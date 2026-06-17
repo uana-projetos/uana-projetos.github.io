@@ -531,7 +531,7 @@ body {
     </div>
     <div class="summary-card" style="background:linear-gradient(135deg,#ff6d0010,#ff6d0025);border-color:#ff6d0030">
       <div class="num" style="color:var(--orange)" id="pendingPayments">0</div>
-      <div class="label">Pagtos Pendentes</div>
+      <div class="label">Pagamentos Pendentes</div>
     </div>
     <div class="summary-card" style="background:linear-gradient(135deg,#00c85310,#00c85325);border-color:#00c85330">
       <div class="num" style="color:var(--green)" id="monthRevenue">R$0</div>
@@ -705,17 +705,17 @@ body {
     <h2 style="text-align:center">Limite do plano grátis</h2>
     <p style="text-align:center">Você atingiu o limite de <strong style="color:var(--accent)">5 alunos</strong> do plano gratuito. Faça upgrade pro <strong>CoachOrg Pro</strong> e cadastre alunos ilimitados!</p>
     <div class="upgrade-price">
-      <div class="price">R$39<span>/mês</span></div>
-      <div class="desc">ou R$197 no semestral — economia de R$37</div>
+      <div class="price">$2<span> pagamento único</span></div>
+      <div class="desc">Pague uma vez, use para sempre — sem mensalidade</div>
     </div>
     <ul class="upgrade-features">
       <li>Alunos ilimitados</li>
       <li>Sem anúncios</li>
       <li>Notificações ilimitadas</li>
-      <li>Backup automático</li>
-      <li>Suporte prioritário</li>
+      <li>Acesso vitalício</li>
+      <li>Todas as atualizações inclusas</li>
     </ul>
-    <button class="btn btn-primary" onclick="goToPro()" style="margin-bottom:10px">Quero o Pro — R$39/mês</button>
+    <button class="btn btn-primary" onclick="goToPro()" style="margin-bottom:10px">Desbloquear Pro — $2 agora</button>
     <button class="btn" onclick="closeUpgrade()" style="background:transparent;color:var(--text2);border:1px solid #ffffff20">Continuar no grátis</button>
   </div>
 </div>
@@ -737,7 +737,7 @@ body {
   </button>
   <button class="tab-btn" onclick="showPage('payments')" data-page="payments">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-    Pagtos
+    Pagamentos
   </button>
   <button class="tab-btn" onclick="showPage('settings')" data-page="settings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -896,10 +896,11 @@ function save() {
 
 function updateAdBanner() {
   const banner = document.getElementById('adBanner');
+  const fab = document.getElementById('fab');
   if(!banner) return;
   banner.classList.toggle('hidden', isPro);
-  // Ajusta padding do body pra não ficar atrás do banner
   document.body.style.paddingBottom = isPro ? '80px' : '145px';
+  if(fab) fab.style.bottom = isPro ? '90px' : '155px';
 }
 
 function openUpgrade() { document.getElementById('upgradeModal').classList.add('show'); }
