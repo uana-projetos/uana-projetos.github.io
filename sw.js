@@ -1,4 +1,4 @@
-const CACHE = 'personalpro-v1';
+const CACHE = 'coachorg-v3';
 const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -7,15 +7,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
-<title>PersonalPro</title>
+<title>CoachOrg</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%23ff5252'/><stop offset='100%25' stop-color='%23ff4081'/></linearGradient></defs><rect fill='%230f0f1a' width='100' height='100' rx='22'/><circle cx='35' cy='32' r='9' stroke='url(%23g)' stroke-width='3' fill='none'/><circle cx='65' cy='32' r='9' stroke='url(%23g)' stroke-width='3' fill='none'/><path d='M26 55 C26 44 44 44 44 55' stroke='url(%23g)' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M56 55 C56 44 74 44 74 55' stroke='url(%23g)' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M30 65 L70 65 M30 73 L60 73' stroke='url(%23g)' stroke-width='3' stroke-linecap='round'/></svg>">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
   --bg: #0f0f1a;
   --card: #1a1a2e;
   --card2: #222240;
-  --accent: #e94560;
-  --accent2: #0f3460;
+  --accent: #ff5252;
+  --accent2: #5c0a1e;
   --green: #00c853;
   --yellow: #ffd600;
   --orange: #ff6d00;
@@ -42,6 +43,43 @@ body {
 .header-sub { font-size:13px; color:var(--text2); margin-top:2px; }
 
 /* Tab Bar */
+/* Ad Banner */
+.ad-banner {
+  position:fixed; bottom:65px; left:0; right:0; z-index:190;
+  background: var(--card);
+  border-top: 1px solid #ffffff10;
+  min-height: 60px;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.ad-banner.hidden { display:none; }
+
+/* Upgrade Modal */
+.upgrade-modal {
+  display:none; position:fixed; inset:0; z-index:999;
+  background:#000000cc; align-items:flex-end; justify-content:center;
+}
+.upgrade-modal.show { display:flex; }
+.upgrade-sheet {
+  background: var(--card);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 24px 40px;
+  width:100%; max-width:480px;
+  animation: slideIn .3s ease;
+}
+.upgrade-sheet h2 { font-size:22px; font-weight:800; margin-bottom:6px; }
+.upgrade-sheet p { color:var(--text2); font-size:14px; line-height:1.5; margin-bottom:20px; }
+.upgrade-price {
+  background: var(--card2); border-radius:14px; padding:16px;
+  text-align:center; margin-bottom:20px;
+}
+.upgrade-price .price { font-size:36px; font-weight:900; color:var(--accent); }
+.upgrade-price .price span { font-size:16px; font-weight:400; color:var(--text2); }
+.upgrade-price .desc { font-size:12px; color:var(--text2); margin-top:4px; }
+.upgrade-features { list-style:none; margin-bottom:24px; display:flex; flex-direction:column; gap:10px; }
+.upgrade-features li { display:flex; align-items:center; gap:10px; font-size:14px; }
+.upgrade-features li::before { content:'✓'; color:var(--green); font-weight:800; font-size:16px; }
+
 .tab-bar {
   position:fixed; bottom:0; left:0; right:0; z-index:200;
   background: var(--card);
@@ -95,7 +133,7 @@ body {
 }
 .tag-paid { background:#00c85320; color:var(--green); }
 .tag-pending { background:#ff6d0020; color:var(--orange); }
-.tag-late { background:#e9456020; color:var(--accent); }
+.tag-late { background:#ff6d0020; color:var(--orange); }
 .student-days { display:flex; gap:3px; margin-top:6px; }
 .day-dot {
   width:24px; height:24px; border-radius:50%; font-size:10px; font-weight:700;
@@ -146,7 +184,7 @@ body {
   position:fixed; bottom:90px; right:20px; z-index:150;
   width:56px; height:56px; border-radius:50%;
   background:var(--accent); border:none; color:#fff;
-  font-size:28px; cursor:pointer; box-shadow:0 4px 20px #e9456060;
+  font-size:28px; cursor:pointer; box-shadow:0 4px 20px #ff525260;
   display:flex; align-items:center; justify-content:center;
   transition:.2s;
 }
@@ -372,8 +410,8 @@ body {
 .email-btn:active { background:#3367d6; }
 .email-btn-outline { background:transparent; border:1.5px solid #4285f4; color:#4285f4; }
 .overdue-banner {
-  background:linear-gradient(135deg,#e9456030,#ff6d0020);
-  border:1px solid #e9456050; border-radius:var(--radius);
+  background:linear-gradient(135deg,#ff525220,#ff408120);
+  border:1px solid #ff525040; border-radius:var(--radius);
   padding:14px 16px; margin-bottom:12px; cursor:pointer;
 }
 .overdue-banner .overdue-title {
@@ -392,20 +430,99 @@ body {
   font-size:13px; color:var(--text2); line-height:1.5;
   margin-top:8px; border:1px solid #ffffff10;
 }
+
+/* Animations */
+@keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:none} }
+@keyframes popIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+@keyframes pulseGlow { 0%,100%{box-shadow:0 4px 20px #ff525240} 50%{box-shadow:0 4px 30px #ff525280} }
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes bounceIn { 0%{opacity:0;transform:scale(.3)} 50%{transform:scale(1.05)} 70%{transform:scale(.95)} 100%{opacity:1;transform:scale(1)} }
+
+.card { animation: slideIn .3s ease-out both; }
+.card:nth-child(2) { animation-delay:.05s; }
+.card:nth-child(3) { animation-delay:.1s; }
+.card:nth-child(4) { animation-delay:.15s; }
+.card:nth-child(5) { animation-delay:.2s; }
+
+.summary-card { animation: popIn .4s ease-out both; }
+.summary-card:nth-child(2) { animation-delay:.08s; }
+.summary-card:nth-child(3) { animation-delay:.16s; }
+.summary-card:nth-child(4) { animation-delay:.24s; }
+.summary-card .num { transition: all .3s; }
+.summary-card:hover .num, .summary-card:active .num { transform: scale(1.1); }
+
+.fab { animation: pulseGlow 2s ease-in-out infinite; }
+
+.logo-icon { animation: bounceIn .6s ease-out; }
+
+.schedule-item { animation: slideIn .3s ease-out both; }
+.schedule-item:nth-child(2) { animation-delay:.05s; }
+.schedule-item:nth-child(3) { animation-delay:.1s; }
+.schedule-item:nth-child(4) { animation-delay:.15s; }
+
+.payment-item { animation: slideIn .3s ease-out both; }
+.payment-item:nth-child(2) { animation-delay:.05s; }
+.payment-item:nth-child(3) { animation-delay:.1s; }
+
+.tab-btn { transition: color .2s, transform .15s; }
+.tab-btn:active { transform: scale(.9); }
+.tab-btn.active svg { filter: drop-shadow(0 0 6px #ff525260); }
+
+.day-pick { transition: all .2s; }
+.day-pick:active { transform: scale(.9); }
+
+.check-btn { transition: all .25s; }
+.check-btn.done { animation: popIn .3s ease-out; }
+
+.wa-btn { transition: all .2s; }
+.wa-btn:hover { box-shadow: 0 4px 15px #25D36640; }
+
+.btn-primary { transition: all .2s; }
+.btn-primary:hover { box-shadow: 0 4px 20px #ff525250; transform: translateY(-1px); }
+
+.overdue-banner { animation: slideIn .4s ease-out; }
+
+.detail-avatar { animation: bounceIn .5s ease-out; }
+.detail-stat { animation: popIn .4s ease-out both; }
+.detail-stat:nth-child(2) { animation-delay:.1s; }
+.detail-stat:nth-child(3) { animation-delay:.2s; }
+
+.stat-bar-fill { transition: width .8s ease-out; }
+
+.header { backdrop-filter: blur(20px); background: #0f0f1af0; }
+.header h1 span { background: linear-gradient(135deg, #ff5252, #ff4081); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Personal<span>Pro</span></h1>
-  <div class="header-sub" id="headerSub">Carregando...</div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <svg class="logo-icon" width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ff5252"/>
+          <stop offset="100%" stop-color="#ff4081"/>
+        </linearGradient>
+      </defs>
+      <rect fill="#1a1a2e" width="100" height="100" rx="22"/>
+      <circle cx="35" cy="32" r="9" stroke="url(#logoGrad)" stroke-width="3" fill="none"/>
+      <circle cx="65" cy="32" r="9" stroke="url(#logoGrad)" stroke-width="3" fill="none"/>
+      <path d="M26 55 C26 44 44 44 44 55" stroke="url(#logoGrad)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M56 55 C56 44 74 44 74 55" stroke="url(#logoGrad)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M30 65 L70 65 M30 73 L60 73" stroke="url(#logoGrad)" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <h1>Coach<span>Org</span></h1>
+      <div class="header-sub" id="headerSub">Carregando...</div>
+    </div>
+  </div>
 </div>
 
 <!-- PAGE: HOME -->
 <div class="page active" id="pageHome">
   <div class="summary-row">
-    <div class="summary-card" style="background:linear-gradient(135deg,#0f346020,#0f346040);border-color:#0f346050">
-      <div class="num" style="color:#64b5f6" id="totalStudents">0</div>
+    <div class="summary-card" style="background:linear-gradient(135deg,#ff525210,#ff525225);border-color:#ff525230">
+      <div class="num" style="color:#ff5252" id="totalStudents">0</div>
       <div class="label">Alunos Ativos</div>
     </div>
     <div class="summary-card" style="background:linear-gradient(135deg,#00c85310,#00c85325);border-color:#00c85330">
@@ -418,7 +535,7 @@ body {
     </div>
     <div class="summary-card" style="background:linear-gradient(135deg,#00c85310,#00c85325);border-color:#00c85330">
       <div class="num" style="color:var(--green)" id="monthRevenue">R$0</div>
-      <div class="label">Receita Mes</div>
+      <div class="label">Receita Mês</div>
     </div>
   </div>
 
@@ -438,6 +555,7 @@ body {
     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="7"/><line x1="14" y1="14" x2="18" y2="18"/></svg>
     <input type="text" placeholder="Buscar aluno..." id="searchInput" oninput="renderStudents()">
   </div>
+  <div id="freeLimitBanner"></div>
   <div id="studentsList"></div>
 </div>
 
@@ -472,11 +590,11 @@ body {
 
 <!-- PAGE: SETTINGS -->
 <div class="page" id="pageSettings">
-  <div class="section-title">Configuracoes</div>
+  <div class="section-title">Configurações</div>
   <div class="card">
     <div class="config-item">
       <div>
-        <div class="config-label">Notificacoes de Pagamento</div>
+        <div class="config-label">Notificações de Pagamento</div>
         <div class="config-desc">Lembrete 3 dias antes do vencimento</div>
       </div>
       <button class="toggle on" id="togglePayNotif" onclick="toggleSetting('payNotif')"></button>
@@ -490,18 +608,18 @@ body {
     </div>
     <div class="config-item">
       <div>
-        <div class="config-label">Horario Padrao</div>
-        <div class="config-desc">Inicio dos treinos</div>
+        <div class="config-label">Horário Padrão</div>
+        <div class="config-desc">Início dos treinos</div>
       </div>
       <input type="time" value="06:00" id="defaultTime" style="background:var(--bg);border:1px solid #ffffff15;color:var(--text);padding:8px 12px;border-radius:10px;font-size:14px" onchange="saveSetting('defaultTime',this.value)">
     </div>
   </div>
 
-  <div class="section-title">WhatsApp Automatico</div>
+  <div class="section-title">WhatsApp Automático</div>
   <div class="card">
     <div class="config-item">
       <div>
-        <div class="config-label">Confirmar Presenca</div>
+        <div class="config-label">Confirmar Presença</div>
         <div class="config-desc">Perguntar no WhatsApp se vai treinar</div>
       </div>
       <button class="toggle on" id="toggleWhatsappNotif" onclick="toggleSetting('whatsappNotif')"></button>
@@ -522,12 +640,12 @@ body {
     <div class="form-group" style="margin-top:12px">
       <label>Mensagem de Treino</label>
       <textarea id="waTrainMsg" style="width:100%;padding:12px;border-radius:12px;background:var(--bg);border:1px solid #ffffff15;color:var(--text);font-size:13px;min-height:80px;resize:vertical" oninput="saveSetting('whatsappMsg',this.value)"></textarea>
-      <div style="font-size:11px;color:var(--text2);margin-top:4px">Variaveis: {nome} {hora} {dia}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">Variáveis: {nome} {hora} {dia}</div>
     </div>
     <div class="form-group">
       <label>Mensagem de Pagamento</label>
       <textarea id="waPayMsg" style="width:100%;padding:12px;border-radius:12px;background:var(--bg);border:1px solid #ffffff15;color:var(--text);font-size:13px;min-height:80px;resize:vertical" oninput="saveSetting('whatsappPayMsg',this.value)"></textarea>
-      <div style="font-size:11px;color:var(--text2);margin-top:4px">Variaveis: {nome} {valor} {dia}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">Variáveis: {nome} {valor} {dia}</div>
     </div>
   </div>
 
@@ -552,7 +670,7 @@ body {
 
   <div class="section-title" style="margin-top:30px">Sobre</div>
   <div class="card" style="text-align:center">
-    <p style="font-size:13px;color:var(--text2)">PersonalPro v2.0<br>App completo para Personal Trainers<br><span style="font-size:11px">WhatsApp + Email + Agenda + Pagamentos</span></p>
+    <p style="font-size:13px;color:var(--text2)">CoachOrg v2.0<br>App completo para Personal Trainers<br><span style="font-size:11px">WhatsApp + Email + Agenda + Pagamentos</span></p>
   </div>
 </div>
 
@@ -568,11 +686,45 @@ body {
 <!-- FAB -->
 <button class="fab" id="fab" onclick="openAddStudent()">+</button>
 
+<!-- AD BANNER (só aparece no plano gratuito) -->
+<div class="ad-banner hidden" id="adBanner">
+  <!-- Cole aqui o código do Google AdSense quando aprovado -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  <ins class="adsbygoogle" style="display:block;width:100%;height:60px" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="banner"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div style="width:100%;text-align:center;padding:10px;font-size:11px;color:var(--text2)">
+    <span style="background:var(--card2);padding:4px 10px;border-radius:6px;letter-spacing:.5px">PUBLICIDADE</span>
+    <div style="margin-top:4px;font-size:12px;color:var(--text2)">Espaço reservado para anúncio</div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="upgrade-modal" id="upgradeModal" onclick="if(event.target===this)closeUpgrade()">
+  <div class="upgrade-sheet">
+    <div style="text-align:center;font-size:36px;margin-bottom:10px">🚀</div>
+    <h2 style="text-align:center">Limite do plano grátis</h2>
+    <p style="text-align:center">Você atingiu o limite de <strong style="color:var(--accent)">5 alunos</strong> do plano gratuito. Faça upgrade pro <strong>CoachOrg Pro</strong> e cadastre alunos ilimitados!</p>
+    <div class="upgrade-price">
+      <div class="price">R$39<span>/mês</span></div>
+      <div class="desc">ou R$197 no semestral — economia de R$37</div>
+    </div>
+    <ul class="upgrade-features">
+      <li>Alunos ilimitados</li>
+      <li>Sem anúncios</li>
+      <li>Notificações ilimitadas</li>
+      <li>Backup automático</li>
+      <li>Suporte prioritário</li>
+    </ul>
+    <button class="btn btn-primary" onclick="goToPro()" style="margin-bottom:10px">Quero o Pro — R$39/mês</button>
+    <button class="btn" onclick="closeUpgrade()" style="background:transparent;color:var(--text2);border:1px solid #ffffff20">Continuar no grátis</button>
+  </div>
+</div>
+
 <!-- TAB BAR -->
 <div class="tab-bar">
   <button class="tab-btn active" onclick="showPage('home')" data-page="home">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>
-    Inicio
+    Início
   </button>
   <button class="tab-btn" onclick="showPage('students')" data-page="students">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
@@ -601,7 +753,7 @@ body {
       <input type="hidden" id="editId">
       <div class="form-group">
         <label>Nome completo</label>
-        <input type="text" id="fName" required placeholder="Ex: Joao Silva">
+        <input type="text" id="fName" required placeholder="Ex: João Silva">
       </div>
       <div class="form-group">
         <label>Telefone / WhatsApp</label>
@@ -617,10 +769,28 @@ body {
           <option value="Hipertrofia">Hipertrofia</option>
           <option value="Emagrecimento">Emagrecimento</option>
           <option value="Condicionamento">Condicionamento</option>
-          <option value="Reabilitacao">Reabilitacao</option>
+          <option value="Reabilitação">Reabilitação</option>
           <option value="Qualidade de Vida">Qualidade de Vida</option>
           <option value="Outro">Outro</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label>Local da Aula</label>
+        <input type="text" id="fLocal" placeholder="Ex: Academia SmartFit, Parque, Casa do aluno...">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Aula</label>
+        <select id="fClassType" onchange="onClassTypeChange()">
+          <option value="Individual">Individual</option>
+          <option value="Dupla">Dupla</option>
+          <option value="Trio">Trio</option>
+          <option value="Grupo">Grupo</option>
+        </select>
+      </div>
+      <div class="form-group" id="groupMembersSection" style="display:none">
+        <label>Parceiros de treino</label>
+        <div id="groupMembersList" style="display:flex;flex-direction:column;gap:6px;max-height:150px;overflow-y:auto"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Selecione os alunos que treinam junto</div>
       </div>
       <div class="form-group">
         <label>Dias de treino</label>
@@ -635,7 +805,7 @@ body {
         </div>
       </div>
       <div class="form-group">
-        <label>Horario do Treino</label>
+        <label>Horário do Treino</label>
         <input type="time" id="fTime" value="06:00">
       </div>
       <div class="form-group">
@@ -647,8 +817,8 @@ body {
         <input type="number" id="fValue" step="0.01" placeholder="200.00">
       </div>
       <div class="form-group">
-        <label>Observacoes</label>
-        <textarea id="fNotes" placeholder="Lesoes, restricoes, preferencias..."></textarea>
+        <label>Observações</label>
+        <textarea id="fNotes" placeholder="Lesões, restrições, preferências..."></textarea>
       </div>
       <button type="submit" class="btn btn-primary">Salvar Aluno</button>
       <button type="button" class="btn btn-danger" id="btnDelete" style="display:none" onclick="deleteStudent()">Excluir Aluno</button>
@@ -666,10 +836,10 @@ body {
       <input type="hidden" id="wIndex" value="-1">
       <div class="form-group">
         <label>Nome do Treino</label>
-        <input type="text" id="wName" required placeholder="Ex: Treino A - Peito/Triceps">
+        <input type="text" id="wName" required placeholder="Ex: Treino A - Peito/Tríceps">
       </div>
       <div class="form-group">
-        <label>Exercicios (um por linha)</label>
+        <label>Exercícios (um por linha)</label>
         <textarea id="wExercises" style="min-height:150px" placeholder="Supino reto 4x10&#10;Crucifixo 3x12&#10;Triceps corda 3x15"></textarea>
       </div>
       <button type="submit" class="btn btn-primary">Salvar Treino</button>
@@ -678,17 +848,43 @@ body {
   </div>
 </div>
 
+<!-- MODAL: WHATSAPP MESSAGE -->
+<div class="modal-overlay" id="modalWa">
+  <div class="modal" style="position:relative">
+    <h2 style="display:flex;align-items:center;gap:10px"><span style="color:#25D366">WhatsApp</span> <span id="waModalName"></span></h2>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <button class="wa-btn" id="waBtnTrain" style="justify-content:center;padding:14px;font-size:14px;border-radius:14px" onclick="sendWaFromModal('train')">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+        Confirmar Presença no Treino
+      </button>
+      <button class="wa-btn" id="waBtnPay" style="justify-content:center;padding:14px;font-size:14px;border-radius:14px;background:#ff6d00" onclick="sendWaFromModal('pay')">
+        💰 Lembrete de Pagamento
+      </button>
+      <div class="form-group" style="margin:8px 0 0">
+        <label>Mensagem personalizada</label>
+        <textarea id="waCustomMsg" style="width:100%;padding:12px;border-radius:12px;background:var(--bg);border:1px solid #ffffff15;color:var(--text);font-size:14px;min-height:80px;resize:vertical" placeholder="Digite sua mensagem aqui..."></textarea>
+      </div>
+      <button class="wa-btn" style="justify-content:center;padding:14px;font-size:14px;border-radius:14px;background:#128C7E" onclick="sendWaFromModal('custom')">
+        ✏️ Enviar Mensagem Personalizada
+      </button>
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="closeWaModal()">Cancelar</button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-const DAYS_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+const DAYS_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const DAYS_LETTER = ['D','S','T','Q','Q','S','S'];
-const COLORS = ['#e94560','#0f3460','#533483','#00c853','#ff6d00','#6c63ff','#00bcd4','#ff5722'];
+const COLORS = ['#ff5252','#0f3460','#533483','#00c853','#ff6d00','#6c63ff','#00bcd4','#ff4081'];
 
 let students = JSON.parse(localStorage.getItem('pp_students') || '[]');
-let settings = JSON.parse(localStorage.getItem('pp_settings') || '{"payNotif":true,"trainNotif":true,"whatsappNotif":true,"defaultTime":"06:00","whatsappMsg":"Oi {nome}! Tudo bem? Seu treino esta marcado pra hoje as {hora}. Voce vem? Me confirma aqui pra eu reservar seu horario! 💪","whatsappPayMsg":"Oi {nome}! Tudo bem? Passando pra lembrar que o pagamento da mensalidade (R${valor}) vence dia {dia}. Qualquer duvida me chama! 😊","whatsappHoursBefore":2}');
+let settings = JSON.parse(localStorage.getItem('pp_settings') || '{"payNotif":true,"trainNotif":true,"whatsappNotif":true,"defaultTime":"06:00","whatsappMsg":"Oi {nome}! Tudo bem? Seu treino está marcado pra hoje às {hora}. Você vem? Me confirma aqui pra eu reservar seu horário! 💪","whatsappPayMsg":"Oi {nome}! Tudo bem? Passando pra lembrar que o pagamento da mensalidade (R${valor}) vence dia {dia}. Qualquer dúvida me chama! 😊","whatsappHoursBefore":2}');
 let attendance = JSON.parse(localStorage.getItem('pp_attendance') || '{}');
+const FREE_LIMIT = 5;
+let isPro = localStorage.getItem('coachorg_pro') === 'true';
 let currentPayFilter = 'all';
 let selectedWeekDay = new Date().getDay();
 
@@ -696,6 +892,36 @@ function save() {
   localStorage.setItem('pp_students', JSON.stringify(students));
   localStorage.setItem('pp_settings', JSON.stringify(settings));
   localStorage.setItem('pp_attendance', JSON.stringify(attendance));
+}
+
+function updateAdBanner() {
+  const banner = document.getElementById('adBanner');
+  if(!banner) return;
+  banner.classList.toggle('hidden', isPro);
+  // Ajusta padding do body pra não ficar atrás do banner
+  document.body.style.paddingBottom = isPro ? '80px' : '145px';
+}
+
+function openUpgrade() { document.getElementById('upgradeModal').classList.add('show'); }
+function closeUpgrade() { document.getElementById('upgradeModal').classList.remove('show'); }
+
+function goToPro() {
+  // Redireciona pro link de pagamento — substitua pela URL do seu checkout
+  const checkoutUrl = 'https://wa.me/5511999999999?text=Quero%20assinar%20o%20CoachOrg%20Pro!';
+  window.open(checkoutUrl, '_blank');
+}
+
+function activatePro(code) {
+  // Código de ativação manual — troque por integração de pagamento futuramente
+  if(code === 'COACHPRO2024') {
+    isPro = true;
+    localStorage.setItem('coachorg_pro', 'true');
+    updateAdBanner();
+    showToast('✅ Plano Pro ativado!');
+    closeUpgrade();
+  } else {
+    showToast('Código inválido');
+  }
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -777,7 +1003,7 @@ function renderHome() {
   const studentsWithPhone = todayStudents.filter(s=>s.phone);
   if(studentsWithPhone.length > 0) {
     document.getElementById('waAllBtn').innerHTML = `<button class="wa-btn wa-send-all" onclick="sendWhatsAppAll()">
-      ${waIcon()} Confirmar Presenca de Todos (${studentsWithPhone.length})
+      ${waIcon()} Confirmar Presença de Todos (${studentsWithPhone.length})
     </button>`;
   } else {
     document.getElementById('waAllBtn').innerHTML = '';
@@ -788,20 +1014,39 @@ function renderHome() {
   if(todayStudents.length === 0) {
     html = '<div class="empty-state"><p>Nenhum treino hoje. Dia de descanso!</p></div>';
   } else {
+    const nowMin = today.getHours()*60 + today.getMinutes();
     todayStudents.forEach(s=>{
       const done = attendance[todayKey+'_'+s.id];
       const waSent = isWhatsAppSent(s.id);
+      const [th,tm] = (s.time||'06:00').split(':').map(Number);
+      const trainMin = th*60+tm;
+      const diff = trainMin - nowMin;
+      let countdown = '';
+      if(done) {
+        countdown = '<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#00c85320;color:var(--green);font-weight:700">Concluído</span>';
+      } else if(diff < 0) {
+        countdown = `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#ff6d0020;color:var(--orange);font-weight:700">Atrasado ${Math.abs(diff)}min</span>`;
+      } else if(diff <= 15) {
+        countdown = `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#ff525230;color:#ff5252;font-weight:700;animation:pulseGlow 1.5s infinite">⏱ ${diff}min</span>`;
+      } else if(diff <= 60) {
+        countdown = `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#ffd60020;color:var(--yellow);font-weight:700">⏱ ${diff}min</span>`;
+      } else {
+        const h = Math.floor(diff/60);
+        const m = diff%60;
+        countdown = `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#ffffff10;color:var(--text2);font-weight:600">em ${h}h${m>0?m+'min':''}</span>`;
+      }
       html += `<div class="schedule-item">
         <div class="schedule-time">${s.time||'06:00'}</div>
         <div style="flex:1">
           <div class="schedule-name">${s.name}</div>
-          <div style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px">
+          <div style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${s.goal||''}
+            ${countdown}
             ${waSent?'<span class="wa-status wa-sent">WA Enviado</span>':''}
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
-          ${s.phone?`<button class="wa-icon-btn" onclick="event.stopPropagation();sendWhatsApp('${s.id}','train')" title="WhatsApp">${waIcon()}</button>`:''}
+          ${s.phone?`<button class="wa-btn wa-btn-small" onclick="event.stopPropagation();openWaModal('${s.id}')" style="padding:6px 10px;font-size:11px">${waIcon()} Msg</button>`:''}
           <button class="check-btn ${done?'done':''}" onclick="toggleAttendance('${s.id}')">
             ${done?'&#10003;':''}
           </button>
@@ -876,6 +1121,23 @@ function renderStudents() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   const filtered = students.filter(s=>s.name.toLowerCase().includes(q));
 
+  // Banner de limite grátis
+  const limitBanner = document.getElementById('freeLimitBanner');
+  if(limitBanner) {
+    if(!isPro) {
+      const remaining = FREE_LIMIT - students.length;
+      if(remaining <= 2 && remaining > 0) {
+        limitBanner.innerHTML = `<div style="background:#ff525215;border:1px solid #ff525240;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;display:flex;align-items:center;gap:10px">
+          ⚠️ <span>Você tem <strong style="color:var(--accent)">${remaining} vaga${remaining>1?'s':''}</strong> no plano grátis. <span onclick="openUpgrade()" style="color:var(--accent);text-decoration:underline;cursor:pointer">Upgrade para ilimitado</span></span>
+        </div>`;
+      } else if(remaining <= 0) {
+        limitBanner.innerHTML = `<div style="background:#ff525215;border:1px solid #ff525240;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;display:flex;align-items:center;gap:10px">
+          🔒 <span>Limite atingido. <span onclick="openUpgrade()" style="color:var(--accent);text-decoration:underline;cursor:pointer">Faça upgrade Pro</span> para adicionar mais alunos</span>
+        </div>`;
+      } else { limitBanner.innerHTML = ''; }
+    } else { limitBanner.innerHTML = ''; }
+  }
+
   let html = '';
   if(filtered.length === 0) {
     html = `<div class="empty-state">
@@ -894,7 +1156,7 @@ function renderStudents() {
         <div class="student-avatar" style="background:${color}20;color:${color}">${initials}</div>
         <div class="student-info">
           <div class="student-name">${s.name}</div>
-          <div class="student-meta">${payTag} <span style="color:var(--text2)">${s.goal||''}</span></div>
+          <div class="student-meta">${payTag} ${s.classType&&s.classType!=='Individual'?'<span class="tag" style="background:#ff525220;color:var(--accent)">👥 '+s.classType+'</span>':''} <span style="color:var(--text2)">${s.goal||''}</span></div>
           <div class="student-days">
             ${DAYS_LETTER.map((d,i)=>`<div class="day-dot ${s.days&&s.days.includes(i)?'active':''} ${i===today&&s.days&&s.days.includes(i)?'today':''}">${d}</div>`).join('')}
           </div>
@@ -934,9 +1196,9 @@ function renderSchedule() {
         <div class="schedule-time">${s.time||'06:00'}</div>
         <div style="flex:1">
           <div class="schedule-name">${s.name}</div>
-          <div style="font-size:11px;color:var(--text2)">${s.goal||''}</div>
+          <div style="font-size:11px;color:var(--text2)">${s.classType&&s.classType!=='Individual'?'👥 '+s.classType+' · ':''}${s.goal||''}${s.local?' · 📍'+s.local:''}</div>
         </div>
-        ${s.phone?`<button class="wa-icon-btn" onclick="event.stopPropagation();sendWhatsApp('${s.id}','train')" title="WhatsApp">${waIcon()}</button>`:''}
+        ${s.phone?`<button class="wa-btn wa-btn-small" onclick="event.stopPropagation();openWaModal('${s.id}')" style="padding:6px 10px;font-size:11px">${waIcon()} Msg</button>`:''}
       </div>`;
     });
   }
@@ -1002,7 +1264,7 @@ function buildWhatsAppMsg(student, type) {
   const firstName = student.name.split(' ')[0];
   let msg = '';
   if(type === 'train') {
-    msg = settings.whatsappMsg || 'Oi {nome}! Seu treino e hoje as {hora}. Voce vem?';
+    msg = settings.whatsappMsg || 'Oi {nome}! Seu treino é hoje às {hora}. Você vem?';
     msg = msg.replace(/\{nome\}/g, firstName)
              .replace(/\{hora\}/g, student.time || '06:00')
              .replace(/\{dia\}/g, DAYS_SHORT[new Date().getDay()]);
@@ -1129,7 +1391,7 @@ function buildPayEmailSubject(student) {
 
 function buildPayEmailBody(student) {
   const firstName = student.name.split(' ')[0];
-  return `Oi ${firstName}!\n\nPassando pra lembrar que o pagamento da sua mensalidade (R$${student.value||'0'}) venceu dia ${student.payDay||'?'}.\n\nQualquer duvida me chama!\n\nAbraco`;
+  return `Oi ${firstName}!\n\nPassando pra lembrar que o pagamento da sua mensalidade (R$${student.value||'0'}) venceu dia ${student.payDay||'?'}.\n\nQualquer dúvida me chama!\n\nAbraço`;
 }
 
 function sendPayEmail(studentId) {
@@ -1167,7 +1429,7 @@ function checkWhatsAppReminders() {
       const key = 'notif_wa_' + today.toISOString().slice(0,10) + '_' + s.id;
       if(localStorage.getItem(key)) return;
 
-      const n = new Notification('PersonalPro - Confirmar Presenca', {
+      const n = new Notification('CoachOrg -Confirmar Presença', {
         body: `Hora de perguntar se ${s.name} vem treinar as ${s.time}! Toque para enviar WhatsApp.`,
         tag: 'wa_'+s.id,
         requireInteraction: true,
@@ -1245,7 +1507,7 @@ function showStudentDetail(id) {
       </div>
       <div class="detail-stat">
         <div class="val">${attendCount}</div>
-        <div class="lbl">Presenças Mês</div>
+        <div class="lbl">Presenças no Mês</div>
       </div>
       <div class="detail-stat">
         <div class="val" style="color:${trainsToday?'var(--green)':'var(--text2)'}">${trainsToday?'Sim':'Não'}</div>
@@ -1258,15 +1520,18 @@ function showStudentDetail(id) {
       <div class="student-days" style="gap:6px">
         ${DAYS_SHORT.map((d,i)=>`<div class="day-dot ${s.days&&s.days.includes(i)?'active':''}" style="width:36px;height:36px;font-size:11px">${d}</div>`).join('')}
       </div>
-      <div style="margin-top:10px;font-size:13px;color:var(--text2)">Horario: <strong style="color:var(--text)">${s.time||'06:00'}</strong></div>
+      <div style="margin-top:10px;font-size:13px;color:var(--text2)">Horário: <strong style="color:var(--text)">${s.time||'06:00'}</strong></div>
       <div style="margin-top:4px;font-size:13px;color:var(--text2)">Objetivo: <strong style="color:var(--text)">${s.goal||'-'}</strong></div>
+      ${s.local?`<div style="margin-top:4px;font-size:13px;color:var(--text2)">Local: <strong style="color:var(--text)">${s.local}</strong></div>`:''}
+      <div style="margin-top:4px;font-size:13px;color:var(--text2)">Tipo: <strong style="color:var(--text)">${s.classType||'Individual'}${s.classType&&s.classType!=='Individual'?' 👥':''}</strong></div>
+      ${s.groupMembers&&s.groupMembers.length?`<div style="margin-top:4px;font-size:13px;color:var(--text2)">Parceiros: <strong style="color:var(--text)">${s.groupMembers.map(mid=>{const m=students.find(x=>x.id===mid);return m?m.name:'?';}).join(', ')}</strong></div>`:''}
       <div style="margin-top:4px;font-size:13px;color:var(--text2)">Valor: <strong style="color:var(--text)">R$${s.value||'0'}</strong></div>
     </div>
 
     ${s.notes?`<div class="card"><div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Observações</div><div style="font-size:14px;line-height:1.5">${s.notes}</div></div>`:''}
 
     <div class="card">
-      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Frequencia do Mes</div>
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Frequência do Mês</div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
         ${DAYS_LETTER.map(d=>`<div style="font-size:10px;color:var(--text2);font-weight:700;padding:4px 0">${d}</div>`).join('')}
         ${buildMonthCalendar(s.id)}
@@ -1296,20 +1561,47 @@ function showStudentDetail(id) {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
 }
 
+// CLASS TYPE / GROUP MEMBERS
+function onClassTypeChange(preselected) {
+  const type = document.getElementById('fClassType').value;
+  const section = document.getElementById('groupMembersSection');
+  const list = document.getElementById('groupMembersList');
+  if(type === 'Individual') {
+    section.style.display = 'none';
+    list.innerHTML = '';
+    return;
+  }
+  section.style.display = '';
+  const editId = document.getElementById('editId').value;
+  const sel = Array.isArray(preselected) ? preselected : [];
+  list.innerHTML = students
+    .filter(s=>s.id !== editId)
+    .map(s=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--card2);border-radius:8px;cursor:pointer;font-size:13px">
+      <input type="checkbox" value="${s.id}" ${sel.includes(s.id)?'checked':''} style="accent-color:var(--accent);width:18px;height:18px">
+      ${s.name}
+    </label>`).join('');
+  if(students.filter(s=>s.id !== editId).length === 0)
+    list.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:8px">Cadastre mais alunos primeiro</div>';
+}
+
 // MODALS
 function openAddStudent() {
+  if(!isPro && students.length >= FREE_LIMIT) { openUpgrade(); return; }
   document.getElementById('modalTitle').textContent = 'Novo Aluno';
   document.getElementById('editId').value = '';
   document.getElementById('fName').value = '';
   document.getElementById('fPhone').value = '';
   document.getElementById('fEmail').value = '';
   document.getElementById('fGoal').value = 'Hipertrofia';
+  document.getElementById('fLocal').value = '';
+  document.getElementById('fClassType').value = 'Individual';
   document.getElementById('fTime').value = settings.defaultTime || '06:00';
   document.getElementById('fPayDay').value = '';
   document.getElementById('fValue').value = '';
   document.getElementById('fNotes').value = '';
   document.getElementById('btnDelete').style.display = 'none';
   document.querySelectorAll('.day-pick').forEach(d=>d.classList.remove('selected'));
+  onClassTypeChange();
   document.getElementById('modalStudent').classList.add('show');
 }
 
@@ -1322,6 +1614,8 @@ function editStudent(id) {
   document.getElementById('fPhone').value = s.phone || '';
   document.getElementById('fEmail').value = s.email || '';
   document.getElementById('fGoal').value = s.goal || 'Hipertrofia';
+  document.getElementById('fLocal').value = s.local || '';
+  document.getElementById('fClassType').value = s.classType || 'Individual';
   document.getElementById('fTime').value = s.time || '06:00';
   document.getElementById('fPayDay').value = s.payDay || '';
   document.getElementById('fValue').value = s.value || '';
@@ -1330,6 +1624,7 @@ function editStudent(id) {
   document.querySelectorAll('.day-pick').forEach(d=>{
     d.classList.toggle('selected', s.days && s.days.includes(parseInt(d.dataset.day)));
   });
+  onClassTypeChange(s.groupMembers || []);
   document.getElementById('modalStudent').classList.add('show');
 }
 
@@ -1342,11 +1637,19 @@ function saveStudent(e) {
   const id = document.getElementById('editId').value;
   const days = Array.from(document.querySelectorAll('.day-pick.selected')).map(d=>parseInt(d.dataset.day));
 
+  const classType = document.getElementById('fClassType').value;
+  const groupMembers = classType !== 'Individual'
+    ? Array.from(document.querySelectorAll('#groupMembersList input:checked')).map(c=>c.value)
+    : [];
+
   const data = {
     name: document.getElementById('fName').value.trim(),
     phone: document.getElementById('fPhone').value.trim(),
     email: document.getElementById('fEmail').value.trim(),
     goal: document.getElementById('fGoal').value,
+    local: document.getElementById('fLocal').value.trim(),
+    classType: classType,
+    groupMembers: groupMembers,
     days: days,
     time: document.getElementById('fTime').value,
     payDay: document.getElementById('fPayDay').value,
@@ -1381,7 +1684,7 @@ function deleteStudent() {
   students = students.filter(s=>s.id!==id);
   save();
   closeModal();
-  showToast('Aluno excluido');
+  showToast('Aluno excluído');
   showPage('students');
 }
 
@@ -1432,11 +1735,39 @@ function deleteWorkout(studentId, idx) {
   if(!s) return;
   s.workouts.splice(idx, 1);
   save();
-  showToast('Treino excluido');
+  showToast('Treino excluído');
   showStudentDetail(studentId);
 }
 
 function closeWorkoutModal() { document.getElementById('modalWorkout').classList.remove('show'); }
+
+// WHATSAPP MODAL
+let waModalStudentId = '';
+function openWaModal(studentId) {
+  const s = students.find(x=>x.id===studentId);
+  if(!s) return;
+  waModalStudentId = studentId;
+  document.getElementById('waModalName').textContent = s.name;
+  document.getElementById('waCustomMsg').value = '';
+  document.getElementById('modalWa').classList.add('show');
+}
+function closeWaModal() { document.getElementById('modalWa').classList.remove('show'); }
+function sendWaFromModal(type) {
+  const s = students.find(x=>x.id===waModalStudentId);
+  if(!s || !s.phone) { showToast('Aluno sem telefone'); return; }
+  const phone = formatPhone(s.phone);
+  let msg = '';
+  if(type === 'custom') {
+    msg = document.getElementById('waCustomMsg').value.trim();
+    if(!msg) { showToast('Digite uma mensagem'); return; }
+  } else {
+    msg = buildWhatsAppMsg(s, type);
+  }
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  if(type === 'train') markWhatsAppSent(waModalStudentId);
+  closeWaModal();
+  showToast('Abrindo WhatsApp...');
+}
 
 // SETTINGS
 function toggleSetting(key) {
@@ -1453,7 +1784,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'personalpro-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.download = 'coachorg-backup-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();
   showToast('Backup exportado!');
 }
@@ -1498,7 +1829,7 @@ function checkNotifications() {
         if(days >= 0 && days <= 3) {
           const key = 'notif_pay_'+today.toISOString().slice(0,10)+'_'+s.id;
           if(!localStorage.getItem(key)) {
-            new Notification('PersonalPro - Pagamento', {
+            new Notification('CoachOrg -Pagamento', {
               body: `${s.name}: pagamento dia ${s.payDay} (${days===0?'HOJE':'em '+days+' dias'}) - R$${s.value||'0'}`,
               icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💪</text></svg>'
             });
@@ -1513,20 +1844,27 @@ function checkNotifications() {
     const dow = today.getDay();
     const hour = today.getHours();
     const min = today.getMinutes();
+    const ALERTS = [60, 30, 15, 5];
 
     students.forEach(s=>{
       if(s.days && s.days.includes(dow) && s.time) {
         const [th, tm] = s.time.split(':').map(Number);
         const diffMin = (th*60+tm) - (hour*60+min);
-        if(diffMin > 0 && diffMin <= 60) {
-          const key = 'notif_train_'+today.toISOString().slice(0,10)+'_'+s.id;
-          if(!localStorage.getItem(key)) {
-            new Notification('PersonalPro - Treino', {
-              body: `${s.name} treina as ${s.time} (em ${diffMin} min)`,
-            });
-            localStorage.setItem(key, '1');
+
+        ALERTS.forEach(alertAt=>{
+          if(diffMin > 0 && diffMin <= alertAt && diffMin > alertAt - 5) {
+            const key = 'notif_train_'+alertAt+'_'+today.toISOString().slice(0,10)+'_'+s.id;
+            if(!localStorage.getItem(key)) {
+              const emoji = alertAt <= 5 ? '🔴' : alertAt <= 15 ? '🟡' : '🟢';
+              const urgency = alertAt <= 15 ? 'ATENÇÃO: ' : '';
+              new Notification(`${emoji} CoachOrg - ${urgency}${diffMin} min pra aula`, {
+                body: `${s.name} treina às ${s.time} — faltam ${diffMin} minutos!`,
+                requireInteraction: alertAt <= 15,
+              });
+              localStorage.setItem(key, '1');
+            }
           }
-        }
+        });
       }
     });
   }
@@ -1539,9 +1877,11 @@ function formatDateBR(d) {
 // INIT
 requestNotifPermission();
 renderHome();
+updateAdBanner();
 checkNotifications();
 checkWhatsAppReminders();
-setInterval(()=>{ checkNotifications(); checkWhatsAppReminders(); }, 60000); // check every 1min
+setInterval(()=>{ checkNotifications(); checkWhatsAppReminders(); }, 60000);
+setInterval(()=>{ if(document.querySelector('#pageHome.active')) renderHome(); }, 30000);
 
 // Load settings into config fields
 document.addEventListener('DOMContentLoaded', ()=>{
