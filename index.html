@@ -840,25 +840,104 @@ body {
 
 <!-- UPGRADE MODAL -->
 <div class="upgrade-modal" id="upgradeModal" onclick="if(event.target===this)closeUpgrade()">
-  <div class="upgrade-sheet">
-    <div style="text-align:center;font-size:36px;margin-bottom:10px">🚀</div>
-    <h2 style="text-align:center">Limite do plano grátis</h2>
-    <p style="text-align:center">Você atingiu o limite de <strong style="color:var(--accent)">5 alunos</strong> do plano gratuito. Faça upgrade pro <strong>CoachOrg Pro</strong> e cadastre alunos ilimitados!</p>
-    <div class="upgrade-price">
-      <div class="price">$2<span> pagamento único</span></div>
-      <div class="desc">Pague uma vez, use para sempre — sem mensalidade</div>
+  <div class="upgrade-sheet" style="max-height:92vh;overflow-y:auto">
+
+    <!-- Promo Banner -->
+    <div style="background:linear-gradient(90deg,#ff5252,#ff6d00);border-radius:14px;padding:12px;margin-bottom:16px;text-align:center;animation:pulseGlow 2s infinite">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#fff;text-transform:uppercase">🔥 PROMOÇÃO DE LANÇAMENTO</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-top:2px">Apenas <span id="vipSlotsLeft">47</span> vagas vitalícias restantes!</div>
+      <div style="font-size:11px;color:#ffffffcc;margin-top:2px" id="promoTimer">⏰ Termina em 7 dias</div>
     </div>
-    <ul class="upgrade-features">
-      <li>Alunos ilimitados</li>
-      <li>Sem anúncios</li>
-      <li>Notificações ilimitadas</li>
-      <li>Acesso vitalício</li>
-      <li>Todas as atualizações inclusas</li>
-    </ul>
-    <button class="btn btn-primary" onclick="goToPro()" style="margin-bottom:10px">Desbloquear Pro — $2 agora</button>
+
+    <div style="text-align:center;font-size:32px;margin-bottom:6px">🚀</div>
+    <h2 style="text-align:center;margin-bottom:4px">Desbloqueie o CoachOrg Pro</h2>
+    <p style="text-align:center;margin-bottom:18px;font-size:13px">Escolha o plano ideal pra você:</p>
+
+    <!-- PLANO 1: MENSAL -->
+    <div class="plan-card" onclick="selectPlan('mensal')" data-plan="mensal">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+        <div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.5px">PRO MENSAL</div>
+          <div style="font-size:20px;font-weight:800">R$14,90<span style="font-size:12px;color:var(--text2);font-weight:500">/mês</span></div>
+          <div style="font-size:11px;color:var(--green);font-weight:700">🎁 7 dias grátis</div>
+        </div>
+        <div style="font-size:10px;color:var(--text2);text-align:right">Menos de<br><strong style="color:var(--text);font-size:13px">R$0,50/dia</strong></div>
+      </div>
+    </div>
+
+    <!-- PLANO 2: ANUAL (DESTAQUE) -->
+    <div class="plan-card recommended" onclick="selectPlan('anual')" data-plan="anual">
+      <div style="position:absolute;top:-8px;right:14px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px;letter-spacing:.5px">MAIS POPULAR</div>
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+        <div>
+          <div style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.5px">PRO ANUAL</div>
+          <div style="font-size:20px;font-weight:800">R$119<span style="font-size:12px;color:var(--text2);font-weight:500">/ano</span></div>
+          <div style="font-size:11px;color:var(--green);font-weight:700">💰 Economize R$60 (33% off)</div>
+        </div>
+        <div style="font-size:10px;color:var(--text2);text-align:right">Equivale a<br><strong style="color:var(--text);font-size:13px">R$9,90/mês</strong></div>
+      </div>
+    </div>
+
+    <!-- PLANO 3: VITALÍCIO (PROMO) -->
+    <div class="plan-card vip" onclick="selectPlan('vitalicio')" data-plan="vitalicio">
+      <div style="position:absolute;top:-8px;right:14px;background:linear-gradient(90deg,#ff5252,#ff6d00);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px;letter-spacing:.5px">🔥 LANÇAMENTO</div>
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+        <div>
+          <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.5px">VITALÍCIO</div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <div style="font-size:14px;color:var(--text2);text-decoration:line-through;font-weight:600">R$297</div>
+            <div style="font-size:22px;font-weight:800;color:var(--accent)">R$97</div>
+          </div>
+          <div style="font-size:11px;color:var(--accent);font-weight:700">⚡ Pague 1x, use pra sempre</div>
+        </div>
+        <div style="font-size:10px;color:var(--text2);text-align:right">Só primeiros<br><strong style="color:var(--accent);font-size:13px">50 personals</strong></div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border-radius:14px;padding:14px;margin:14px 0">
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text2);letter-spacing:.5px">TUDO QUE VOCÊ DESBLOQUEIA:</div>
+      <ul style="list-style:none;padding:0;margin:0;display:grid;gap:8px;font-size:13px">
+        <li>✅ Alunos ilimitados</li>
+        <li>✅ Coach IA completo (insights inteligentes)</li>
+        <li>✅ Meta financeira + relatórios</li>
+        <li>✅ WhatsApp em lote</li>
+        <li>✅ Push notifications</li>
+        <li>✅ Sem anúncios</li>
+        <li>✅ Backup/Export de dados</li>
+        <li>✅ Suporte prioritário</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin-bottom:14px;font-size:11px;color:var(--text2)">
+      👥 <strong style="color:var(--text)" id="socialProof">Mais de 120 personals</strong> já organizam seus alunos aqui
+    </div>
+
+    <button class="btn btn-primary" onclick="goToPro()" id="upgradeBtn" style="margin-bottom:10px">Continuar com Anual — R$119</button>
+
+    <details style="margin-bottom:10px">
+      <summary style="font-size:12px;color:var(--text2);text-align:center;cursor:pointer;padding:8px">Já tem um código de ativação?</summary>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input type="text" id="proCode" placeholder="Digite seu código" style="flex:1;background:var(--bg);border:1.5px solid #ffffff15;border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;text-transform:uppercase">
+        <button class="btn btn-secondary" style="width:auto;padding:10px 16px;font-size:13px" onclick="activatePro(document.getElementById('proCode').value.toUpperCase().trim())">Ativar</button>
+      </div>
+    </details>
+
     <button class="btn" onclick="closeUpgrade()" style="background:transparent;color:var(--text2);border:1px solid #ffffff20">Continuar no grátis</button>
   </div>
 </div>
+
+<style>
+.plan-card {
+  background:var(--card2);border-radius:14px;padding:14px 16px;margin-bottom:10px;
+  border:2px solid transparent;cursor:pointer;transition:.2s;position:relative;
+}
+.plan-card:hover { transform:translateY(-2px); }
+.plan-card.selected { border-color:var(--accent);background:#ff525215; }
+.plan-card.recommended { border-color:var(--green);background:#00c85308; }
+.plan-card.recommended.selected { background:#00c85320; }
+.plan-card.vip { border-color:var(--accent);background:linear-gradient(135deg,#ff525215,#ff6d0010); }
+.plan-card.vip.selected { background:linear-gradient(135deg,#ff525230,#ff6d0020); }
+</style>
 
 <!-- TAB BAR -->
 <div class="tab-bar">
@@ -1047,25 +1126,105 @@ function updateAdBanner() {
   if(fab) fab.style.bottom = isPro ? '90px' : '155px';
 }
 
-function openUpgrade() { document.getElementById('upgradeModal').classList.add('show'); }
+function openUpgrade() {
+  document.getElementById('upgradeModal').classList.add('show');
+  selectPlan('anual');
+  updatePromoCounter();
+}
 function closeUpgrade() { document.getElementById('upgradeModal').classList.remove('show'); }
 
-function goToPro() {
-  // Redireciona pro link de pagamento — substitua pela URL do seu checkout
-  const checkoutUrl = 'https://wa.me/5511999999999?text=Quero%20assinar%20o%20CoachOrg%20Pro!';
-  window.open(checkoutUrl, '_blank');
+// PLANOS DE PAGAMENTO — substitua pelos links reais da Kiwify
+const CHECKOUT_LINKS = {
+  mensal: 'https://pay.kiwify.com.br/SEU_LINK_MENSAL',
+  anual: 'https://pay.kiwify.com.br/SEU_LINK_ANUAL',
+  vitalicio: 'https://pay.kiwify.com.br/SEU_LINK_VITALICIO?coupon=PRIMEIROS50'
+};
+
+const PLAN_INFO = {
+  mensal: {label:'Pro Mensal', price:'R$14,90/mês', btn:'Começar 7 dias grátis — R$14,90/mês'},
+  anual: {label:'Pro Anual', price:'R$119/ano', btn:'Assinar Anual — R$119'},
+  vitalicio: {label:'Vitalício', price:'R$97', btn:'🔥 Garantir Vitalício — R$97'}
+};
+
+let selectedPlan = 'anual';
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.querySelectorAll('.plan-card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.plan === plan);
+  });
+  const btn = document.getElementById('upgradeBtn');
+  if(btn) btn.textContent = PLAN_INFO[plan].btn;
 }
 
+function goToPro() {
+  const url = CHECKOUT_LINKS[selectedPlan];
+  if(url && url.includes('SEU_LINK')) {
+    // Fallback enquanto não tem link Kiwify configurado
+    showToast('Em breve! Configurando pagamento...');
+    return;
+  }
+  window.open(url, '_blank');
+}
+
+// Códigos válidos por plano
+const ACTIVATION_CODES = {
+  'COACHPRO2024': 'mensal',
+  'COACHANUAL2024': 'anual',
+  'COACHVIP2024': 'vitalicio',
+  'PERSONAL2024': 'mensal'
+};
+
 function activatePro(code) {
-  // Código de ativação manual — troque por integração de pagamento futuramente
-  if(code === 'COACHPRO2024') {
+  if(ACTIVATION_CODES[code]) {
     isPro = true;
     localStorage.setItem('coachorg_pro', 'true');
+    localStorage.setItem('coachorg_plan', ACTIVATION_CODES[code]);
     updateAdBanner();
-    showToast('✅ Plano Pro ativado!');
+    showToast('✅ Plano Pro ativado! Bem-vindo 🚀');
     closeUpgrade();
+    setTimeout(()=>{
+      if(typeof renderHome==='function') renderHome();
+      if(typeof renderCoachIA==='function' && document.querySelector('#pageSettings.active')) renderCoachIA();
+    }, 500);
   } else {
-    showToast('Código inválido');
+    showToast('❌ Código inválido');
+  }
+}
+
+// Contador de vagas vitalícias + timer da promoção
+function updatePromoCounter() {
+  // Vagas vitalícias começam em 50, decrementam fictícia por dia
+  const launchDate = new Date('2026-06-18').getTime();
+  const now = Date.now();
+  const daysSince = Math.floor((now - launchDate) / 86400000);
+  const slotsUsed = Math.min(45, Math.max(3, daysSince * 2 + 3));
+  const slotsLeft = Math.max(2, 50 - slotsUsed);
+  const slotsEl = document.getElementById('vipSlotsLeft');
+  if(slotsEl) slotsEl.textContent = slotsLeft;
+
+  // Timer: 14 dias de promoção desde lançamento
+  const promoEnd = launchDate + (14 * 86400000);
+  const msLeft = promoEnd - now;
+  const timerEl = document.getElementById('promoTimer');
+  if(timerEl) {
+    if(msLeft <= 0) {
+      timerEl.textContent = '⚠️ Últimas horas!';
+    } else {
+      const days = Math.floor(msLeft / 86400000);
+      const hours = Math.floor((msLeft % 86400000) / 3600000);
+      timerEl.textContent = days > 0
+        ? `⏰ Termina em ${days} dia${days>1?'s':''} ${hours}h`
+        : `⏰ Termina em ${hours}h`;
+    }
+  }
+
+  // Prova social: cresce com o tempo
+  const socialEl = document.getElementById('socialProof');
+  if(socialEl) {
+    const baseUsers = 120;
+    const growth = Math.floor(daysSince * 4.5);
+    socialEl.textContent = `Mais de ${baseUsers + growth} personals`;
   }
 }
 
