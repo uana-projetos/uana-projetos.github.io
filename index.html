@@ -189,7 +189,7 @@ body {
 /* Pages */
 .page { display:none; padding:16px 20px; animation: fadeIn .25s; }
 .page.active { display:block; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
 
 /* Cards */
 .card {
@@ -948,7 +948,12 @@ body {
       👥 <strong style="color:var(--text)" id="socialProof">Mais de 120 personals</strong> já organizam seus alunos aqui
     </div>
 
-    <button class="btn btn-primary" onclick="goToPro()" id="upgradeBtn" style="margin-bottom:10px">Continuar com Anual — R$119</button>
+    <button class="btn btn-primary" onclick="goToPro()" id="upgradeBtn" style="margin-bottom:10px">Assinar Anual — R$79</button>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;font-size:11px;color:var(--text2)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Pagamento 100% seguro via Kiwify · Garantia de 7 dias
+    </div>
 
     <details style="margin-bottom:10px">
       <summary style="font-size:12px;color:var(--text2);text-align:center;cursor:pointer;padding:8px">Já tem um código de ativação?</summary>
@@ -968,7 +973,9 @@ body {
   border:2px solid transparent;cursor:pointer;transition:.2s;position:relative;
 }
 .plan-card:hover { transform:translateY(-2px); }
-.plan-card.selected { border-color:var(--accent);background:#ff525215; }
+.plan-card.selected { border-color:var(--accent);background:#ff525215; position:relative; }
+.plan-card.selected::after { content:'✓'; position:absolute; top:10px; right:12px; width:20px; height:20px; background:var(--accent); color:#fff; border-radius:50%; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; animation:checkPop .2s cubic-bezier(.34,1.56,.64,1); }
+@keyframes checkPop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
 .plan-card.recommended { border-color:var(--green);background:#00c85308; }
 .plan-card.recommended.selected { background:#00c85320; }
 .plan-card.vip { border-color:var(--accent);background:linear-gradient(135deg,#ff525215,#ff6d0010); }
@@ -995,7 +1002,7 @@ body {
     Pagamentos
   </button>
   <button class="tab-btn" onclick="showPage('settings')" data-page="settings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8z"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-width="0" fill="currentColor" opacity=".1"/><path d="M9.5 9a2.5 2.5 0 015 0v.5"/><path d="M7 13.5c0-1.5 1-2.5 2.5-2.5h5c1.5 0 2.5 1 2.5 2.5"/><circle cx="9.5" cy="11.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="14.5" cy="11.5" r="1.5" fill="currentColor" stroke="none"/><path d="M12 17v2M8 19l1-2M16 19l-1-2"/><path d="M5 9c0-3.87 3.13-7 7-7s7 3.13 7 7" stroke-width="1.5" stroke-linecap="round"/><path d="M12 4c-1.5 0-2.8.55-3.8 1.45"/></svg>
     Coach IA
   </button>
 </div>
@@ -1315,11 +1322,6 @@ function selectPlan(plan) {
 
 function goToPro() {
   const url = CHECKOUT_LINKS[selectedPlan];
-  if(url && url.includes('SEU_LINK')) {
-    // Fallback enquanto não tem link Kiwify configurado
-    showToast('Em breve! Configurando pagamento...');
-    return;
-  }
   window.open(url, '_blank');
 }
 
@@ -1432,7 +1434,10 @@ function renderHome() {
   document.getElementById('monthRevenue').textContent = 'R$'+revenue.toFixed(0);
 
   const todayKey = today.toISOString().slice(0,10);
-  document.getElementById('headerSub').textContent = formatDateBR(today) + ' - ' + DAYS_SHORT[dow];
+  const planPill = isPro
+    ? `<span style="background:#4ade8020;color:#4ade80;border:1px solid #4ade8040;border-radius:20px;font-size:10px;font-weight:700;padding:1px 7px;margin-left:6px;letter-spacing:.3px">Pro ✦</span>`
+    : `<span style="background:#f8717120;color:#f87171;border:1px solid #f8717140;border-radius:20px;font-size:10px;font-weight:600;padding:1px 7px;margin-left:6px">Free</span>`;
+  document.getElementById('headerSub').innerHTML = formatDateBR(today) + ' · ' + DAYS_SHORT[dow] + planPill;
 
   // Overdue payments banner
   const overdue = students.filter(s=>{
