@@ -842,6 +842,7 @@ body {
   </div>
 
   <div id="overdueBanner"></div>
+  <div id="birthdayBanner"></div>
   <div id="waAllBtn"></div>
 
   <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
@@ -1252,6 +1253,10 @@ body {
       <div class="form-group">
         <label>Email</label>
         <input type="email" id="fEmail" placeholder="aluno@email.com">
+      </div>
+      <div class="form-group">
+        <label>Aniversário <span style="font-size:11px;color:var(--text2);font-weight:400">(opcional — você recebe alerta no dia)</span></label>
+        <input type="date" id="fBirthday">
       </div>
       <div class="form-group">
         <label>Objetivo</label>
@@ -1788,6 +1793,31 @@ function renderTasks() {
   `).join('');
 }
 
+function renderBirthdayBanner() {
+  const banner = document.getElementById('birthdayBanner');
+  if(!banner) return;
+  const today = new Date();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  const todayKey = mm + '-' + dd;
+  const aniversariantes = students.filter(s => {
+    if(!s.birthday) return false;
+    const parts = s.birthday.split('-');
+    if(parts.length < 3) return false;
+    return parts[1] + '-' + parts[2] === todayKey;
+  });
+  if(aniversariantes.length === 0) { banner.innerHTML = ''; return; }
+  banner.innerHTML = `<div style="background:linear-gradient(90deg,#9c27b0,#e040fb);border-radius:14px;padding:14px;margin-bottom:14px;color:#fff">
+    <div style="font-weight:800;font-size:14px;margin-bottom:8px">🎂 Hoje é aniversário de ${aniversariantes.length === 1 ? aniversariantes[0].name.split(' ')[0] : aniversariantes.length + ' alunos'}!</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      ${aniversariantes.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#ffffff15;border-radius:10px;padding:8px 12px">
+        <div style="font-weight:600">${s.name}</div>
+        ${s.phone?`<button onclick="sendWhatsApp('${s.id}','birthday')" style="background:#fff;color:#9c27b0;border:none;border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;cursor:pointer">🎁 Parabenizar</button>`:''}
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
 function renderHome() {
   const today = new Date();
   const dow = today.getDay();
@@ -1800,6 +1830,7 @@ function renderHome() {
   document.getElementById('totalStudents').textContent = students.length;
   document.getElementById('todayCount').textContent = todayStudents.length;
   renderTasks();
+  renderBirthdayBanner();
 
   const pending = students.filter(s=>!isPaymentDone(s.id));
   document.getElementById('pendingPayments').textContent = pending.length;
@@ -2104,39 +2135,94 @@ function formatPhone(phone) {
   return p;
 }
 
-function buildWhatsAppMsg(student, type) {
+const MSG_TEMPLATES = {
+  pay_amigavel: 'Oi {nome}! Tudo bem? 😊\nPassando só pra lembrar que o pagamento de R${valor} vence dia {dia}.\nQualquer dúvida me chama!',
+  pay_objetivo: 'Oi {nome}! Lembrando que sua mensalidade de R${valor} vence dia {dia}. Posso te mandar o Pix?',
+  pay_atrasado: 'Oi {nome}! Vi aqui que seu pagamento de R${valor} (vencido dia {dia}) tá em aberto. Consegue resolver hoje?',
+  niver_simples: 'Feliz aniversário, {nome}! 🎉🎂\nMuita saúde, força e treinos firmes esse ano! Conta comigo sempre.',
+  niver_motivacional: 'Parabéns, {nome}! 🎂🔥\nQue esse novo ciclo seja de muita conquista e progresso. Você merece tudo de melhor — vamos com tudo!',
+  niver_cortesia: 'Feliz aniversário, {nome}! 🎉\nComo presente, te liberei {presente}. Bora começar o novo ciclo com tudo? 🚀'
+};
+
+function buildWhatsAppMsg(student, type, opts = {}) {
   const firstName = student.name.split(' ')[0];
   let msg = '';
   if(type === 'train') {
     msg = settings.whatsappMsg || 'Oi {nome}! Seu treino é hoje às {hora}. Você vem?';
-    msg = msg.replace(/\{nome\}/g, firstName)
-             .replace(/\{hora\}/g, student.time || '06:00')
-             .replace(/\{dia\}/g, DAYS_SHORT[new Date().getDay()]);
   } else if(type === 'pay') {
-    msg = settings.whatsappPayMsg || 'Oi {nome}! Seu pagamento de R${valor} vence dia {dia}.';
-    msg = msg.replace(/\{nome\}/g, firstName)
-             .replace(/\{valor\}/g, student.value || '0')
-             .replace(/\{dia\}/g, student.payDay || '?');
+    const key = opts.template || 'pay_amigavel';
+    msg = settings['whatsappMsg_' + key] || MSG_TEMPLATES[key] || MSG_TEMPLATES.pay_amigavel;
+  } else if(type === 'birthday') {
+    const key = opts.template || 'niver_simples';
+    msg = settings['whatsappMsg_' + key] || MSG_TEMPLATES[key] || MSG_TEMPLATES.niver_simples;
   }
-  return msg;
+  return msg.replace(/\{nome\}/g, firstName)
+            .replace(/\{hora\}/g, student.time || '06:00')
+            .replace(/\{dia\}/g, type==='train' ? DAYS_SHORT[new Date().getDay()] : (student.payDay || '?'))
+            .replace(/\{valor\}/g, student.value || '0')
+            .replace(/\{presente\}/g, opts.presente || 'uma aula extra de cortesia');
 }
 
-function getWhatsAppUrl(student, type) {
+function getWhatsAppUrl(student, type, opts) {
   const phone = formatPhone(student.phone);
-  const msg = buildWhatsAppMsg(student, type);
+  const msg = buildWhatsAppMsg(student, type, opts || {});
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
-function sendWhatsApp(studentId, type) {
+function sendWhatsApp(studentId, type, opts) {
   const s = students.find(x=>x.id===studentId);
   if(!s || !s.phone) {
     showToast('Aluno sem telefone cadastrado');
     return;
   }
-  const url = getWhatsAppUrl(s, type);
+  if(type === 'pay' && !opts) { showPayTemplatePicker(studentId); return; }
+  if(type === 'birthday' && !opts) { showBirthdayTemplatePicker(studentId); return; }
+  const url = getWhatsAppUrl(s, type, opts);
   window.open(url, '_blank');
   markWhatsAppSent(studentId);
   showToast('Abrindo WhatsApp...');
+}
+
+function showPayTemplatePicker(studentId) {
+  const opts = [
+    { key:'pay_amigavel', label:'😊 Amigável', desc:'Tom leve, lembrete antes do vencimento' },
+    { key:'pay_objetivo', label:'💼 Objetivo', desc:'Direto ao ponto + oferta de Pix' },
+    { key:'pay_atrasado', label:'⚠️ Atrasado', desc:'Cobrança firme pra quem já passou do prazo' }
+  ];
+  showTemplatePicker(studentId, 'pay', 'Como você quer cobrar?', opts);
+}
+
+function showBirthdayTemplatePicker(studentId) {
+  const opts = [
+    { key:'niver_simples', label:'🎂 Simples', desc:'Mensagem curta e calorosa' },
+    { key:'niver_motivacional', label:'🔥 Motivacional', desc:'Energia + chamada pro novo ciclo' },
+    { key:'niver_cortesia', label:'🎁 Com cortesia', desc:'Oferece um presente (aula extra, etc)' }
+  ];
+  showTemplatePicker(studentId, 'birthday', 'Mensagem de aniversário', opts);
+}
+
+function showTemplatePicker(studentId, type, title, opts) {
+  let modal = document.getElementById('templatePickerModal');
+  if(!modal) {
+    modal = document.createElement('div');
+    modal.id = 'templatePickerModal';
+    modal.className = 'modal-overlay';
+    modal.onclick = (e)=>{ if(e.target===modal) modal.classList.remove('show'); };
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `<div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <div class="modal-title">${title}</div>
+      <button class="modal-close" onclick="document.getElementById('templatePickerModal').classList.remove('show')">×</button>
+    </div>
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px">
+      ${opts.map(o=>`<button onclick="document.getElementById('templatePickerModal').classList.remove('show');sendWhatsApp('${studentId}','${type}',{template:'${o.key}'})" style="text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;color:var(--text)">
+        <div style="font-weight:700;font-size:14px;margin-bottom:2px">${o.label}</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.4">${o.desc}</div>
+      </button>`).join('')}
+    </div>
+  </div>`;
+  modal.classList.add('show');
 }
 
 function sendWhatsAppAll() {
@@ -2337,7 +2423,8 @@ function showStudentDetail(id) {
         </button>
         <button class="wa-btn wa-btn-small wa-btn-outline" onclick="sendWhatsApp('${s.id}','pay')">
           ${waIcon()} Cobrar
-        </button>`:''}
+        </button>
+        ${s.birthday?`<button class="wa-btn wa-btn-small" style="background:#9c27b0;color:#fff" onclick="sendWhatsApp('${s.id}','birthday')">🎂 Niver</button>`:''}`:''}
         ${s.email?`<button class="email-btn email-btn-outline" style="font-size:11px;padding:6px 10px" onclick="sendPayEmail('${s.id}')">
           ✉ Cobrar Email
         </button>`:''}
@@ -2454,6 +2541,7 @@ function openAddStudent() {
   document.getElementById('fEmail').value = '';
   document.getElementById('fGoal').value = 'Hipertrofia';
   document.getElementById('fLocal').value = '';
+  document.getElementById('fBirthday').value = '';
   document.getElementById('fClassType').value = 'Individual';
   document.getElementById('fTime').value = settings.defaultTime || '06:00';
   document.getElementById('fPayDay').value = '';
@@ -2474,6 +2562,7 @@ function editStudent(id) {
   document.getElementById('fName').value = s.name;
   document.getElementById('fPhone').value = s.phone || '';
   document.getElementById('fEmail').value = s.email || '';
+  document.getElementById('fBirthday').value = s.birthday || '';
   document.getElementById('fGoal').value = s.goal || 'Hipertrofia';
   document.getElementById('fLocal').value = s.local || '';
   document.getElementById('fClassType').value = s.classType || 'Individual';
@@ -2561,6 +2650,7 @@ function saveStudent(e) {
     name: document.getElementById('fName').value.trim(),
     phone: document.getElementById('fPhone').value.trim(),
     email: document.getElementById('fEmail').value.trim(),
+    birthday: document.getElementById('fBirthday').value || '',
     goal: document.getElementById('fGoal').value,
     local: document.getElementById('fLocal').value.trim(),
     classType: classType,
