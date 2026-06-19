@@ -1,4 +1,4 @@
-const CACHE = 'coachorg-v13';
+const CACHE = 'coachorg-v14';
 const ASSETS = [
   './index.html',
   './manifest.json',
