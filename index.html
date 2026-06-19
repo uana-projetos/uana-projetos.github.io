@@ -3546,14 +3546,48 @@ async function renderReferralPanel() {
     el.innerHTML = `<div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text2)">Faça login para acessar seu link de indicação.</div>`;
     return;
   }
-  const { data: refs } = await sb.from('referrals').select('referred_email,status').eq('referrer_email', currentUser.email);
-  const paid  = (refs||[]).filter(r=>r.status==='paid').length;
-  const pend  = (refs||[]).filter(r=>r.status==='pending').length;
-  const goal  = 5;
-  const pct   = Math.min(100, Math.round(paid/goal*100));
-  const reward = paid>=5?'🏆 Vitalício desbloqueado!': paid>=3?'🎉 +3 meses grátis!': paid>=1?'✅ +30 dias grátis!':'';
-  const next   = paid>=5?null: paid>=3?{n:5,label:'Vitalício'}:{n:paid>=1?3:1,label:paid>=1?'+3 meses':'primeiro mês'};
-  const link   = getRefLink();
+  const { data: refs } = await sb.from('referrals').select('referred_email,status,activated').eq('referrer_email', currentUser.email);
+  const paid     = (refs||[]).filter(r=>r.status==='paid').length;
+  const active   = (refs||[]).filter(r=>r.activated === true || r.status==='paid').length;
+  const pend     = (refs||[]).filter(r=>r.status==='pending').length;
+
+  // 3 niveis
+  const bronzeGoal = 5;
+  const prataGoal = 3;
+  const ouroGoal = 5;
+
+  const bronzeUnlocked = active >= bronzeGoal;
+  const prataUnlocked  = paid >= prataGoal;
+  const ouroUnlocked   = paid >= ouroGoal;
+
+  // Próxima recompensa
+  let next = null;
+  if(!ouroUnlocked) {
+    if(!prataUnlocked) next = { type:'prata', current: paid, target: prataGoal, label:'PRATA — Anual grátis' };
+    else next = { type:'ouro', current: paid, target: ouroGoal, label:'OURO — Sócio Fundador grátis' };
+  }
+  const bronzeNext = !bronzeUnlocked ? { current: active, target: bronzeGoal } : null;
+
+  const link = getRefLink();
+  const tier = (icon, name, desc, cur, goal, unlocked, color) => {
+    const pct = Math.min(100, Math.round(cur/goal*100));
+    return `<div style="background:var(--bg);border:1.5px solid ${unlocked?color:'var(--border)'};border-radius:12px;padding:11px 13px;margin-bottom:8px;${unlocked?'box-shadow:0 0 0 3px '+color+'20':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">${icon}</span>
+          <div>
+            <div style="font-size:12px;font-weight:800;color:${unlocked?color:'var(--text)'};letter-spacing:.4px">${name}</div>
+            <div style="font-size:10px;color:var(--text2)">${desc}</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:${unlocked?color:'var(--text2)'}">${cur}/${goal}${unlocked?' ✓':''}</div>
+      </div>
+      <div style="background:#ffffff10;border-radius:20px;height:5px;overflow:hidden">
+        <div style="background:${color};height:100%;width:${pct}%;border-radius:20px;transition:.5s"></div>
+      </div>
+    </div>`;
+  };
+
   el.innerHTML = `
     <div style="margin-bottom:14px">
       <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Seu link de indicação:</div>
@@ -3562,22 +3596,19 @@ async function renderReferralPanel() {
         <button onclick="copyRefLink()" aria-label="Copiar link" title="Copiar link" style="background:var(--accent);color:#fff;border:none;border-radius:10px;width:44px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
       </div>
     </div>
-    <div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
-        <span style="color:var(--text2)">${paid} de ${goal} amigos que assinaram</span>
-        ${reward?`<span style="color:#4ade80;font-weight:700">${reward}</span>`:''}
-      </div>
-      <div style="background:#ffffff10;border-radius:20px;height:8px;overflow:hidden">
-        <div style="background:linear-gradient(90deg,var(--accent),#ff6d6d);height:100%;width:${pct}%;border-radius:20px;transition:.5s"></div>
-      </div>
-    </div>
-    ${next?`<div style="font-size:11px;color:var(--text2);text-align:center">Faltam <strong style="color:var(--text)">${next.n-paid}</strong> para ganhar <strong style="color:var(--accent)">${next.label} grátis</strong></div>`:''}
-    ${pend>0?`<div style="font-size:11px;color:var(--text2);margin-top:8px;text-align:center">${pend} cadastro${pend>1?'s':''} pendente${pend>1?'s':''} (aguardando assinar)</div>`:''}
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ffffff08;font-size:11px;color:var(--text2);line-height:1.6">
+
+    ${tier('🥉', 'BRONZE', '+1 mês grátis', active, bronzeGoal, bronzeUnlocked, '#cd7f32')}
+    ${tier('🥈', 'PRATA', 'Anual grátis (R$99)', paid, prataGoal, prataUnlocked, '#c0c0c0')}
+    ${tier('🥇', 'OURO', 'Sócio Fundador (R$297)', paid, ouroGoal, ouroUnlocked, '#d4af37')}
+
+    ${next?`<div style="font-size:11px;color:var(--text2);text-align:center;margin-top:8px">Faltam <strong style="color:var(--text)">${next.target-next.current}</strong> amigo${next.target-next.current>1?'s':''} pagante${next.target-next.current>1?'s':''} para ganhar <strong style="color:var(--accent)">${next.label}</strong></div>`:''}
+    ${pend>0?`<div style="font-size:11px;color:var(--text2);margin-top:6px;text-align:center">${pend} cadastro${pend>1?'s':''} pendente${pend>1?'s':''} (aguardando assinar)</div>`:''}
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ffffff08;font-size:11px;color:var(--text2);line-height:1.7">
       <strong style="color:var(--text)">Como funciona:</strong><br>
-      1 amigo que assinar → +30 dias grátis pra você<br>
-      3 amigos → +3 meses grátis<br>
-      5 amigos → CoachOrg Vitalício de graça 🏆
+      🥉 5 amigos que cadastrarem 1 aluno → +1 mês grátis<br>
+      🥈 3 amigos que assinarem → Anual grátis<br>
+      🥇 5 amigos que assinarem → Sócio Fundador grátis
     </div>`;
 }
 
