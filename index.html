@@ -958,10 +958,18 @@ body {
     </div>
     <div class="config-item" style="border-top:1px solid #ffffff10;padding-top:14px">
       <div>
-        <div class="config-label">Lembrete de Treino</div>
-        <div class="config-desc">1h antes do horário da aula</div>
+        <div class="config-label">Lembrete antes da aula</div>
+        <div class="config-desc">Notifica X min antes de cada sessão começar</div>
       </div>
-      <button class="toggle on" id="toggleTrainNotif" onclick="toggleSetting('trainNotif')"></button>
+      <select id="notifyBeforeSel" onchange="saveSetting('notifyBefore', parseInt(this.value, 10))"
+        style="background:var(--bg);border:1px solid #ffffff15;color:var(--text);padding:8px 10px;border-radius:10px;font-size:14px;cursor:pointer">
+        <option value="0">Desativado</option>
+        <option value="5">5 min antes</option>
+        <option value="10">10 min antes</option>
+        <option value="15" selected>15 min antes</option>
+        <option value="30">30 min antes</option>
+        <option value="60">1h antes</option>
+      </select>
     </div>
     <div class="config-item">
       <div>
@@ -1829,18 +1837,37 @@ function onStartTimeChange() {
 }
 
 let _sessionEndTimers = [];
+let _sessionStartTimers = [];
+
 function scheduleSessionEndNotifications() {
   _sessionEndTimers.forEach(t => clearTimeout(t));
+  _sessionStartTimers.forEach(t => clearTimeout(t));
   _sessionEndTimers = [];
+  _sessionStartTimers = [];
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
 
   const now = new Date();
   const dow = now.getDay();
   const todayStudents = students.filter(s => s.days && s.days.includes(dow));
+  const beforeMin = (settings.notifyBefore != null) ? settings.notifyBefore : 15;
 
   todayStudents.forEach(s => {
     const start = s.times?.[String(dow)] || s.time || '06:00';
     const end = s.endTime || addMinutes(start, 60);
+
+    // Notificação ANTES da aula
+    if(beforeMin > 0) {
+      const [sh,sm] = start.split(':').map(Number);
+      const startDate = new Date();
+      startDate.setHours(sh, sm, 0, 0);
+      const preMs = startDate.getTime() - now.getTime() - beforeMin*60*1000;
+      if(preMs > 0 && preMs < 24*60*60*1000) {
+        const t = setTimeout(() => fireSessionStartNotification(s, start, beforeMin), preMs);
+        _sessionStartTimers.push(t);
+      }
+    }
+
+    // Notificação no FIM da aula
     const [h,m] = end.split(':').map(Number);
     const endDate = new Date();
     endDate.setHours(h, m, 0, 0);
@@ -1850,6 +1877,20 @@ function scheduleSessionEndNotifications() {
       _sessionEndTimers.push(timer);
     }
   });
+}
+
+async function fireSessionStartNotification(student, startTime, beforeMin) {
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const title = `Aula com ${student.name.split(' ')[0]} em ${beforeMin} min`;
+  const body = `Começa às ${startTime}${student.local ? ' · ' + student.local : ''}`;
+  const icon = './icons/icon-192x192.png';
+  try {
+    if('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if(reg) { reg.showNotification(title, { body, icon, badge: icon, tag: 'session-start-' + student.id, vibrate: [200,100,200] }); return; }
+    }
+    new Notification(title, { body, icon, tag: 'session-start-' + student.id });
+  } catch(e) {}
 }
 
 async function fireSessionEndNotification(student) {
@@ -3428,6 +3469,10 @@ function renderCoachIA() {
   const inp = document.getElementById('monthlyGoalInput');
   if(inp) inp.value = monthlyGoal || '';
   renderGoalProgress();
+
+  // Populate "notify before" select
+  const sel = document.getElementById('notifyBeforeSel');
+  if(sel) sel.value = String(settings.notifyBefore != null ? settings.notifyBefore : 15);
 
   // Push button state
   const pushBtn = document.getElementById('pushBtn');
