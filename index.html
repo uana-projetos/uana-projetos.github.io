@@ -840,6 +840,17 @@ body {
   <div id="overdueBanner"></div>
   <div id="waAllBtn"></div>
 
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Minhas Tarefas <span id="tasksCount" style="font-size:11px;color:var(--text2);font-weight:500;margin-left:4px"></span></span>
+    <button onclick="toggleTasksDone()" id="tasksToggleBtn" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer">mostrar feitas</button>
+  </div>
+  <div id="tasksList" style="margin-bottom:8px"></div>
+  <div style="display:flex;gap:8px;margin-bottom:24px">
+    <input type="text" id="newTaskInput" placeholder="Nova tarefa…" onkeydown="if(event.key==='Enter')addTask()"
+      style="flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);padding:11px 14px;font-size:14px">
+    <button onclick="addTask()" style="background:var(--accent);color:#fff;border:none;border-radius:12px;padding:0 18px;font-weight:700;cursor:pointer;font-size:18px">+</button>
+  </div>
+
   <div class="section-title">Treinos de Hoje</div>
   <div id="todaySchedule"></div>
 
@@ -1703,6 +1714,75 @@ function showPage(name) {
 }
 
 // HOME
+let tasks = JSON.parse(localStorage.getItem('coachorg_tasks') || '[]');
+let showTasksDone = false;
+
+function saveTasks() {
+  localStorage.setItem('coachorg_tasks', JSON.stringify(tasks));
+}
+
+function addTask() {
+  const input = document.getElementById('newTaskInput');
+  const text = input.value.trim();
+  if(!text) return;
+  tasks.unshift({
+    id: 't_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+    text,
+    done: false,
+    createdAt: Date.now()
+  });
+  input.value = '';
+  saveTasks();
+  renderTasks();
+}
+
+function toggleTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+  t.done = !t.done;
+  t.doneAt = t.done ? Date.now() : null;
+  saveTasks();
+  renderTasks();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  renderTasks();
+}
+
+function toggleTasksDone() {
+  showTasksDone = !showTasksDone;
+  const btn = document.getElementById('tasksToggleBtn');
+  if(btn) btn.textContent = showTasksDone ? 'ocultar feitas' : 'mostrar feitas';
+  renderTasks();
+}
+
+function renderTasks() {
+  const list = document.getElementById('tasksList');
+  const countEl = document.getElementById('tasksCount');
+  if(!list) return;
+
+  const pending = tasks.filter(t => !t.done);
+  const done = tasks.filter(t => t.done);
+  if(countEl) countEl.textContent = pending.length > 0 ? `(${pending.length} pendente${pending.length>1?'s':''})` : '';
+
+  const visible = showTasksDone ? [...pending, ...done] : pending;
+
+  if(visible.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:18px;color:var(--text3);font-size:13px;border:1.5px dashed var(--border);border-radius:12px">${pending.length===0 && done.length>0 ? '🎉 Tudo feito!' : 'Adicione uma tarefa abaixo'}</div>`;
+    return;
+  }
+
+  list.innerHTML = visible.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;margin-bottom:6px;${t.done?'opacity:.45':''}">
+      <button onclick="toggleTask('${t.id}')" style="width:22px;height:22px;border-radius:6px;border:2px solid ${t.done?'var(--green)':'var(--text3)'};background:${t.done?'var(--green)':'transparent'};color:#fff;font-size:13px;font-weight:900;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0">${t.done?'✓':''}</button>
+      <div style="flex:1;font-size:14px;${t.done?'text-decoration:line-through':''}">${t.text.replace(/</g,'&lt;')}</div>
+      <button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px" title="Remover">×</button>
+    </div>
+  `).join('');
+}
+
 function renderHome() {
   const today = new Date();
   const dow = today.getDay();
@@ -1714,6 +1794,7 @@ function renderHome() {
 
   document.getElementById('totalStudents').textContent = students.length;
   document.getElementById('todayCount').textContent = todayStudents.length;
+  renderTasks();
 
   const pending = students.filter(s=>!isPaymentDone(s.id));
   document.getElementById('pendingPayments').textContent = pending.length;
