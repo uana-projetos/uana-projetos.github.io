@@ -1441,6 +1441,15 @@ async function initAuth() {
 async function checkProStatus() {
   const sb = getSB();
   if(!sb || !currentUser) return;
+  // Admin sempre Vitalício (sobrevive limpeza de cache)
+  if(currentUser.email === _ADMIN && !isPro) {
+    isPro = true;
+    localStorage.setItem('coachorg_pro', 'true');
+    localStorage.setItem('coachorg_plan', 'vitalicio');
+    updateAdBanner();
+    showToast('✅ Vitalício admin ativo');
+    if(typeof renderHome === 'function') renderHome();
+  }
   // Checar profiles
   const { data } = await sb.from('profiles').select('is_pro,plan').eq('id', currentUser.id).single();
   if(data?.is_pro && !isPro) {
