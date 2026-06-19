@@ -1,4 +1,4 @@
-const CACHE = 'coachorg-v20';
+const CACHE = 'coachorg-v21';
 const ASSETS = [
   './index.html',
   './precos.html',

@@ -2389,10 +2389,12 @@ function showStudentDetail(id) {
     </div>
 
     <div class="card" style="border:1.5px solid #ff525240;background:linear-gradient(135deg,#1a1a2e,#22112a);margin-top:18px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
         <div style="font-size:18px">🤖</div>
         <div style="font-size:13px;font-weight:700;color:var(--text)">Gerar Treino com IA</div>
+        <span style="background:#ff525220;color:var(--accent);border:1px solid #ff525240;border-radius:20px;font-size:9px;font-weight:800;padding:2px 7px;letter-spacing:.5px;text-transform:uppercase">Beta</span>
       </div>
+      <div style="font-size:10px;color:var(--accent);margin-bottom:8px;font-weight:600">⚡ Em breve: IA real com sugestões personalizadas por aluno</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.4">Descreva o objetivo do treino. Ex: "peito e tríceps intermediário 45min, hipertrofia"</div>
       <textarea id="aiPromptInput_${s.id}" placeholder="Ex: treino de pernas iniciante, 4 exercícios, foco glúteo" rows="2"
         style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit;margin-bottom:8px"></textarea>
