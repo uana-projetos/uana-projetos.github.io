@@ -1059,6 +1059,18 @@ body {
     </div>
   </div>
 
+  <div class="section-title" style="margin-top:30px">Avalie o App</div>
+  <div class="card" style="background:linear-gradient(135deg,#1a1a2e,#1a2240);border:1.5px solid #5b8cff40">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="font-size:32px">🌟</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;margin-bottom:2px">Conta como tá sendo a experiência</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.4">Seu feedback ajuda a melhorar o app — leva 30 segundos</div>
+      </div>
+      <button onclick="openRatingModal()" style="background:#5b8cff;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:12px;flex-shrink:0">Avaliar</button>
+    </div>
+  </div>
+
   <div class="section-title" style="margin-top:30px">Indique & Ganhe</div>
   <div class="card" id="referralPanel">
     <div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text2)">Carregando...</div>
@@ -1104,6 +1116,40 @@ body {
 </div>
 
 <!-- LOGIN MODAL -->
+<!-- RATING MODAL -->
+<div class="modal-overlay" id="ratingModal" onclick="if(event.target===this)closeRatingModal()">
+  <div class="modal" style="max-width:400px;margin:20px auto">
+    <div class="modal-header">
+      <div class="modal-title">Sua opinião vale ouro 🙏</div>
+      <button class="modal-close" onclick="closeRatingModal()">×</button>
+    </div>
+    <div style="padding:0 20px 24px">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5">Você tá usando o CoachOrg há alguns dias. Como tá sendo a experiência?</p>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Sua nota:</div>
+        <div id="ratingStars" style="display:flex;gap:8px;justify-content:center;font-size:38px;cursor:pointer">
+          <span data-r="1" onclick="setRating(1)">☆</span>
+          <span data-r="2" onclick="setRating(2)">☆</span>
+          <span data-r="3" onclick="setRating(3)">☆</span>
+          <span data-r="4" onclick="setRating(4)">☆</span>
+          <span data-r="5" onclick="setRating(5)">☆</span>
+        </div>
+        <div id="ratingLabel" style="text-align:center;font-size:12px;color:var(--text2);margin-top:6px;min-height:16px"></div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">O que mais te impressionou OU o que tá faltando? <span style="color:var(--text3)">(opcional)</span></label>
+        <textarea id="ratingFeedback" placeholder="Ex: gostei da agenda, mas senti falta de..." rows="3"
+          style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--text);padding:11px 13px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+      </div>
+
+      <button onclick="submitRating()" class="btn btn-primary" id="ratingSubmitBtn" style="width:100%">Enviar feedback</button>
+      <button onclick="closeRatingModal()" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;padding:10px;cursor:pointer;margin-top:6px">Lembrar depois</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
   <div class="modal" style="max-width:380px;margin:20px auto">
     <div class="modal-header">
@@ -2112,6 +2158,7 @@ function renderHome() {
   renderWorkoutExpirationBanner();
   scheduleSessionEndNotifications();
   notifyExpiringWorkoutsOnce();
+  maybeShowRatingModal();
 
   const pending = students.filter(s=>!isPaymentDone(s.id));
   document.getElementById('pendingPayments').textContent = pending.length;
@@ -3622,6 +3669,90 @@ async function renderReferralPanel() {
       🥈 3 amigos que assinarem → Anual grátis<br>
       🥇 5 amigos que assinarem → Sócio Fundador grátis
     </div>`;
+}
+
+let _currentRating = 0;
+const RATING_LABELS = { 1:'😞 Ruim', 2:'😐 Regular', 3:'🙂 Bom', 4:'😊 Muito bom', 5:'🤩 Sensacional!' };
+
+function setRating(n) {
+  _currentRating = n;
+  const stars = document.querySelectorAll('#ratingStars span');
+  stars.forEach(s => {
+    const r = parseInt(s.dataset.r, 10);
+    s.textContent = r <= n ? '★' : '☆';
+    s.style.color = r <= n ? '#ffab00' : 'var(--text3)';
+  });
+  const label = document.getElementById('ratingLabel');
+  if(label) label.textContent = RATING_LABELS[n] || '';
+}
+
+function openRatingModal() {
+  _currentRating = 0;
+  setRating(0);
+  document.getElementById('ratingFeedback').value = '';
+  document.getElementById('ratingModal').classList.add('show');
+}
+
+function closeRatingModal() {
+  document.getElementById('ratingModal').classList.remove('show');
+  localStorage.setItem('coachorg_rating_postpone', String(Date.now()));
+}
+
+async function submitRating() {
+  if(!_currentRating) {
+    showToast('Toca em uma estrela primeiro 🙏');
+    return;
+  }
+  const feedback = document.getElementById('ratingFeedback').value.trim();
+  const btn = document.getElementById('ratingSubmitBtn');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+
+  try {
+    const sb = getSB();
+    if(sb) {
+      await sb.from('feedback').insert({
+        email: currentUser?.email || 'anonimo',
+        rating: _currentRating,
+        comment: feedback,
+        student_count: students.length,
+        app_version: 'v37'
+      });
+    }
+  } catch(e) { console.warn('feedback save error', e); }
+
+  localStorage.setItem('coachorg_rating_sent', String(Date.now()));
+  document.getElementById('ratingModal').classList.remove('show');
+  btn.textContent = 'Enviar feedback';
+  btn.disabled = false;
+
+  const thankMsg = _currentRating >= 4
+    ? '🤩 Valeu! Que tal indicar pra um colega? Aba Coach IA → Indique & Ganhe'
+    : '🙏 Obrigado pela honestidade. Vou usar pra melhorar — promesso!';
+  showToast(thankMsg);
+}
+
+function maybeShowRatingModal() {
+  if(!currentUser) return;
+  if(localStorage.getItem('coachorg_rating_sent')) return;
+
+  const firstUse = parseInt(localStorage.getItem('coachorg_first_use') || '0', 10);
+  if(!firstUse) {
+    localStorage.setItem('coachorg_first_use', String(Date.now()));
+    return;
+  }
+  const daysSince = (Date.now() - firstUse) / 86400000;
+  if(daysSince < 3) return;
+
+  const postponed = parseInt(localStorage.getItem('coachorg_rating_postpone') || '0', 10);
+  if(postponed) {
+    const daysSincePostpone = (Date.now() - postponed) / 86400000;
+    if(daysSincePostpone < 5) return;
+  }
+
+  if(students.length < 1) return;
+
+  setTimeout(() => openRatingModal(), 2500);
 }
 
 function checkCourtesyExpiration() {
