@@ -789,6 +789,11 @@ body {
     </div>
   </div>
 
+  <div class="section-title" style="margin-top:30px">Indique & Ganhe</div>
+  <div class="card" id="referralPanel">
+    <div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text2)">Carregando...</div>
+  </div>
+
   <!-- ADMIN PANEL — só aparece pra uanalee1@gmail.com -->
   <div id="adminPanel" style="display:none">
     <div class="section-title" style="margin-top:30px">Admin</div>
@@ -1161,6 +1166,7 @@ async function initAuth() {
 async function checkProStatus() {
   const sb = getSB();
   if(!sb || !currentUser) return;
+  // Checar profiles
   const { data } = await sb.from('profiles').select('is_pro,plan').eq('id', currentUser.id).single();
   if(data?.is_pro && !isPro) {
     isPro = true;
@@ -1169,6 +1175,17 @@ async function checkProStatus() {
     updateAdBanner();
     showToast('✅ Plano Pro ativado via conta!');
   }
+  // Checar pro_activations (ativações por email via Kiwify ou cortesia)
+  const { data: act } = await sb.from('pro_activations').select('plan').eq('email', currentUser.email).maybeSingle();
+  if(act && !isPro) {
+    isPro = true;
+    localStorage.setItem('coachorg_pro', 'true');
+    localStorage.setItem('coachorg_plan', act.plan || 'mensal');
+    updateAdBanner();
+    showToast('✅ Plano ' + (PLAN_INFO[act.plan]?.label||'Pro') + ' ativado!');
+  }
+  // Checar recompensa de indicação
+  await checkReferralReward();
 }
 
 async function signInWithEmail(email, password) {
@@ -1251,6 +1268,25 @@ async function handleSignup() {
   errEl.style.display='none';
   closeLoginModal();
   showToast('✅ Conta criada! Verifique seu email para confirmar.');
+  // Registrar indicação se veio por link de referral
+  const refCode = localStorage.getItem('coachorg_ref_by');
+  if(refCode) {
+    try {
+      const referrerEmail = atob(refCode.replace(/-/g,'+').replace(/_/g,'/'));
+      if(referrerEmail && referrerEmail !== email) {
+        const sb = getSB();
+        if(sb) {
+          await sb.from('referrals').upsert(
+            { referrer_email: referrerEmail, referred_email: email, status: 'pending' },
+            { onConflict: 'referred_email' }
+          );
+          localStorage.removeItem('coachorg_ref_by');
+          // Amigo ganha 7 dias extras → ativa Free estendido (sem custo)
+          showToast('🎁 Você foi indicado por um colega! Aproveite o CoachOrg.');
+        }
+      }
+    } catch(e) { /* código inválido */ }
+  }
 }
 // ==================== END SUPABASE AUTH ====================
 let selectedWeekDay = new Date().getDay();
@@ -2185,6 +2221,13 @@ function saveStudent(e) {
   showToast(id ? 'Aluno atualizado!' : 'Aluno cadastrado!');
   renderStudents();
   renderHome();
+  // Aha moment — primeiro aluno cadastrado
+  if(!id && students.length === 1) {
+    setTimeout(()=>{
+      showToast('🎉 Primeiro aluno! Indique colegas e ganhe o app de graça →');
+      setTimeout(()=>showPage('settings'), 2800);
+    }, 1200);
+  }
 }
 
 function deleteStudent() {
@@ -2592,8 +2635,86 @@ function activateCourtesyAdmin() {
   renderHome();
 }
 
+// ==================== REFERRAL SYSTEM ====================
+function getRefCode(email) {
+  return btoa(email).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+function getRefLink() {
+  if(!currentUser) return null;
+  return location.origin + location.pathname + '?ref=' + getRefCode(currentUser.email);
+}
+function copyRefLink() {
+  const link = getRefLink();
+  if(!link) { showToast('Faça login primeiro'); return; }
+  navigator.clipboard.writeText(link).then(()=>showToast('Link copiado! 🎁 Manda pro colega'))
+    .catch(()=>{ prompt('Copie o link:', link); });
+}
+async function checkReferralReward() {
+  const sb = getSB();
+  if(!sb || !currentUser) return;
+  const { data: refs } = await sb.from('referrals').select('id').eq('referrer_email', currentUser.email).eq('status','paid');
+  const count = refs?.length || 0;
+  localStorage.setItem('coachorg_ref_count', count);
+  // Verificar se ganhou recompensa via pro_activations
+  const { data: act } = await sb.from('pro_activations').select('plan').eq('email', currentUser.email).maybeSingle();
+  if(act && !isPro) {
+    isPro = true;
+    localStorage.setItem('coachorg_pro','true');
+    localStorage.setItem('coachorg_plan', act.plan);
+    updateAdBanner();
+    showToast('🏆 Recompensa de indicação aplicada!');
+  }
+  return count;
+}
+async function renderReferralPanel() {
+  const el = document.getElementById('referralPanel');
+  if(!el) return;
+  const sb = getSB();
+  if(!currentUser || !sb) {
+    el.innerHTML = `<div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text2)">Faça login para acessar seu link de indicação.</div>`;
+    return;
+  }
+  const { data: refs } = await sb.from('referrals').select('referred_email,status').eq('referrer_email', currentUser.email);
+  const paid  = (refs||[]).filter(r=>r.status==='paid').length;
+  const pend  = (refs||[]).filter(r=>r.status==='pending').length;
+  const goal  = 5;
+  const pct   = Math.min(100, Math.round(paid/goal*100));
+  const reward = paid>=5?'🏆 Vitalício desbloqueado!': paid>=3?'🎉 +3 meses grátis!': paid>=1?'✅ +30 dias grátis!':'';
+  const next   = paid>=5?null: paid>=3?{n:5,label:'Vitalício'}:{n:paid>=1?3:1,label:paid>=1?'+3 meses':'primeiro mês'};
+  const link   = getRefLink();
+  el.innerHTML = `
+    <div style="margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Seu link de indicação:</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;background:var(--bg);border:1.5px solid #ffffff15;border-radius:10px;padding:10px 12px;font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${link}</div>
+        <button onclick="copyRefLink()" class="btn btn-primary" style="padding:10px 14px;font-size:12px;flex-shrink:0">Copiar</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+        <span style="color:var(--text2)">${paid} de ${goal} amigos que assinaram</span>
+        ${reward?`<span style="color:#4ade80;font-weight:700">${reward}</span>`:''}
+      </div>
+      <div style="background:#ffffff10;border-radius:20px;height:8px;overflow:hidden">
+        <div style="background:linear-gradient(90deg,var(--accent),#ff6d6d);height:100%;width:${pct}%;border-radius:20px;transition:.5s"></div>
+      </div>
+    </div>
+    ${next?`<div style="font-size:11px;color:var(--text2);text-align:center">Faltam <strong style="color:var(--text)">${next.n-paid}</strong> para ganhar <strong style="color:var(--accent)">${next.label} grátis</strong></div>`:''}
+    ${pend>0?`<div style="font-size:11px;color:var(--text2);margin-top:8px;text-align:center">${pend} cadastro${pend>1?'s':''} pendente${pend>1?'s':''} (aguardando assinar)</div>`:''}
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ffffff08;font-size:11px;color:var(--text2);line-height:1.6">
+      <strong style="color:var(--text)">Como funciona:</strong><br>
+      1 amigo que assinar → +30 dias grátis pra você<br>
+      3 amigos → +3 meses grátis<br>
+      5 amigos → CoachOrg Vitalício de graça 🏆
+    </div>`;
+}
+
 function checkCourtesyURL() {
   try {
+    // Salvar código de indicação se veio por link
+    const ref = new URLSearchParams(location.search).get('ref');
+    if(ref) { localStorage.setItem('coachorg_ref_by', ref); history.replaceState({}, '', location.pathname); }
+
     const param = new URLSearchParams(location.search).get('vip');
     if(!param) return;
     const obj = JSON.parse(atob(decodeURIComponent(param)));
@@ -2610,6 +2731,9 @@ function checkCourtesyURL() {
 }
 
 function renderCoachIA() {
+  // Painel de indicações
+  renderReferralPanel();
+
   // Admin panel (só pra Uaná)
   const adminEl = document.getElementById('adminPanel');
   if(adminEl) {
