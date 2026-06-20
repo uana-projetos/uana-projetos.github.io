@@ -2202,6 +2202,7 @@ function scheduleSessionEndNotifications() {
   _sessionStartTimers.forEach(t => clearTimeout(t));
   _sessionEndTimers = [];
   _sessionStartTimers = [];
+  if(localStorage.getItem('coachorg_notif_paused') === '1') return;
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
 
   const now = new Date();
@@ -2281,6 +2282,7 @@ function workoutExpirationInfo(w) {
 }
 
 async function notifyExpiringWorkoutsOnce() {
+  if(localStorage.getItem('coachorg_notif_paused') === '1') return;
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
   const today = new Date().toISOString().slice(0,10);
   if(localStorage.getItem('coachorg_workout_notif_day') === today) return;
@@ -3028,6 +3030,7 @@ let _myReminderTimers = [];
 function scheduleMyReminderNotifications() {
   _myReminderTimers.forEach(t => clearTimeout(t));
   _myReminderTimers = [];
+  if(localStorage.getItem('coachorg_notif_paused') === '1') return;
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
   const now = new Date();
   const dow = now.getDay();
@@ -5491,13 +5494,39 @@ function renderCoachIA() {
   // Push button state
   const pushBtn = document.getElementById('pushBtn');
   const pushStatus = document.getElementById('pushStatus');
+  const notifPaused = localStorage.getItem('coachorg_notif_paused') === '1';
   if(pushBtn && 'Notification' in window) {
     if(Notification.permission === 'granted') {
-      pushBtn.textContent = '✓ Ativadas';
-      pushBtn.style.background = 'var(--green)';
-      pushBtn.style.opacity = '1';
-      pushBtn.onclick = () => showToast('🔔 Notificações já estão ativas');
-      if(pushStatus) pushStatus.innerHTML = '<span style="color:var(--green)">●</span> Você vai receber lembretes no celular';
+      if(notifPaused) {
+        pushBtn.textContent = '▶️ Retomar';
+        pushBtn.style.background = 'var(--accent)';
+        pushBtn.style.color = '#fff';
+        pushBtn.style.border = 'none';
+        pushBtn.style.opacity = '1';
+        pushBtn.onclick = () => {
+          localStorage.removeItem('coachorg_notif_paused');
+          if(typeof scheduleSessionEndNotifications === 'function') scheduleSessionEndNotifications();
+          if(typeof scheduleMyReminderNotifications === 'function') scheduleMyReminderNotifications();
+          showToast('🔔 Notificações retomadas');
+          renderCoachIA();
+        };
+        if(pushStatus) pushStatus.innerHTML = '<span style="color:var(--text2)">●</span> Pausadas no app — toca em Retomar';
+      } else {
+        pushBtn.textContent = '⏸️ Pausar';
+        pushBtn.style.background = 'transparent';
+        pushBtn.style.color = 'var(--green)';
+        pushBtn.style.border = '1.5px solid var(--green)';
+        pushBtn.style.opacity = '1';
+        pushBtn.onclick = () => {
+          localStorage.setItem('coachorg_notif_paused', '1');
+          if(typeof _sessionEndTimers !== 'undefined') { _sessionEndTimers.forEach(t=>clearTimeout(t)); _sessionEndTimers = []; }
+          if(typeof _sessionStartTimers !== 'undefined') { _sessionStartTimers.forEach(t=>clearTimeout(t)); _sessionStartTimers = []; }
+          if(typeof _myReminderTimers !== 'undefined') { _myReminderTimers.forEach(t=>clearTimeout(t)); _myReminderTimers = []; }
+          showToast('⏸️ Notificações pausadas no app');
+          renderCoachIA();
+        };
+        if(pushStatus) pushStatus.innerHTML = '<span style="color:var(--green)">●</span> Ativadas — recebe lembretes no celular';
+      }
     } else if(Notification.permission === 'denied') {
       pushBtn.innerHTML = '🔕 Como liberar';
       pushBtn.style.background = 'transparent';
