@@ -8090,16 +8090,18 @@ function _detectAppLink() {
   return 'navegador do app';
 }
 
-// Versão sem cortesia: dispara quando detectar in-app browser pela primeira vez
+// Versão sem cortesia: dispara em cenários onde a pessoa não sabe que dá pra instalar
 function showInstallHelperIfNeeded() {
   if(_isStandalonePWA()) return false;
   if(localStorage.getItem('coachorg_install_helper_dismissed')) return false;
-  // Só dispara se for in-app browser (cenário onde NÃO dá pra instalar direto)
-  // OU se for iOS Safari na primeira visita (precisa guiar manualmente)
   const inApp = _isInAppBrowser();
   const ios = _isIOS();
-  if(!inApp && !ios) return false;
-  // Mostra a mesma landing, mas sem promessa de cortesia
+  const android = _isAndroid();
+  // Cenários onde precisa guiar:
+  // 1. In-app browser (WhatsApp/Insta/FB) — não dá pra instalar direto
+  // 2. iOS Safari (primeira visita — não tem prompt nativo)
+  // 3. Android Chrome (primeira visita — alguns Chromes não disparam beforeinstallprompt na hora)
+  if(!inApp && !ios && !android) return false;
   return showCourtesyWelcome(null);
 }
 
