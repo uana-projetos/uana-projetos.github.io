@@ -7864,6 +7864,14 @@ function showIOSInstallGuide() {
   }
 })();
 
+// Move modais novos pra fora de qualquer .page — evita modal sumir quando aba inativa
+['modalPostura','modalAvalFisica','modalEditMeal','modalEditSupp','modalMenuMais','modalConquista','modalRegistrarComida'].forEach(id => {
+  const m = document.getElementById(id);
+  if(m && m.parentElement && m.parentElement !== document.body) {
+    document.body.appendChild(m);
+  }
+});
+
 renderHome();
 updateAdBanner();
 initAuth();
