@@ -1062,6 +1062,77 @@ body {
     </div>
   </div>
 
+  <!-- Modal: Editar refeição -->
+  <div id="modalEditMeal" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:380px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:800" id="mealEditTitle">Editar refeição</div>
+        <button onclick="fecharEditarRefeicao()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Nome</label>
+          <input type="text" id="mealEditLabel" placeholder="Café da manhã" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:8px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Ícone</label>
+            <input type="text" id="mealEditIcon" maxlength="2" placeholder="☕" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px;font-size:18px;text-align:center;margin-top:3px">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Horário</label>
+            <input type="text" id="mealEditHour" placeholder="7h" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+          </div>
+        </div>
+      </div>
+      <button onclick="salvarRefeicao()" style="width:100%;background:#4ade80;color:#0f0f1a;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-size:13px;margin-top:14px">💾 Salvar</button>
+      <button onclick="deletarRefeicao()" id="mealEditDelete" style="width:100%;background:transparent;border:1px solid #ff525240;color:#ff5252;border-radius:10px;padding:9px;font-weight:600;cursor:pointer;font-size:11px;margin-top:6px">🗑️ Excluir refeição</button>
+    </div>
+  </div>
+
+  <!-- Modal: Editar suplemento -->
+  <div id="modalEditSupp" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:380px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:800" id="suppEditTitle">Editar suplemento</div>
+        <button onclick="fecharEditarSupp()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Nome</label>
+          <input type="text" id="suppEditName" placeholder="Creatina" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Dose</label>
+            <input type="text" id="suppEditDose" placeholder="5g" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Horário</label>
+            <input type="text" id="suppEditHour" placeholder="7h" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+          </div>
+        </div>
+      </div>
+      <button onclick="salvarSupp()" style="width:100%;background:#9c5bff;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-size:13px;margin-top:14px">💾 Salvar</button>
+      <button onclick="deletarSupp()" id="suppEditDelete" style="width:100%;background:transparent;border:1px solid #ff525240;color:#ff5252;border-radius:10px;padding:9px;font-weight:600;cursor:pointer;font-size:11px;margin-top:6px">🗑️ Excluir</button>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar comida (calorias IA) -->
+  <div id="modalRegistrarComida" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:480px;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:800" id="comidaTitulo">🍽️ Registrar comida</div>
+        <button onclick="fecharRegistrarComida()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Descreve o que comeu — a IA estima calorias e macros</div>
+      <textarea id="comidaTexto" rows="4" placeholder="Ex: 100g arroz, 150g frango grelhado, 1 banana, 1 colher de azeite" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit;margin-bottom:10px"></textarea>
+      <button onclick="calcularCalorias()" id="btnCalcularCal" style="width:100%;background:linear-gradient(90deg,#4ade80,#22c55e);color:#0f0f1a;border:none;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;font-size:14px">🧮 Calcular calorias</button>
+      <div style="font-size:9px;color:var(--text3);text-align:center;margin-top:6px;font-style:italic">⚠️ Estimativa por IA · margem ~20%</div>
+      <div id="comidaResult"></div>
+    </div>
+  </div>
+
   <div id="euSelfCare"></div>
 
   <!-- MEU TREINO: seletor de modo -->
@@ -2525,7 +2596,7 @@ function selfCareToggleField(field) {
   renderPersonalSelfCare();
 }
 
-const SELF_CARE_MEALS = [
+const SELF_CARE_MEALS_DEFAULT = [
   { key:'cafe', label:'Café', icon:'☕', hour:'7h' },
   { key:'lanche1', label:'Lanche', icon:'🍎', hour:'10h' },
   { key:'almoco', label:'Almoço', icon:'🍽️', hour:'12h' },
@@ -2533,20 +2604,224 @@ const SELF_CARE_MEALS = [
   { key:'janta', label:'Janta', icon:'🌙', hour:'19h' }
 ];
 
+function getMealsConfig() {
+  const raw = localStorage.getItem('coachorg_meals_config');
+  if(!raw) return [...SELF_CARE_MEALS_DEFAULT];
+  try { return JSON.parse(raw); } catch(e) { return [...SELF_CARE_MEALS_DEFAULT]; }
+}
+function saveMealsConfig(list) {
+  localStorage.setItem('coachorg_meals_config', JSON.stringify(list));
+}
+
+function getSupplementsConfig() {
+  const raw = localStorage.getItem('coachorg_supps_config');
+  if(!raw) return [];
+  try { return JSON.parse(raw); } catch(e) { return []; }
+}
+function saveSupplementsConfig(list) {
+  localStorage.setItem('coachorg_supps_config', JSON.stringify(list));
+}
+
+function getWaterGoal() {
+  return parseInt(localStorage.getItem('coachorg_water_goal') || '8', 10);
+}
+function setWaterGoal() {
+  const cur = getWaterGoal();
+  const v = prompt('Meta de copos de água por dia:', cur);
+  if(v === null) return;
+  const n = parseInt(v, 10);
+  if(isNaN(n) || n < 1 || n > 25) { showToast('Use um número entre 1 e 25'); return; }
+  localStorage.setItem('coachorg_water_goal', String(n));
+  renderPersonalSelfCare();
+}
+
+// ======= REFEIÇÕES =======
+let _mealEditKey = null;
+function abrirEditarRefeicao(key) {
+  _mealEditKey = key;
+  const list = getMealsConfig();
+  const m = key ? list.find(x => x.key === key) : { label:'', icon:'🍽️', hour:'12h' };
+  if(!m) return;
+  document.getElementById('mealEditLabel').value = m.label || '';
+  document.getElementById('mealEditIcon').value = m.icon || '🍽️';
+  document.getElementById('mealEditHour').value = m.hour || '12h';
+  document.getElementById('mealEditTitle').textContent = key ? 'Editar refeição' : 'Nova refeição';
+  document.getElementById('mealEditDelete').style.display = key ? '' : 'none';
+  document.getElementById('modalEditMeal').style.display = 'flex';
+}
+function fecharEditarRefeicao() {
+  document.getElementById('modalEditMeal').style.display = 'none';
+  _mealEditKey = null;
+}
+function salvarRefeicao() {
+  const label = document.getElementById('mealEditLabel').value.trim();
+  const icon = document.getElementById('mealEditIcon').value.trim() || '🍽️';
+  const hour = document.getElementById('mealEditHour').value.trim() || '12h';
+  if(!label) { showToast('Nome obrigatório'); return; }
+  const list = getMealsConfig();
+  if(_mealEditKey) {
+    const i = list.findIndex(x => x.key === _mealEditKey);
+    if(i >= 0) list[i] = { ...list[i], label, icon, hour };
+  } else {
+    list.push({ key: 'meal_' + Date.now(), label, icon, hour });
+  }
+  saveMealsConfig(list);
+  fecharEditarRefeicao();
+  renderPersonalSelfCare();
+}
+function deletarRefeicao() {
+  if(!_mealEditKey) return;
+  if(!confirm('Excluir essa refeição?')) return;
+  const list = getMealsConfig().filter(x => x.key !== _mealEditKey);
+  saveMealsConfig(list);
+  fecharEditarRefeicao();
+  renderPersonalSelfCare();
+}
+
+// ======= SUPLEMENTOS =======
+let _suppEditKey = null;
+function abrirEditarSupp(key) {
+  _suppEditKey = key;
+  const list = getSupplementsConfig();
+  const s = key ? list.find(x => x.key === key) : { name:'', dose:'', hour:'7h' };
+  document.getElementById('suppEditName').value = s.name || '';
+  document.getElementById('suppEditDose').value = s.dose || '';
+  document.getElementById('suppEditHour').value = s.hour || '7h';
+  document.getElementById('suppEditTitle').textContent = key ? 'Editar suplemento' : 'Novo suplemento';
+  document.getElementById('suppEditDelete').style.display = key ? '' : 'none';
+  document.getElementById('modalEditSupp').style.display = 'flex';
+}
+function fecharEditarSupp() {
+  document.getElementById('modalEditSupp').style.display = 'none';
+  _suppEditKey = null;
+}
+function salvarSupp() {
+  const name = document.getElementById('suppEditName').value.trim();
+  const dose = document.getElementById('suppEditDose').value.trim();
+  const hour = document.getElementById('suppEditHour').value.trim() || '7h';
+  if(!name) { showToast('Nome obrigatório'); return; }
+  const list = getSupplementsConfig();
+  if(_suppEditKey) {
+    const i = list.findIndex(x => x.key === _suppEditKey);
+    if(i >= 0) list[i] = { ...list[i], name, dose, hour };
+  } else {
+    list.push({ key: 'supp_' + Date.now(), name, dose, hour });
+  }
+  saveSupplementsConfig(list);
+  fecharEditarSupp();
+  renderPersonalSelfCare();
+}
+function deletarSupp() {
+  if(!_suppEditKey) return;
+  if(!confirm('Excluir esse suplemento?')) return;
+  const list = getSupplementsConfig().filter(x => x.key !== _suppEditKey);
+  saveSupplementsConfig(list);
+  fecharEditarSupp();
+  renderPersonalSelfCare();
+}
+function toggleSupp(key) {
+  const st = getSelfCareState();
+  st.supps = st.supps || {};
+  st.supps[key] = !st.supps[key];
+  saveSelfCareState(st);
+  renderPersonalSelfCare();
+}
+
+// ======= CALORIAS =======
+let _calMealKey = null;
+function abrirRegistrarComida(mealKey) {
+  _calMealKey = mealKey;
+  const st = getSelfCareState();
+  const log = (st.foodLog || {})[mealKey] || '';
+  document.getElementById('comidaTexto').value = log;
+  const cal = (st.calories || {})[mealKey];
+  const meal = getMealsConfig().find(m => m.key === mealKey);
+  document.getElementById('comidaTitulo').textContent = '🍽️ ' + (meal?.label || 'Refeição');
+  const resEl = document.getElementById('comidaResult');
+  resEl.innerHTML = cal ? renderCaloriasHTML(cal) : '';
+  document.getElementById('modalRegistrarComida').style.display = 'flex';
+}
+function fecharRegistrarComida() {
+  document.getElementById('modalRegistrarComida').style.display = 'none';
+  _calMealKey = null;
+}
+async function calcularCalorias() {
+  if(!_calMealKey) return;
+  const txt = document.getElementById('comidaTexto').value.trim();
+  if(!txt) { showToast('Descreva o que comeu'); return; }
+  const btn = document.getElementById('btnCalcularCal');
+  const result = document.getElementById('comidaResult');
+  btn.textContent = 'Calculando...';
+  btn.disabled = true;
+  result.innerHTML = '<div style="font-size:11px;color:var(--text2);padding:10px;text-align:center">IA analisando...</div>';
+
+  try {
+    const sb = getSB();
+    if(!sb) throw new Error('sem_conexao');
+    const meal = getMealsConfig().find(m => m.key === _calMealKey);
+    const { data, error } = await sb.functions.invoke('phd-nutrition', {
+      body: { description: txt, mealLabel: meal?.label }
+    });
+    if(error || data?.error) throw new Error(data?.error || error?.message || 'erro');
+
+    // Salva no estado do dia
+    const st = getSelfCareState();
+    st.foodLog = st.foodLog || {};
+    st.foodLog[_calMealKey] = txt;
+    st.calories = st.calories || {};
+    st.calories[_calMealKey] = {
+      kcal: data.kcal, protein: data.protein, carbs: data.carbs, fat: data.fat, fiber: data.fiber,
+      items: data.items, observacao: data.observacao
+    };
+    saveSelfCareState(st);
+
+    result.innerHTML = renderCaloriasHTML(st.calories[_calMealKey]);
+    renderPersonalSelfCare(); // atualiza total no topo
+  } catch(e) {
+    result.innerHTML = '<div style="font-size:11px;color:var(--accent);padding:10px">Erro: ' + e.message + '. Tenta de novo.</div>';
+  }
+  btn.textContent = '🧮 Calcular calorias';
+  btn.disabled = false;
+}
+function renderCaloriasHTML(cal) {
+  return `<div style="background:var(--bg);border:1.5px solid #4ade8040;border-radius:12px;padding:12px;margin-top:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-size:18px;font-weight:900;color:#4ade80">${Math.round(cal.kcal || 0)} kcal</div>
+      <div style="font-size:9px;color:var(--text3)">margem ~20%</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <div style="flex:1;background:#5b8cff15;border:1px solid #5b8cff40;border-radius:8px;padding:6px;text-align:center"><div style="font-size:13px;font-weight:800;color:#5b8cff">${Math.round(cal.protein||0)}g</div><div style="font-size:9px;color:var(--text2)">Proteína</div></div>
+      <div style="flex:1;background:#ffab0015;border:1px solid #ffab0040;border-radius:8px;padding:6px;text-align:center"><div style="font-size:13px;font-weight:800;color:#ffab00">${Math.round(cal.carbs||0)}g</div><div style="font-size:9px;color:var(--text2)">Carbo</div></div>
+      <div style="flex:1;background:#ff525215;border:1px solid #ff525240;border-radius:8px;padding:6px;text-align:center"><div style="font-size:13px;font-weight:800;color:#ff5252">${Math.round(cal.fat||0)}g</div><div style="font-size:9px;color:var(--text2)">Gordura</div></div>
+    </div>
+    ${cal.items?.length ? `<div style="font-size:10px;color:var(--text2);line-height:1.5">${cal.items.map(i => `<div>• ${i.alimento} <span style="color:var(--text3)">${i.porcao}</span> — ${i.kcal}kcal</div>`).join('')}</div>` : ''}
+    ${cal.observacao ? `<div style="font-size:10px;color:var(--text2);margin-top:6px;font-style:italic;background:var(--card);border-radius:6px;padding:6px 8px">💬 ${cal.observacao}</div>` : ''}
+  </div>`;
+}
+function totalCaloriasDia(st) {
+  const c = st.calories || {};
+  let kcal=0,p=0,carb=0,f=0;
+  Object.values(c).forEach(v => { kcal+=v.kcal||0; p+=v.protein||0; carb+=v.carbs||0; f+=v.fat||0; });
+  return { kcal:Math.round(kcal), p:Math.round(p), carb:Math.round(carb), f:Math.round(f) };
+}
+
 function renderPersonalSelfCare() {
   const el = document.getElementById('personalSelfCare');
   if(!el) return;
   const collapsed = localStorage.getItem('coachorg_selfcare_collapsed') === '1';
   const s = getSelfCareState();
-  const waterTarget = 8;
-  const waterPct = Math.min(100, Math.round((s.water || 0) / waterTarget * 100));
+  const waterTarget = getWaterGoal();
+  const meals = getMealsConfig();
+  const supps = getSupplementsConfig();
+  const totals = totalCaloriasDia(s);
+  const mealsDone = meals.filter(m => s.meals?.[m.key]).length;
 
   if(collapsed) {
     el.innerHTML = `<div onclick="toggleSelfCareCollapsed()" style="background:linear-gradient(135deg,#1a1a2e,#1a2e2a);border:1.5px solid #4ade8030;border-radius:14px;padding:10px 14px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="font-size:18px">💚</span>
         <span style="font-size:12px;font-weight:700;color:var(--text)">Eu Personal</span>
-        <span style="font-size:11px;color:var(--text2)">💧 ${s.water || 0}/${waterTarget} · ${Object.values(s.meals||{}).filter(Boolean).length}/${SELF_CARE_MEALS.length} refeições</span>
+        <span style="font-size:11px;color:var(--text2)">💧 ${s.water || 0}/${waterTarget} · 🍽️ ${mealsDone}/${meals.length}${totals.kcal>0?' · 🔥 '+totals.kcal+'kcal':''}</span>
       </div>
       <span style="font-size:14px;color:var(--text2)">▼</span>
     </div>`;
@@ -2565,35 +2840,84 @@ function renderPersonalSelfCare() {
       <button onclick="toggleSelfCareCollapsed()" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer">▲</button>
     </div>
 
+    ${totals.kcal > 0 ? `<div style="background:linear-gradient(90deg,#4ade8015,#5b8cff15);border:1.5px solid #4ade8060;border-radius:12px;padding:10px 12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">🔥 Total do dia</div>
+        <div style="font-size:9px;color:var(--text3)">~20% margem</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="font-size:18px;font-weight:900;color:#4ade80">${totals.kcal} <span style="font-size:11px;font-weight:600">kcal</span></div>
+        <div style="display:flex;gap:6px;font-size:10px">
+          <span style="color:#5b8cff;font-weight:700">${totals.p}P</span>
+          <span style="color:#ffab00;font-weight:700">${totals.carb}C</span>
+          <span style="color:#ff5252;font-weight:700">${totals.f}G</span>
+        </div>
+      </div>
+    </div>` : ''}
+
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:18px">💧</span>
           <span style="font-size:12px;font-weight:700">Água</span>
           <span style="font-size:11px;color:var(--text2)">${s.water || 0}/${waterTarget} copos</span>
+          <button onclick="setWaterGoal()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0 4px" title="Editar meta">✏️</button>
         </div>
         <div style="display:flex;gap:6px">
           <button onclick="selfCareAddWater(-1)" style="width:30px;height:30px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);color:var(--text);cursor:pointer;font-weight:700">−</button>
           <button onclick="selfCareAddWater(1)" style="width:30px;height:30px;border-radius:50%;background:#5b8cff;border:none;color:#fff;cursor:pointer;font-weight:800">+</button>
         </div>
       </div>
-      <div style="display:flex;gap:3px;height:16px">
-        ${Array.from({length: waterTarget}, (_,i) => `<div style="flex:1;background:${i < (s.water||0) ? '#5b8cff' : '#ffffff10'};border-radius:3px;transition:.3s"></div>`).join('')}
+      <div style="display:flex;gap:3px;height:16px;flex-wrap:wrap">
+        ${Array.from({length: waterTarget}, (_,i) => `<div style="flex:1;min-width:8px;background:${i < (s.water||0) ? '#5b8cff' : '#ffffff10'};border-radius:3px;transition:.3s"></div>`).join('')}
       </div>
     </div>
 
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px">
-      <div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">🍽️ Refeições do dia</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
-        ${SELF_CARE_MEALS.map(m => {
-          const done = s.meals?.[m.key];
-          return `<button onclick="selfCareToggleMeal('${m.key}')" style="background:${done ? '#4ade8025' : 'var(--card)'};border:1.5px solid ${done ? '#4ade80' : 'var(--border)'};border-radius:10px;padding:8px 4px;cursor:pointer;text-align:center;${done ? 'box-shadow:0 0 0 2px #4ade8030' : ''}">
-            <div style="font-size:20px">${m.icon}</div>
-            <div style="font-size:10px;color:${done ? '#4ade80' : 'var(--text2)'};font-weight:700;margin-top:2px">${m.label}</div>
-            <div style="font-size:9px;color:var(--text3)">${m.hour}</div>
-          </button>`;
-        }).join('')}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">🍽️ Refeições</div>
+        <button onclick="abrirEditarRefeicao(null)" style="background:#4ade80;color:#0f0f1a;border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;cursor:pointer">+ Add</button>
       </div>
+      ${meals.length === 0 ? '<div style="font-size:11px;color:var(--text3);text-align:center;padding:10px">Nenhuma refeição. Toca + Add</div>' : `<div style="display:flex;flex-direction:column;gap:6px">
+        ${meals.map(m => {
+          const done = s.meals?.[m.key];
+          const cal = (s.calories||{})[m.key];
+          return `<div style="background:${done ? '#4ade8015' : 'var(--card)'};border:1.5px solid ${done ? '#4ade80' : 'var(--border)'};border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px">
+            <button onclick="selfCareToggleMeal('${m.key}')" style="background:${done ? '#4ade80' : 'transparent'};border:1.5px solid ${done ? '#4ade80' : 'var(--border)'};border-radius:6px;width:22px;height:22px;cursor:pointer;color:#0f0f1a;font-weight:900;font-size:13px;flex-shrink:0;padding:0">${done ? '✓' : ''}</button>
+            <div style="font-size:18px;flex-shrink:0">${m.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:700;color:${done ? '#4ade80' : 'var(--text)'}">${m.label}</div>
+              <div style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span>${m.hour}</span>
+                ${cal ? `<span style="color:#4ade80;font-weight:700">· ${Math.round(cal.kcal)}kcal</span>` : ''}
+              </div>
+            </div>
+            <button onclick="abrirRegistrarComida('${m.key}')" style="background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);padding:4px 8px;cursor:pointer;font-size:10px;flex-shrink:0" title="Registrar comida">🧮</button>
+            <button onclick="abrirEditarRefeicao('${m.key}')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:13px;flex-shrink:0">✏️</button>
+          </div>`;
+        }).join('')}
+      </div>`}
+    </div>
+
+    <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px">💊 Suplementos</div>
+        <button onclick="abrirEditarSupp(null)" style="background:#9c5bff;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;cursor:pointer">+ Add</button>
+      </div>
+      ${supps.length === 0 ? '<div style="font-size:11px;color:var(--text3);text-align:center;padding:10px">Nenhum suplemento ainda. Ex: Creatina, Whey, Multi</div>' : `<div style="display:flex;flex-direction:column;gap:6px">
+        ${supps.map(sp => {
+          const done = (s.supps||{})[sp.key];
+          return `<div style="background:${done ? '#9c5bff15' : 'var(--card)'};border:1.5px solid ${done ? '#9c5bff' : 'var(--border)'};border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px">
+            <button onclick="toggleSupp('${sp.key}')" style="background:${done ? '#9c5bff' : 'transparent'};border:1.5px solid ${done ? '#9c5bff' : 'var(--border)'};border-radius:6px;width:22px;height:22px;cursor:pointer;color:#fff;font-weight:900;font-size:13px;flex-shrink:0;padding:0">${done ? '✓' : ''}</button>
+            <div style="font-size:16px;flex-shrink:0">💊</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:700;color:${done ? '#9c5bff' : 'var(--text)'}">${sp.name}</div>
+              <div style="font-size:10px;color:var(--text2)">${sp.dose ? sp.dose+' · ' : ''}${sp.hour}</div>
+            </div>
+            <button onclick="abrirEditarSupp('${sp.key}')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:13px;flex-shrink:0">✏️</button>
+          </div>`;
+        }).join('')}
+      </div>`}
     </div>
 
     <div id="stravaSection" style="display:none"></div>
