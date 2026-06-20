@@ -1202,6 +1202,48 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
     </div>
   </div>
 
+  <!-- Modal: Compartilhar Conquista -->
+  <div id="modalConquista" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:420px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">🏆</span>
+          <div>
+            <div style="font-size:15px;font-weight:800">Compartilhar Conquista</div>
+            <div style="font-size:10px;color:var(--text2)" id="conqStudentName">—</div>
+          </div>
+        </div>
+        <button onclick="fecharModalConquista()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Exercício</label>
+          <input type="text" id="conqExercicio" placeholder="Ex: Supino reto" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Peso novo (kg) *</label>
+            <input type="number" id="conqPesoNovo" placeholder="100" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Peso anterior</label>
+            <input type="number" id="conqPesoAnterior" placeholder="80" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Período de evolução</label>
+          <input type="text" id="conqPeriodo" placeholder="Ex: 8 semanas" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
+        </div>
+      </div>
+
+      <button onclick="gerarConquistaCard()" id="btnGerarConquista" style="width:100%;background:linear-gradient(90deg,#ffab00,#ff6d00);color:#0f0f1a;border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;font-size:14px;margin-top:14px">🏆 Gerar e Compartilhar</button>
+      <div style="font-size:9px;color:var(--text3);text-align:center;margin-top:6px">Gera PNG pra Instagram, WhatsApp ou Stories</div>
+    </div>
+  </div>
+
   <!-- Modal: Registrar comida (calorias IA) -->
   <div id="modalRegistrarComida" class="modal" style="display:none">
     <div class="modal-content" style="max-width:480px;max-height:90vh;overflow-y:auto">
@@ -3171,12 +3213,13 @@ function renderPersonalSelfCare() {
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <span style="font-size:18px">💪</span>
-        <span style="font-size:12px;font-weight:700">Calculadora 1RM</span>
+        <span style="font-size:12px;font-weight:700">Calculadora 1RM → 15RM</span>
         <span style="font-size:9px;color:var(--text2);font-weight:600;letter-spacing:.3px">FORÇA MÁXIMA</span>
       </div>
+      <input type="text" id="rmExercicio" placeholder="Exercício (ex: Supino reto)" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;margin-bottom:6px">
       <div style="display:flex;gap:6px;margin-bottom:8px">
         <input type="number" id="rmWeight" placeholder="Peso (kg)" min="1" max="500" step="0.5" style="flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
-        <input type="number" id="rmReps" placeholder="Repetições" min="1" max="20" style="flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
+        <input type="number" id="rmReps" placeholder="Reps feitas" min="1" max="20" style="flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
         <button onclick="calc1RM()" style="background:#ffab00;color:#0f0f1a;border:none;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer;font-size:12px">Calcular</button>
       </div>
       <div id="rmResult" style="font-size:11px;color:var(--text2);text-align:center;padding:4px"></div>
@@ -3809,11 +3852,12 @@ function abrirModal1RMAluno(studentId) {
   const html = `<div style="background:var(--card);border:1.5px solid #ffab0040;border-radius:14px;padding:14px;margin-top:10px">
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
       <span style="font-size:18px">🧮</span>
-      <span style="font-size:13px;font-weight:800">1RM de ${nome}</span>
+      <span style="font-size:13px;font-weight:800">1RM → 15RM de ${nome}</span>
     </div>
+    <input type="text" id="rmEx_${studentId}" placeholder="Exercício (ex: Supino reto)" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;margin-bottom:6px">
     <div style="display:flex;gap:6px;margin-bottom:8px">
       <input type="number" id="rmW_${studentId}" placeholder="Peso (kg)" min="1" max="500" step="0.5" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
-      <input type="number" id="rmR_${studentId}" placeholder="Reps" min="1" max="20" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
+      <input type="number" id="rmR_${studentId}" placeholder="Reps feitas" min="1" max="20" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
       <button onclick="calc1RMAluno('${studentId}')" style="background:#ffab00;color:#0f0f1a;border:none;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer;font-size:12px">Calcular</button>
     </div>
     <div id="rmResAluno_${studentId}" style="font-size:11px;color:var(--text2);text-align:center;padding:4px"></div>
@@ -3830,6 +3874,7 @@ function abrirModal1RMAluno(studentId) {
 }
 
 function calc1RMAluno(studentId) {
+  const ex = document.getElementById('rmEx_' + studentId)?.value?.trim() || '';
   const w = parseFloat(document.getElementById('rmW_' + studentId).value);
   const r = parseInt(document.getElementById('rmR_' + studentId).value, 10);
   const out = document.getElementById('rmResAluno_' + studentId);
@@ -3837,8 +3882,8 @@ function calc1RMAluno(studentId) {
   const epley = w * (1 + r/30);
   const brzycki = w * 36 / (37 - r);
   const lander = (100 * w) / (101.3 - 2.67123 * r);
-  const med = (epley + brzycki + lander) / 3;
-  out.innerHTML = `<div style="font-size:14px;font-weight:800;color:#ffab00">${med.toFixed(1)}kg</div><div style="font-size:9px;color:var(--text3)">Média Epley · Brzycki · Lander</div>`;
+  const oneRM = Math.round((epley + brzycki + lander) / 3);
+  out.innerHTML = render1RMTable(ex, oneRM);
 }
 
 function abrirModalPostura(preSelectStudentId) {
@@ -4137,7 +4182,27 @@ function checkBetaBanner() {
   banner.style.display = 'flex';
 }
 
+// ====== Mapa RM (1 a 15) → %1RM (referência Brzycki / RP / NSCA) ======
+const RM_PCT_TABLE = [
+  { rm: 1,  pct: 100, goal: 'Força máx', cor: '#ff5252' },
+  { rm: 2,  pct: 95,  goal: 'Força máx', cor: '#ff5252' },
+  { rm: 3,  pct: 93,  goal: 'Força',     cor: '#ff6d00' },
+  { rm: 4,  pct: 90,  goal: 'Força',     cor: '#ff6d00' },
+  { rm: 5,  pct: 87,  goal: 'Força',     cor: '#ff6d00' },
+  { rm: 6,  pct: 85,  goal: 'Força/Hipertrofia', cor: '#ffab00' },
+  { rm: 7,  pct: 83,  goal: 'Força/Hipertrofia', cor: '#ffab00' },
+  { rm: 8,  pct: 80,  goal: 'Hipertrofia', cor: '#9c5bff' },
+  { rm: 9,  pct: 77,  goal: 'Hipertrofia', cor: '#9c5bff' },
+  { rm: 10, pct: 75,  goal: 'Hipertrofia', cor: '#9c5bff' },
+  { rm: 11, pct: 73,  goal: 'Hipertrofia', cor: '#9c5bff' },
+  { rm: 12, pct: 70,  goal: 'Hipertrofia', cor: '#9c5bff' },
+  { rm: 13, pct: 67,  goal: 'Hipertrofia/Resistência', cor: '#5b8cff' },
+  { rm: 14, pct: 65,  goal: 'Resistência', cor: '#5b8cff' },
+  { rm: 15, pct: 63,  goal: 'Resistência', cor: '#5b8cff' }
+];
+
 function calc1RM() {
+  const exercicio = document.getElementById('rmExercicio')?.value?.trim() || '';
   const w = parseFloat(document.getElementById('rmWeight').value);
   const r = parseInt(document.getElementById('rmReps').value, 10);
   const el = document.getElementById('rmResult');
@@ -4148,42 +4213,35 @@ function calc1RM() {
   const epley = w * (1 + r/30);
   const brzycki = w * 36 / (37 - r);
   const lander = (100 * w) / (101.3 - 2.67123 * r);
-  const avg = (epley + brzycki + lander) / 3;
-  const oneRM = Math.round(avg);
+  const oneRM = Math.round((epley + brzycki + lander) / 3);
 
-  const pcts = [
-    { pct: 95, reps: '1-2', goal: 'Força máx' },
-    { pct: 90, reps: '3-4', goal: 'Força' },
-    { pct: 85, reps: '5-6', goal: 'Força/Hiper' },
-    { pct: 80, reps: '7-8', goal: 'Hipertrofia' },
-    { pct: 75, reps: '8-10', goal: 'Hipertrofia' },
-    { pct: 70, reps: '10-12', goal: 'Hipertrofia' },
-    { pct: 65, reps: '12-15', goal: 'Hiper/Resist' },
-    { pct: 60, reps: '15-20', goal: 'Resistência' }
-  ];
+  el.innerHTML = render1RMTable(exercicio, oneRM);
+}
 
-  el.innerHTML = `<div style="background:var(--card);border:1.5px solid #ffab0040;border-radius:10px;padding:10px;margin-top:6px;text-align:left">
-    <div style="text-align:center;margin-bottom:10px">
-      <div style="font-size:10px;color:var(--text2);letter-spacing:1px;font-weight:700">SEU 1RM ESTIMADO</div>
+function render1RMTable(exercicio, oneRM) {
+  return `<div style="background:var(--card);border:1.5px solid #ffab0040;border-radius:10px;padding:12px;margin-top:6px;text-align:left">
+    ${exercicio ? `<div style="font-size:12px;font-weight:800;color:var(--text);text-align:center;margin-bottom:4px">${exercicio}</div>` : ''}
+    <div style="text-align:center;margin-bottom:12px">
+      <div style="font-size:10px;color:var(--text2);letter-spacing:1px;font-weight:700">1RM ESTIMADO</div>
       <div style="font-size:36px;font-weight:900;color:#ffab00;line-height:1;margin-top:4px">${oneRM}<span style="font-size:14px;color:var(--text2);font-weight:600">kg</span></div>
-      <div style="font-size:9px;color:var(--text3);margin-top:3px">Média de Epley + Brzycki + Lander</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:3px">Média Epley + Brzycki + Lander</div>
     </div>
-    <div style="border-top:1px solid var(--border);padding-top:8px">
-      <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:6px;letter-spacing:.5px">TABELA DE TREINAMENTO:</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;font-size:10px">
-        <div style="color:var(--text2);font-weight:700">%</div>
-        <div style="color:var(--text2);font-weight:700">Peso</div>
-        <div style="color:var(--text2);font-weight:700">Reps</div>
-        <div style="color:var(--text2);font-weight:700">Objetivo</div>
-        ${pcts.map(p => `
-          <div style="color:#ffab00;font-weight:700">${p.pct}%</div>
-          <div style="color:var(--text);font-weight:600">${Math.round(oneRM * p.pct / 100)}kg</div>
-          <div style="color:var(--text)">${p.reps}</div>
-          <div style="color:var(--text2);font-size:9px">${p.goal}</div>
+    <div style="border-top:1px solid var(--border);padding-top:10px">
+      <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:6px;letter-spacing:.5px">TABELA RM 1 → 15</div>
+      <div style="display:grid;grid-template-columns:36px 1fr 56px 1fr;gap:4px 6px;font-size:11px;align-items:center">
+        <div style="color:var(--text3);font-weight:700;font-size:9px">RM</div>
+        <div style="color:var(--text3);font-weight:700;font-size:9px">Peso</div>
+        <div style="color:var(--text3);font-weight:700;font-size:9px;text-align:right">%1RM</div>
+        <div style="color:var(--text3);font-weight:700;font-size:9px">Objetivo</div>
+        ${RM_PCT_TABLE.map(p => `
+          <div style="color:${p.cor};font-weight:800">${p.rm}</div>
+          <div style="color:var(--text);font-weight:700">${Math.round(oneRM * p.pct / 100)}<span style="color:var(--text3);font-size:9px">kg</span></div>
+          <div style="color:var(--text2);font-size:10px;text-align:right">${p.pct}%</div>
+          <div style="color:var(--text2);font-size:9px;line-height:1.2">${p.goal}</div>
         `).join('')}
       </div>
     </div>
-    <div style="font-size:9px;color:var(--text3);margin-top:8px;font-style:italic;text-align:center">⚠️ Use com aquecimento + spotter. Estimativa confiável até 10 reps.</div>
+    <div style="font-size:9px;color:var(--text3);margin-top:10px;font-style:italic;text-align:center;line-height:1.5">⚠️ Use com aquecimento + spotter.<br>Estimativa confiável até 10 reps. Erro ~3-5%.</div>
   </div>`;
 }
 
@@ -5327,19 +5385,47 @@ async function shareTreinoCard(studentId, workoutIdx) {
     'Treino de ' + s.name, 'Treino criado no CoachOrg 🏋️');
 }
 
-async function shareConquistaCardFromStudent(studentId) {
+let _conquistaStudentId = null;
+function shareConquistaCardFromStudent(studentId) {
   const s = students.find(x => x.id === studentId);
   if(!s) return;
-  const exercise = prompt('Qual exercício? (ex: Supino reto)', 'Supino reto');
-  if(!exercise) return;
-  const weight = prompt('Peso novo (kg):', '100');
-  if(!weight) return;
-  const prevWeight = prompt('Peso anterior (kg, opcional):', '');
-  const period = prompt('Período de evolução (opcional, ex: 8 semanas):', '');
-  showToast('🎨 Gerando card de conquista...');
-  const blob = await generateConquistaCardBlob(s.name, exercise, weight, prevWeight, period);
-  shareBlob(blob, 'recorde-' + s.name.split(' ')[0].toLowerCase() + '.png',
-    'Novo recorde: ' + s.name, '🏆 Bate-recorde no CoachOrg!');
+  _conquistaStudentId = studentId;
+  document.getElementById('conqStudentName').textContent = s.name;
+  document.getElementById('conqExercicio').value = 'Supino reto';
+  document.getElementById('conqPesoNovo').value = '';
+  document.getElementById('conqPesoAnterior').value = '';
+  document.getElementById('conqPeriodo').value = '';
+  document.getElementById('modalConquista').style.display = 'flex';
+}
+
+function fecharModalConquista() {
+  document.getElementById('modalConquista').style.display = 'none';
+  _conquistaStudentId = null;
+}
+
+async function gerarConquistaCard() {
+  if(!_conquistaStudentId) return;
+  const s = students.find(x => x.id === _conquistaStudentId);
+  if(!s) return;
+  const exercise = document.getElementById('conqExercicio').value.trim();
+  const weight = document.getElementById('conqPesoNovo').value.trim();
+  const prevWeight = document.getElementById('conqPesoAnterior').value.trim();
+  const period = document.getElementById('conqPeriodo').value.trim();
+  if(!exercise) { showToast('Coloca o exercício'); return; }
+  if(!weight) { showToast('Coloca o peso novo'); return; }
+  const btn = document.getElementById('btnGerarConquista');
+  btn.textContent = '🎨 Gerando...';
+  btn.disabled = true;
+  try {
+    const blob = await generateConquistaCardBlob(s.name, exercise, weight, prevWeight, period);
+    fecharModalConquista();
+    shareBlob(blob, 'recorde-' + s.name.split(' ')[0].toLowerCase() + '.png',
+      'Novo recorde: ' + s.name, '🏆 Bate-recorde no CoachOrg!');
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  }
+  btn.textContent = '🏆 Gerar e Compartilhar';
+  btn.disabled = false;
 }
 
 async function shareSemanalCard() {
