@@ -2706,7 +2706,8 @@ function gerarMeuTreino() {
     input.value = title + '\n' + cfg.duration + 'min · ' + cfg.level + ' · ' + cfg.goal + '\n\n' + lines;
     btn.textContent = '⚡ Gerar treino';
     btn.disabled = false;
-    showToast('✅ Treino gerado — clica em Personal PhD pra revisar');
+    // Já dispara análise PhD automaticamente
+    validarMeuTreino();
   }, 500);
 }
 
