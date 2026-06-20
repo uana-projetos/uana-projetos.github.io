@@ -787,6 +787,10 @@ body {
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2284923541901387" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+</script>
 </head>
 <body>
 
@@ -4065,6 +4069,45 @@ function generateInsights() {
 }
 
 const _ADMIN = 'uanalee1@gmail.com';
+const ONESIGNAL_APP_ID = '';
+
+function initOneSignal() {
+  if(!ONESIGNAL_APP_ID) { console.warn('OneSignal: App ID nao configurado'); return; }
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: ONESIGNAL_APP_ID,
+      allowLocalhostAsSecureOrigin: true,
+      notifyButton: { enable: false }
+    });
+    if(currentUser?.email) {
+      try { await OneSignal.login(currentUser.email); } catch(e) {}
+    }
+  });
+}
+
+async function subscribeOneSignal() {
+  if(!ONESIGNAL_APP_ID) {
+    showToast('Aguarde — OneSignal sendo configurado');
+    return;
+  }
+  return new Promise(resolve => {
+    window.OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        await OneSignal.Notifications.requestPermission();
+        const isOptedIn = OneSignal.Notifications.permission;
+        if(isOptedIn) {
+          if(currentUser?.email) await OneSignal.login(currentUser.email);
+          showToast('🔔 Notificações ativas — receba mesmo com app fechado');
+          resolve(true);
+        } else {
+          showToast('Permissão negada. Ative nas configurações do navegador.');
+          resolve(false);
+        }
+      } catch(e) { console.warn('OneSignal subscribe error', e); resolve(false); }
+    });
+  });
+}
 const _VIP_S = 'coachorg2026vip';
 
 function generateCourtesyLink() {
@@ -4425,8 +4468,15 @@ function buildCoachSummary() {
   };
 }
 
-function requestPushPermission() {
+async function requestPushPermission() {
   if(!('Notification' in window)) { showToast('Notificações não suportadas neste browser'); return; }
+  // Se OneSignal configurado, usar push avançado (funciona com app fechado)
+  if(ONESIGNAL_APP_ID) {
+    const ok = await subscribeOneSignal();
+    if(ok) renderCoachIA();
+    return;
+  }
+  // Fallback nativo
   Notification.requestPermission().then(perm=>{
     if(perm==='granted') {
       showToast('✅ Notificações ativadas!');
@@ -4511,6 +4561,7 @@ function showIOSInstallGuide() {
 renderHome();
 updateAdBanner();
 initAuth();
+initOneSignal();
 checkCourtesyExpiration();
 checkCourtesyURL();
 checkPasswordResetURL();
