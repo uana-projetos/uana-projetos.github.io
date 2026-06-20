@@ -3128,6 +3128,36 @@ function _setsReps(level, goal) {
   return '4x10-12 (75s desc)';
 }
 
+const _PHD_INJURY_RISK = {
+  'levantamento terra': { risco:'alto', area:'lombar', dica:'Técnica imperfeita aumenta L4-L5 em 1.500N (McGill 2007). Iniciante: começar com peso morto romeno', alternativa:'Stiff halter ou hip thrust' },
+  'agachamento livre': { risco:'medio', area:'lombar/joelho', dica:'Hack squat reduz cisalhamento em 30% (Escamilla 2001). Avalia mobilidade tornozelo antes', alternativa:'Hack squat ou leg press 45°' },
+  'desenvolvimento militar': { risco:'medio', area:'ombro/lombar', dica:'Acima de 12RM aumenta compensação lombar. Use cadeira com apoio se iniciante', alternativa:'Desenvolvimento halter sentado' },
+  'supino reto': { risco:'baixo', area:'ombro', dica:'Abertura excessiva (cotovelo 90°) aumenta risco impacto subacromial (Schoenfeld 2011)', alternativa:'Supino inclinado 30° pra reduzir stress glenoumeral' },
+  'puxada por trás': { risco:'alto', area:'ombro', dica:'Rotação externa máxima + compressão = lesão SLAP. EVITE — use pegada neutra (Durall 2001)', alternativa:'Puxada frente pegada aberta' },
+  'crucifixo banco plano': { risco:'medio', area:'ombro', dica:'Amplitude excessiva estressa cápsula anterior. Parar quando braço alinhado com tronco', alternativa:'Crucifixo polia ou peck deck' },
+  'rosca direta barra reta': { risco:'baixo', area:'punho', dica:'Pegada supinada barra reta = stress ECU. Use barra W pra rotação neutra', alternativa:'Rosca barra W ou halter neutra' },
+  'mergulho': { risco:'medio', area:'ombro/peito', dica:'Descida abaixo paralelo aumenta tensão peitoral menor + cápsula. Limita amplitude', alternativa:'Tríceps testa ou polia corda' }
+};
+
+const _PHD_PRINCIPLES = [
+  { area:'volume', regra:'Hipertrofia: 10-20 séries efetivas por músculo por SEMANA', fonte:'Schoenfeld et al. 2017, JSCR' },
+  { area:'volume', regra:'Volume além de 20 séries semanais traz retornos decrescentes e risco de overreaching', fonte:'Israetel 2019, RP Strength' },
+  { area:'frequência', regra:'2 sessões por músculo por semana superior a 1 sessão (8% mais hipertrofia)', fonte:'Schoenfeld et al. 2016, Sports Med' },
+  { area:'frequência', regra:'Iniciante: 3x/semana full body. Intermediário: 2x ABAB. Avançado: 5-6x split', fonte:'Helms 2019, Muscle and Strength Pyramid' },
+  { area:'intensidade', regra:'Falha muscular não é necessária pra hipertrofia. RIR 1-3 igualmente eficaz', fonte:'Helms et al. 2018' },
+  { area:'descanso', regra:'2-3 minutos entre séries de hipertrofia (não 60s — reduz volume total)', fonte:'Schoenfeld et al. 2016, JSCR' },
+  { area:'tempo sob tensão', regra:'1-2s concêntrica, 2-3s excêntrica. Tempo total 20-70s por série ótimo', fonte:'Schoenfeld 2015, Sports Med' },
+  { area:'progressão', regra:'Adicionar 1 série por semana ou 2.5% carga (sobrecarga progressiva)', fonte:'Israetel 2017, Scientific Principles' },
+  { area:'deload', regra:'A cada 4-6 semanas: redução de 30-50% volume por 1 semana', fonte:'Mike Israetel, RP' },
+  { area:'lesão', regra:'Lombar plana é mito — manter curva neutra reduz pressão discal em 50%', fonte:'McGill 2007, Low Back Disorders' },
+  { area:'lesão', regra:'Joelho ultrapassar dedos no agachamento é seguro com mobilidade adequada', fonte:'Fry et al. 2003, JSCR' },
+  { area:'lesão', regra:'Manguito rotador: face pull 2-3x/semana previne impacto subacromial', fonte:'Cools et al. 2014' },
+  { area:'compostos', regra:'Compostos antes de isolados na mesma sessão (princípio de prioridade)', fonte:'NSCA Essentials' },
+  { area:'amplitude', regra:'Amplitude completa supera parcial em 5-10% de hipertrofia', fonte:'Schoenfeld 2020, ESJ' },
+  { area:'idade', regra:'Após 50 anos: priorizar treino unilateral e estabilidade central', fonte:'ACSM 2018 Position Stand' },
+  { area:'mulher', regra:'Mulheres podem treinar com 80% do volume sem comprometer recuperação', fonte:'Janse de Jonge 2003' }
+];
+
 const _PHD_MUSCLE_KEYWORDS = {
   peito: ['supino','crucifixo','peck','flexão','cross','peitoral','pull-over','pullover'],
   costas: ['puxada','remada','barra fixa','pulldown','levantamento terra','pull','t-bar'],
@@ -3238,10 +3268,43 @@ function validatePhDWorkout(studentId) {
 
     if(unknownCount > 0) insights.push({ type:'tip', icon:'❓', title:`${unknownCount} exercícios não identificados`, desc:'Não consegui classificar pelo nome. Validação parcial.' });
 
+    // Análise de risco de lesão por exercício
+    exercises.forEach(ex => {
+      const lower = ex.name.toLowerCase();
+      for(const exName in _PHD_INJURY_RISK) {
+        if(lower.includes(exName.toLowerCase())) {
+          const r = _PHD_INJURY_RISK[exName];
+          const riskColor = r.risco === 'alto' ? 'warn' : 'tip';
+          const riskEmoji = r.risco === 'alto' ? '🚨' : (r.risco === 'medio' ? '⚠️' : '🟢');
+          insights.push({
+            type: riskColor,
+            icon: riskEmoji,
+            title: `Risco ${r.risco} de lesão: ${ex.name.slice(0,40)}`,
+            desc: `Área: ${r.area}. ${r.dica}. Alternativa: ${r.alternativa}`
+          });
+          break;
+        }
+      }
+    });
+
+    // 2 princípios científicos aleatórios relevantes
+    const relevantPrinciples = _PHD_PRINCIPLES.filter(p => {
+      if(goal === 'hipertrofia') return ['volume','frequência','intensidade','descanso','progressão'].includes(p.area);
+      if(goal === 'forca') return ['volume','frequência','descanso','progressão'].includes(p.area);
+      return true;
+    });
+    relevantPrinciples.sort(()=>Math.random()-0.5);
+    relevantPrinciples.slice(0,2).forEach(p => {
+      insights.push({ type:'science', icon:'🔬', title:`Princípio PhD — ${p.area}`, desc:`${p.regra}. Fonte: ${p.fonte}` });
+    });
+
+    // Recomendação geral por objetivo
     if(goal === 'hipertrofia') {
-      insights.push({ type:'science', icon:'🔬', title:'Recomendação PhD pra hipertrofia', desc:'Schoenfeld: 10-20 séries/músculo/SEMANA, frequência 2x. Treine cada grupo 2-3x/semana com 8-12 reps perto da falha (1-2 RIR)' });
+      insights.push({ type:'science', icon:'📚', title:'Protocolo recomendado pra hipertrofia', desc:'Volume: 10-20 séries/músculo/semana. Reps: 6-15 (8-12 ótimo). Descanso: 2-3min. Frequência: 2x/semana. RIR 1-3 (Schoenfeld 2021)' });
     } else if(goal === 'forca') {
-      insights.push({ type:'science', icon:'🔬', title:'Recomendação PhD pra força', desc:'RP: Treinos compostos pesados (3-5 reps), descanso 3-5min, frequência 2-3x por padrão' });
+      insights.push({ type:'science', icon:'📚', title:'Protocolo recomendado pra força', desc:'Volume: 6-12 séries efetivas. Reps: 1-6 com 80-95% 1RM. Descanso: 3-5min. Frequência: 2-3x. Compostos pesados (Helms 2019)' });
+    } else if(goal === 'resistencia') {
+      insights.push({ type:'science', icon:'📚', title:'Protocolo recomendado pra resistência', desc:'Volume alto: 12-20 séries. Reps: 12-25 com 50-65% 1RM. Descanso: 30-60s. Foco em metabolismo (ACSM 2018)' });
     }
 
     const color = (t) => ({ warn:'#ffab00', ok:'#4ade80', tip:'#5b8cff', science:'#9c5bff' }[t] || '#5b8cff');
