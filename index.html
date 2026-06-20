@@ -3205,7 +3205,7 @@ function detectMuscleGroup(exerciseName) {
   return null;
 }
 
-function validatePhDWorkout(studentId) {
+async function validatePhDWorkout(studentId) {
   const input = document.getElementById('aiPromptInput_'+studentId);
   const result = document.getElementById('aiResult_'+studentId);
   const btn = document.getElementById('phdValidateBtn_'+studentId);
@@ -3214,6 +3214,28 @@ function validatePhDWorkout(studentId) {
 
   btn.textContent = '🎓 Analisando...';
   btn.disabled = true;
+
+  // Tenta IA real (Gemini PhD) primeiro — fallback pra regras locais
+  try {
+    const sb = getSB();
+    const student = students.find(s => s.id === studentId);
+    if(sb) {
+      const { data, error } = await sb.functions.invoke('phd-workout', {
+        body: {
+          prompt: text,
+          workout: text,
+          student: student ? { name: student.name, goal: student.goal, notes: student.notes, age: student.age } : null
+        }
+      });
+      if(!error && data && Array.isArray(data.insights) && data.insights.length > 0) {
+        renderPhDInsights(result, data.insights, true);
+        btn.textContent = '🎓 Validar PhD';
+        btn.disabled = false;
+        return;
+      }
+    }
+  } catch(e) { console.warn('Gemini PhD failed, fallback rules', e); }
+
 
   setTimeout(() => {
     const cfg = _parsePrompt(text);
@@ -3307,27 +3329,34 @@ function validatePhDWorkout(studentId) {
       insights.push({ type:'science', icon:'📚', title:'Protocolo recomendado pra resistência', desc:'Volume alto: 12-20 séries. Reps: 12-25 com 50-65% 1RM. Descanso: 30-60s. Foco em metabolismo (ACSM 2018)' });
     }
 
-    const color = (t) => ({ warn:'#ffab00', ok:'#4ade80', tip:'#5b8cff', science:'#9c5bff' }[t] || '#5b8cff');
-    const bg = (t) => ({ warn:'#ffab0015', ok:'#4ade8015', tip:'#5b8cff15', science:'#9c5bff15' }[t] || '#5b8cff15');
-
-    result.innerHTML = `
-      <div style="background:var(--bg);border:1.5px solid #5b8cff40;border-radius:12px;padding:14px;margin-top:6px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span style="font-size:18px">🎓</span>
-          <span style="font-size:13px;font-weight:800;color:#5b8cff;letter-spacing:.5px">VALIDAÇÃO PhD</span>
-          <span style="background:#5b8cff15;border:1px solid #5b8cff40;color:#5b8cff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">Schoenfeld + RP</span>
-        </div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">${exercises.length} exercícios · ${totalSets} séries · ~${avgReps} reps médias · Objetivo: ${cfg.goal}</div>
-        ${insights.map(ins => `<div style="background:${bg(ins.type)};border:1px solid ${color(ins.type)}40;border-radius:10px;padding:10px 12px;margin-bottom:6px">
-          <div style="font-size:12px;font-weight:800;color:${color(ins.type)};margin-bottom:3px">${ins.icon} ${ins.title}</div>
-          <div style="font-size:11px;color:var(--text);line-height:1.4">${ins.desc}</div>
-        </div>`).join('')}
-        <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px;font-style:italic">Baseado em Schoenfeld 2021 (Science and Development of Muscle Hypertrophy) + RP Scientific Principles of Hypertrophy</div>
-      </div>`;
+    const summaryStr = `${exercises.length} exercícios · ${totalSets} séries · ~${avgReps} reps médias · Objetivo: ${cfg.goal}`;
+    renderPhDInsights(result, insights, false, summaryStr);
 
     btn.textContent = '🎓 Validar PhD';
     btn.disabled = false;
   }, 700);
+}
+
+function renderPhDInsights(container, insights, isGemini, summary) {
+  const color = (t) => ({ warn:'#ffab00', ok:'#4ade80', tip:'#5b8cff', science:'#9c5bff', lesao:'#ff5252' }[t] || '#5b8cff');
+  const bg = (t) => ({ warn:'#ffab0015', ok:'#4ade8015', tip:'#5b8cff15', science:'#9c5bff15', lesao:'#ff525215' }[t] || '#5b8cff15');
+  const badge = isGemini
+    ? '<span style="background:linear-gradient(90deg,#9c5bff,#5b8cff);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.5px">✨ Dr. CoachOrg AI</span>'
+    : '<span style="background:#5b8cff15;border:1px solid #5b8cff40;color:#5b8cff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">Schoenfeld + RP</span>';
+  container.innerHTML = `
+    <div style="background:var(--bg);border:1.5px solid #5b8cff40;border-radius:12px;padding:14px;margin-top:6px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:18px">🎓</span>
+        <span style="font-size:13px;font-weight:800;color:#5b8cff;letter-spacing:.5px">VALIDAÇÃO PhD</span>
+        ${badge}
+      </div>
+      ${summary ? `<div style="font-size:11px;color:var(--text2);margin-bottom:10px">${summary}</div>` : ''}
+      ${insights.map(ins => `<div style="background:${bg(ins.type)};border:1px solid ${color(ins.type)}40;border-radius:10px;padding:10px 12px;margin-bottom:6px">
+        <div style="font-size:12px;font-weight:800;color:${color(ins.type)};margin-bottom:3px">${ins.icon||'💡'} ${ins.title}</div>
+        <div style="font-size:11px;color:var(--text);line-height:1.4">${ins.desc}</div>
+      </div>`).join('')}
+      <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px;font-style:italic">${isGemini ? 'Dr. CoachOrg — PhD 30 anos em biomecânica e fisiologia · Baseado em literatura científica peer-reviewed' : 'Baseado em Schoenfeld 2021 + RP Scientific Principles of Hypertrophy'}</div>
+    </div>`;
 }
 
 function generateAIWorkout(studentId) {
