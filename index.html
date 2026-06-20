@@ -2339,6 +2339,15 @@ async function handleLogin() {
   errEl.style.display='none';
   closeLoginModal();
   showToast('✅ Login realizado!');
+  // Se tinha link de cortesia pendente, ativa agora
+  const pending = localStorage.getItem('coachorg_pending_vip');
+  if(pending) {
+    localStorage.removeItem('coachorg_pending_vip');
+    setTimeout(() => {
+      history.replaceState({}, '', location.pathname + '?vip=' + pending);
+      checkCourtesyURL();
+    }, 800);
+  }
 }
 
 async function handleSignup() {
@@ -2373,6 +2382,15 @@ async function handleSignup() {
         }
       }
     } catch(e) { /* código inválido */ }
+  }
+  // Se tinha link de cortesia pendente, ativa agora
+  const pending = localStorage.getItem('coachorg_pending_vip');
+  if(pending) {
+    localStorage.removeItem('coachorg_pending_vip');
+    setTimeout(() => {
+      history.replaceState({}, '', location.pathname + '?vip=' + pending);
+      checkCourtesyURL();
+    }, 1200);
   }
 }
 // ==================== END SUPABASE AUTH ====================
@@ -7482,16 +7500,44 @@ async function subscribeOneSignal() {
 }
 const _VIP_S = 'coachorg2026vip';
 
-function generateCourtesyLink() {
+function _randCourtesyId() {
+  // ID curto e único (timestamp + random)
+  return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+async function generateCourtesyLink() {
+  const id = _randCourtesyId();
   const now = Date.now();
-  const exp = now + 90*24*60*60*1000;
-  const token = btoa(JSON.stringify({p:'cortesia', s:_VIP_S, ts:now, exp}));
-  const url = location.origin + location.pathname + '?vip=' + encodeURIComponent(token);
-  navigator.clipboard.writeText(url).then(()=>{
-    showToast('Link de 3 meses copiado! Manda pro amigo 🎁');
-  }).catch(()=>{
-    prompt('Copie o link abaixo (válido por 3 meses):', url);
-  });
+  const exp = new Date(now + 90*24*60*60*1000).toISOString();
+  const url = location.origin + location.pathname + '?vip=' + id;
+
+  // Tenta registrar no Supabase pra ser intransferível
+  try {
+    const sb = getSB();
+    if(sb) {
+      const { error } = await sb.from('courtesy_links').insert({
+        id,
+        plan: 'cortesia',
+        duration_days: 90,
+        created_by_email: currentUser?.email || null,
+        expires_at: exp
+      });
+      if(error) throw error;
+    } else {
+      throw new Error('sem conexão Supabase');
+    }
+  } catch(e) {
+    console.warn('generateCourtesyLink supabase falhou', e);
+    showToast('Erro: faz login antes de gerar link 🙏');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('🎁 Link único copiado! Só uma pessoa pode usar.');
+  } catch(e) {
+    prompt('Copie o link (1 uso, 3 meses):', url);
+  }
 }
 
 function activateCourtesyAdmin() {
@@ -7713,7 +7759,7 @@ function checkCourtesyExpiration() {
   }
 }
 
-function checkCourtesyURL() {
+async function checkCourtesyURL() {
   try {
     // Salvar código de indicação se veio por link
     const ref = new URLSearchParams(location.search).get('ref');
@@ -7721,30 +7767,88 @@ function checkCourtesyURL() {
 
     const param = new URLSearchParams(location.search).get('vip');
     if(!param) {
-      // limpa só o ref se nao tinha vip
       if(ref) history.replaceState({}, '', location.pathname);
       return;
     }
-    const obj = JSON.parse(atob(decodeURIComponent(param)));
-    if(obj.s !== _VIP_S) return;
-    if(obj.exp && Date.now() > obj.exp) { showToast('Esse link de cortesia expirou. Pede um novo 🙏'); return; }
+
+    // 🆕 Formato novo: ID curto (começa com 'c'). Formato legado: token base64
+    let plan = 'cortesia';
+    let expMs = null;
+    let usarSupabase = false;
+    let novoLinkId = null;
+
+    if(/^c[a-z0-9]{6,}$/i.test(param)) {
+      // Novo formato — ID curto, validar no Supabase
+      usarSupabase = true;
+      novoLinkId = param;
+    } else {
+      // Formato legado — token base64 (mantém compatibilidade pra links antigos)
+      try {
+        const obj = JSON.parse(atob(decodeURIComponent(param)));
+        if(obj.s !== _VIP_S) return;
+        if(obj.exp && Date.now() > obj.exp) { showToast('Esse link de cortesia expirou. Pede um novo 🙏'); return; }
+        plan = obj.p || 'cortesia';
+        expMs = obj.exp || null;
+      } catch(e) { return; }
+    }
+
+    // Se é o novo formato, valida no Supabase
+    if(usarSupabase) {
+      const sb = getSB();
+      if(!sb) {
+        showToast('Sem conexão. Tenta de novo com internet 🙏');
+        return;
+      }
+      const { data: link, error } = await sb.from('courtesy_links').select('*').eq('id', novoLinkId).maybeSingle();
+      if(error || !link) {
+        showToast('Link inválido ou inexistente 🙏');
+        return;
+      }
+      // Expirado
+      if(link.expires_at && new Date(link.expires_at) < new Date()) {
+        showToast('Esse link de cortesia expirou. Pede um novo 🙏');
+        return;
+      }
+      // Já foi usado por outra pessoa?
+      const meuEmail = currentUser?.email || null;
+      if(link.used_by_email && link.used_by_email !== meuEmail) {
+        showToast('🔒 Esse link já foi usado por outra pessoa.');
+        history.replaceState({}, '', location.pathname);
+        return;
+      }
+      // Não logado → exige login antes
+      if(!meuEmail) {
+        showToast('🎁 Pra ativar 3 meses grátis, faça login primeiro');
+        localStorage.setItem('coachorg_pending_vip', novoLinkId);
+        setTimeout(() => { if(typeof openLoginModal === 'function') openLoginModal(); }, 600);
+        return;
+      }
+      // Marca como usado pelo email atual
+      if(!link.used_by_email) {
+        await sb.from('courtesy_links').update({
+          used_by_email: meuEmail,
+          used_at: new Date().toISOString()
+        }).eq('id', novoLinkId);
+      }
+      plan = link.plan || 'cortesia';
+      expMs = link.expires_at ? new Date(link.expires_at).getTime() : (Date.now() + (link.duration_days||90)*86400000);
+    }
 
     const jaAtivouAntes = isPro;
     if(!jaAtivouAntes) {
       isPro = true;
       localStorage.setItem('coachorg_pro','true');
-      localStorage.setItem('coachorg_plan', obj.p || 'cortesia');
-      if(obj.exp) localStorage.setItem('coachorg_pro_exp', String(obj.exp));
+      localStorage.setItem('coachorg_plan', plan);
+      if(expMs) localStorage.setItem('coachorg_pro_exp', String(expMs));
       updateAdBanner();
     }
 
-    // Tenta mostrar a landing de boas-vindas (que cobre toast também)
-    const planoLabel = obj.p === 'cortesia' ? '3 meses grátis Pro' : 'Acesso Pro liberado';
+    const planoLabel = plan === 'cortesia' ? '3 meses grátis Pro' : 'Acesso Pro liberado';
     const mostrou = showCourtesyWelcome(planoLabel);
     if(!mostrou) {
       const msg = jaAtivouAntes
         ? '🎁 Você já tinha acesso ativo. Bem-vindo de volta!'
-        : (obj.p === 'cortesia' ? '🎁 Cortesia de 3 meses ativada! Bem-vindo!' : '🎁 Acesso ativado! Bem-vindo!');
+        : (plan === 'cortesia' ? '🎁 Cortesia de 3 meses ativada! Bem-vindo!' : '🎁 Acesso ativado! Bem-vindo!');
       showToast(msg);
     }
 
