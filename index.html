@@ -979,6 +979,89 @@ body {
     </div>
   </div>
 
+  <!-- Modal: Avaliação Física -->
+  <div id="modalAvalFisica" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:560px;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;position:sticky;top:0;background:var(--card);padding-top:4px;z-index:5">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">📏</span>
+          <div>
+            <div style="font-size:15px;font-weight:800" id="avalTitle">Avaliação Física</div>
+            <div style="font-size:10px;color:var(--text2)" id="avalSubtitle"></div>
+          </div>
+        </div>
+        <button onclick="fecharModalAvalFisica()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+
+      <!-- Tabs: Nova / Histórico / Comparar -->
+      <div style="display:flex;gap:4px;margin-bottom:14px;background:var(--bg);padding:3px;border-radius:10px">
+        <button onclick="avalTab('nova')" id="avalTabNova" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px;font-size:11px;font-weight:700;cursor:pointer">+ Nova</button>
+        <button onclick="avalTab('historico')" id="avalTabHistorico" style="flex:1;background:transparent;color:var(--text2);border:none;border-radius:8px;padding:7px;font-size:11px;font-weight:700;cursor:pointer">Histórico</button>
+        <button onclick="avalTab('comparar')" id="avalTabComparar" style="flex:1;background:transparent;color:var(--text2);border:none;border-radius:8px;padding:7px;font-size:11px;font-weight:700;cursor:pointer">Comparar</button>
+      </div>
+
+      <!-- TAB: Nova avaliação -->
+      <div id="avalPanelNova">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Data</label>
+            <input type="date" id="avalDate" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:13px;margin-top:3px">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Altura (cm)</label>
+            <input type="number" id="avalHeight" step="0.5" placeholder="175" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:13px;margin-top:3px">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">Peso (kg)</label>
+            <input type="number" id="avalWeight" step="0.1" placeholder="78.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:13px;margin-top:3px" oninput="atualizarIMC()">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700">IMC <span style="font-size:9px;color:var(--text3)">(auto)</span></label>
+            <div id="avalIMC" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:13px;margin-top:3px;font-weight:700">—</div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin:14px 0 6px">📏 Medidas (cm)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><label style="font-size:10px;color:var(--text2)">Peito</label><input type="number" id="m_peito" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Cintura</label><input type="number" id="m_cintura" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Quadril</label><input type="number" id="m_quadril" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Pescoço</label><input type="number" id="m_pescoco" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Braço relax.</label><input type="number" id="m_bracoR" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Braço contr.</label><input type="number" id="m_bracoC" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Coxa</label><input type="number" id="m_coxa" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+          <div><label style="font-size:10px;color:var(--text2)">Panturrilha</label><input type="number" id="m_panturrilha" step="0.5" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:7px;font-size:12px;margin-top:2px"></div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin:14px 0 4px">📸 Fotos <span style="font-size:9px;color:var(--text2);font-weight:400">(frente · lado · costas)</span></div>
+        <input type="file" id="avalFotos" accept="image/*" multiple capture="environment" style="display:none" onchange="onAvalFotosSelected(event)">
+        <button onclick="document.getElementById('avalFotos').click()" style="width:100%;background:var(--bg);border:1.5px dashed #5b8cff60;border-radius:10px;padding:12px;color:#5b8cff;font-weight:700;font-size:12px;cursor:pointer">📷 Selecionar até 3 fotos</button>
+        <div id="avalFotosPreview" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"></div>
+
+        <div style="margin-top:14px">
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Observações</label>
+          <textarea id="avalNotes" rows="2" placeholder="Ex: sem dores, dieta consistente" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:12px;resize:vertical;margin-top:3px;font-family:inherit"></textarea>
+        </div>
+
+        <button onclick="salvarAvaliacao()" id="btnSalvarAval" style="width:100%;background:linear-gradient(90deg,#5b8cff,#4ade80);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:14px;margin-top:16px">💾 Salvar Avaliação</button>
+      </div>
+
+      <!-- TAB: Histórico -->
+      <div id="avalPanelHistorico" style="display:none">
+        <div id="avalHistoricoList"></div>
+      </div>
+
+      <!-- TAB: Comparar -->
+      <div id="avalPanelComparar" style="display:none">
+        <div id="avalCompararPicker" style="margin-bottom:12px"></div>
+        <div id="avalCompararResult"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="euSelfCare"></div>
 
   <!-- MEU TREINO: seletor de modo -->
@@ -2845,10 +2928,309 @@ function abrirFerramentaAluno(tipo, studentId) {
     abrirModalPostura(studentId);
     return;
   }
-  if(tipo === 'avaliacao' || tipo === 'periodizacao') {
+  if(tipo === 'avaliacao') {
+    abrirAvaliacaoFisica(studentId);
+    return;
+  }
+  if(tipo === 'periodizacao') {
     showToast('🛠️ Em construção — em breve');
     return;
   }
+}
+
+// ====== AVALIAÇÃO FÍSICA ======
+let _avalStudentId = null;
+let _avalFotos = []; // {key:'frente'|'lado'|'costas', dataUrl}
+let _avalEditId = null;
+
+function abrirAvaliacaoFisica(studentId) {
+  _avalStudentId = studentId;
+  _avalEditId = null;
+  const s = (window.students || []).find(x => x.id === studentId);
+  document.getElementById('avalTitle').textContent = 'Avaliação Física';
+  document.getElementById('avalSubtitle').textContent = s ? s.name : '';
+  document.getElementById('modalAvalFisica').style.display = 'flex';
+  // Preenche data com hoje
+  document.getElementById('avalDate').valueAsDate = new Date();
+  // Preenche altura se já tem registrada
+  if(s && s.height) document.getElementById('avalHeight').value = s.height;
+  limparFormAvaliacao();
+  avalTab('nova');
+}
+
+function fecharModalAvalFisica() {
+  document.getElementById('modalAvalFisica').style.display = 'none';
+}
+
+function limparFormAvaliacao() {
+  ['avalWeight','m_peito','m_cintura','m_quadril','m_pescoco','m_bracoR','m_bracoC','m_coxa','m_panturrilha','avalNotes']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  _avalFotos = [];
+  document.getElementById('avalFotosPreview').innerHTML = '';
+  document.getElementById('avalIMC').textContent = '—';
+}
+
+function avalTab(name) {
+  ['nova','historico','comparar'].forEach(n => {
+    const btn = document.getElementById('avalTab' + n.charAt(0).toUpperCase() + n.slice(1));
+    const panel = document.getElementById('avalPanel' + n.charAt(0).toUpperCase() + n.slice(1));
+    if(btn) {
+      btn.style.background = n === name ? 'var(--accent)' : 'transparent';
+      btn.style.color = n === name ? '#fff' : 'var(--text2)';
+    }
+    if(panel) panel.style.display = n === name ? '' : 'none';
+  });
+  if(name === 'historico') renderAvalHistorico();
+  if(name === 'comparar') renderAvalComparar();
+}
+
+function atualizarIMC() {
+  const w = parseFloat(document.getElementById('avalWeight').value);
+  const h = parseFloat(document.getElementById('avalHeight').value);
+  const el = document.getElementById('avalIMC');
+  if(!w || !h) { el.textContent = '—'; el.style.color = 'var(--text)'; return; }
+  const imc = w / Math.pow(h/100, 2);
+  let cor = '#4ade80', cat = 'normal';
+  if(imc < 18.5) { cor = '#5b8cff'; cat = 'baixo'; }
+  else if(imc >= 25 && imc < 30) { cor = '#ffab00'; cat = 'sobrepeso'; }
+  else if(imc >= 30) { cor = '#ff5252'; cat = 'obesidade'; }
+  el.innerHTML = `${imc.toFixed(1)} <span style="font-size:9px;font-weight:500;color:${cor}">· ${cat}</span>`;
+  el.style.color = cor;
+}
+
+async function onAvalFotosSelected(event) {
+  const files = Array.from(event.target.files || []).slice(0, 3);
+  if(!files.length) return;
+  const labels = ['frente','lado','costas'];
+  _avalFotos = [];
+  for(let i = 0; i < files.length; i++) {
+    const dataUrl = await readFileAsDataURL(files[i]);
+    const compressed = await comprimirImagem(dataUrl, 900);
+    _avalFotos.push({ key: labels[i], dataUrl: compressed });
+  }
+  renderAvalFotosPreview();
+}
+
+function renderAvalFotosPreview() {
+  const el = document.getElementById('avalFotosPreview');
+  if(!el) return;
+  el.innerHTML = _avalFotos.map(f => `
+    <div style="position:relative;width:80px">
+      <img src="${f.dataUrl}" style="width:80px;height:100px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border)">
+      <div style="font-size:10px;text-align:center;color:var(--text2);margin-top:3px;text-transform:capitalize">${f.key}</div>
+    </div>`).join('');
+}
+
+function salvarAvaliacao() {
+  if(!_avalStudentId) return;
+  const data = document.getElementById('avalDate').value;
+  const peso = parseFloat(document.getElementById('avalWeight').value) || null;
+  const altura = parseFloat(document.getElementById('avalHeight').value) || null;
+  if(!data || !peso) { showToast('Preencha data e peso'); return; }
+
+  const medidas = {};
+  ['peito','cintura','quadril','pescoco','bracoR','bracoC','coxa','panturrilha'].forEach(k => {
+    const v = parseFloat(document.getElementById('m_' + k).value);
+    if(!isNaN(v)) medidas[k] = v;
+  });
+
+  const fotos = {};
+  _avalFotos.forEach(f => { fotos[f.key] = f.dataUrl; });
+
+  const notes = document.getElementById('avalNotes').value.trim();
+  const imc = (peso && altura) ? +(peso / Math.pow(altura/100, 2)).toFixed(1) : null;
+
+  const assessment = {
+    id: 'ass_' + Date.now(),
+    date: data,
+    weight: peso,
+    height: altura,
+    imc,
+    measurements: medidas,
+    photos: fotos,
+    notes,
+    createdAt: Date.now()
+  };
+
+  const s = students.find(x => x.id === _avalStudentId);
+  if(!s) return;
+  s.assessments = s.assessments || [];
+  if(_avalEditId) {
+    const idx = s.assessments.findIndex(a => a.id === _avalEditId);
+    if(idx >= 0) s.assessments[idx] = { ...assessment, id: _avalEditId };
+  } else {
+    s.assessments.push(assessment);
+  }
+  if(altura) s.height = altura;
+  saveStudents();
+
+  showToast('💾 Avaliação salva');
+  _avalEditId = null;
+  limparFormAvaliacao();
+  avalTab('historico');
+}
+
+function renderAvalHistorico() {
+  const s = students.find(x => x.id === _avalStudentId);
+  const el = document.getElementById('avalHistoricoList');
+  if(!el) return;
+  const list = (s?.assessments || []).slice().sort((a,b) => b.createdAt - a.createdAt);
+  if(list.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px;border:1.5px dashed var(--border);border-radius:12px">Nenhuma avaliação ainda. Toque em <strong>+ Nova</strong> pra começar.</div>';
+    return;
+  }
+  el.innerHTML = list.map(a => {
+    const photos = Object.entries(a.photos || {});
+    const measEntries = Object.entries(a.measurements || {});
+    return `<div class="card" style="margin-bottom:10px;border:1.5px solid #4ade8030">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+        <div>
+          <div style="font-size:13px;font-weight:800">${new Date(a.date + 'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
+          <div style="font-size:11px;color:var(--text2)">${a.weight}kg ${a.imc ? '· IMC '+a.imc : ''} ${a.height ? '· '+a.height+'cm' : ''}</div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button onclick="editarAvaliacao('${a.id}')" style="background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer">✏️</button>
+          <button onclick="deletarAvaliacao('${a.id}')" style="background:none;border:1px solid #ff525240;color:#ff5252;border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer">🗑️</button>
+        </div>
+      </div>
+      ${photos.length ? `<div style="display:flex;gap:4px;margin-bottom:8px">${photos.map(([k,url]) => `<img src="${url}" onclick="ampliarFoto('${url}')" style="width:60px;height:75px;object-fit:cover;border-radius:6px;cursor:pointer">`).join('')}</div>` : ''}
+      ${measEntries.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;font-size:10px">${measEntries.map(([k,v]) => `<span style="background:var(--bg);padding:3px 7px;border-radius:6px;color:var(--text2)"><strong style="color:var(--text)">${k}</strong> ${v}cm</span>`).join('')}</div>` : ''}
+      ${a.notes ? `<div style="font-size:11px;color:var(--text2);margin-top:6px;font-style:italic">"${a.notes}"</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function editarAvaliacao(id) {
+  const s = students.find(x => x.id === _avalStudentId);
+  const a = s?.assessments?.find(x => x.id === id);
+  if(!a) return;
+  _avalEditId = id;
+  document.getElementById('avalDate').value = a.date;
+  document.getElementById('avalWeight').value = a.weight || '';
+  document.getElementById('avalHeight').value = a.height || '';
+  Object.entries(a.measurements || {}).forEach(([k,v]) => {
+    const el = document.getElementById('m_' + k); if(el) el.value = v;
+  });
+  document.getElementById('avalNotes').value = a.notes || '';
+  _avalFotos = Object.entries(a.photos || {}).map(([k, dataUrl]) => ({ key: k, dataUrl }));
+  renderAvalFotosPreview();
+  atualizarIMC();
+  avalTab('nova');
+}
+
+function deletarAvaliacao(id) {
+  if(!confirm('Excluir essa avaliação?')) return;
+  const s = students.find(x => x.id === _avalStudentId);
+  if(!s) return;
+  s.assessments = (s.assessments || []).filter(a => a.id !== id);
+  saveStudents();
+  renderAvalHistorico();
+  showToast('Avaliação excluída');
+}
+
+function ampliarFoto(url) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:#000d;z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<img src="${url}" style="max-width:95vw;max-height:95vh;border-radius:10px">`;
+  document.body.appendChild(overlay);
+}
+
+function renderAvalComparar() {
+  const s = students.find(x => x.id === _avalStudentId);
+  const list = (s?.assessments || []).slice().sort((a,b) => a.createdAt - b.createdAt);
+  const picker = document.getElementById('avalCompararPicker');
+  const result = document.getElementById('avalCompararResult');
+  if(list.length < 2) {
+    picker.innerHTML = '';
+    result.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px;border:1.5px dashed var(--border);border-radius:12px">Precisa de pelo menos 2 avaliações pra comparar.</div>';
+    return;
+  }
+  const opt = list.map(a => `<option value="${a.id}">${new Date(a.date + 'T12:00:00').toLocaleDateString('pt-BR')}</option>`).join('');
+  picker.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><label style="font-size:10px;color:var(--text2);font-weight:700">Antes</label><select id="compA" onchange="executarComparacao()" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:12px;margin-top:3px">${opt}</select></div>
+      <div><label style="font-size:10px;color:var(--text2);font-weight:700">Depois</label><select id="compB" onchange="executarComparacao()" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:8px;font-size:12px;margin-top:3px">${opt}</select></div>
+    </div>`;
+  document.getElementById('compA').value = list[0].id;
+  document.getElementById('compB').value = list[list.length - 1].id;
+  executarComparacao();
+}
+
+function executarComparacao() {
+  const s = students.find(x => x.id === _avalStudentId);
+  if(!s) return;
+  const aId = document.getElementById('compA').value;
+  const bId = document.getElementById('compB').value;
+  const A = s.assessments.find(x => x.id === aId);
+  const B = s.assessments.find(x => x.id === bId);
+  const result = document.getElementById('avalCompararResult');
+  if(!A || !B) { result.innerHTML = ''; return; }
+
+  const diffNumber = (a, b, unit='kg', inverter=false) => {
+    if(a == null || b == null) return '<span style="color:var(--text3)">—</span>';
+    const d = +(b - a).toFixed(1);
+    const positivo = inverter ? d < 0 : d > 0;
+    const c = d === 0 ? 'var(--text2)' : (positivo ? '#4ade80' : '#ff5252');
+    const sign = d > 0 ? '+' : '';
+    return `<span style="color:${c};font-weight:800">${sign}${d}${unit}</span>`;
+  };
+
+  const dias = Math.round((B.createdAt - A.createdAt) / (1000*60*60*24));
+
+  const linhas = [];
+  linhas.push({ label:'Peso', a:A.weight, b:B.weight, unit:'kg', inv:true });
+  linhas.push({ label:'IMC', a:A.imc, b:B.imc, unit:'', inv:true });
+  const allMeasKeys = new Set([...Object.keys(A.measurements||{}), ...Object.keys(B.measurements||{})]);
+  const cinturaKeys = ['cintura','quadril','pescoco']; // diminuir = bom
+  const muscKeys = ['peito','bracoR','bracoC','coxa','panturrilha']; // aumentar = bom
+  [...cinturaKeys, ...muscKeys].forEach(k => {
+    if(allMeasKeys.has(k)) linhas.push({ label:k, a:(A.measurements||{})[k], b:(B.measurements||{})[k], unit:'cm', inv: cinturaKeys.includes(k) });
+  });
+
+  const photosA = Object.entries(A.photos || {});
+  const photosB = Object.entries(B.photos || {});
+
+  result.innerHTML = `
+    <div style="background:var(--bg);border:1.5px solid #4ade8040;border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:6px">📅 ${dias} dias entre as avaliações</div>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead>
+          <tr style="color:var(--text2);font-size:10px;text-transform:uppercase">
+            <th style="text-align:left;padding:4px 0">Medida</th>
+            <th style="text-align:center">Antes</th>
+            <th style="text-align:center">Depois</th>
+            <th style="text-align:right">Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${linhas.map(l => `<tr style="border-top:1px solid var(--border)">
+            <td style="padding:6px 0;text-transform:capitalize">${l.label}</td>
+            <td style="text-align:center;color:var(--text2)">${l.a ?? '—'}${l.a?l.unit:''}</td>
+            <td style="text-align:center">${l.b ?? '—'}${l.b?l.unit:''}</td>
+            <td style="text-align:right">${diffNumber(l.a, l.b, l.unit, l.inv)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    ${(photosA.length || photosB.length) ? `<div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px">
+      <div style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:8px">📸 Fotos lado a lado</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        ${['frente','lado','costas'].map(k => {
+          const a = (A.photos||{})[k]; const b = (B.photos||{})[k];
+          if(!a && !b) return '';
+          return `<div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">${k}</div>
+            <div style="display:flex;gap:3px">
+              ${a ? `<img src="${a}" onclick="ampliarFoto('${a}')" style="width:70px;height:90px;object-fit:cover;border-radius:6px;cursor:pointer">` : '<div style="width:70px;height:90px;background:var(--card);border:1px dashed var(--border);border-radius:6px"></div>'}
+              ${b ? `<img src="${b}" onclick="ampliarFoto('${b}')" style="width:70px;height:90px;object-fit:cover;border-radius:6px;cursor:pointer">` : '<div style="width:70px;height:90px;background:var(--card);border:1px dashed var(--border);border-radius:6px"></div>'}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
+  `;
 }
 
 function abrirModal1RMAluno(studentId) {
@@ -4585,11 +4967,11 @@ function showStudentDetail(id) {
         <div style="font-size:12px;font-weight:800;margin-top:3px">Análise Postural</div>
         <div style="font-size:9px;color:var(--text2)">Foto → PhD analisa</div>
       </button>
-      <button onclick="abrirFerramentaAluno('avaliacao','${s.id}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
-        <div style="position:absolute;top:5px;right:5px;background:#4ade80;color:#0f0f1a;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">EM BREVE</div>
-        <div style="font-size:20px;opacity:.6">📏</div>
-        <div style="font-size:12px;font-weight:800;margin-top:3px;opacity:.7">Avaliação Física</div>
-        <div style="font-size:9px;color:var(--text2)">Medidas + foto</div>
+      <button onclick="abrirFerramentaAluno('avaliacao','${s.id}')" style="background:linear-gradient(135deg,#5b8cff15,#4ade8015);border:1.5px solid #4ade8060;border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
+        ${(s.assessments||[]).length ? `<div style="position:absolute;top:5px;right:5px;background:#4ade80;color:#0f0f1a;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">${s.assessments.length}</div>` : ''}
+        <div style="font-size:20px">📏</div>
+        <div style="font-size:12px;font-weight:800;margin-top:3px">Avaliação Física</div>
+        <div style="font-size:9px;color:var(--text2)">Medidas + fotos · evolução</div>
       </button>
       <button onclick="abrirFerramentaAluno('periodizacao','${s.id}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
         <div style="position:absolute;top:5px;right:5px;background:#4ade80;color:#0f0f1a;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">EM BREVE</div>
