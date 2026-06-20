@@ -8090,6 +8090,19 @@ function _detectAppLink() {
   return 'navegador do app';
 }
 
+// Versão sem cortesia: dispara quando detectar in-app browser pela primeira vez
+function showInstallHelperIfNeeded() {
+  if(_isStandalonePWA()) return false;
+  if(localStorage.getItem('coachorg_install_helper_dismissed')) return false;
+  // Só dispara se for in-app browser (cenário onde NÃO dá pra instalar direto)
+  // OU se for iOS Safari na primeira visita (precisa guiar manualmente)
+  const inApp = _isInAppBrowser();
+  const ios = _isIOS();
+  if(!inApp && !ios) return false;
+  // Mostra a mesma landing, mas sem promessa de cortesia
+  return showCourtesyWelcome(null);
+}
+
 function showCourtesyWelcome(planoLabel) {
   // Se já está instalado como PWA, só ativa silenciosamente
   if(_isStandalonePWA()) return false;
@@ -8106,13 +8119,19 @@ function showCourtesyWelcome(planoLabel) {
   overlay.id = 'courtesyWelcomeOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0a0a14;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:24px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch';
 
-  // ===== HEADER: Comemoração =====
-  const header = `
+  // ===== HEADER: comemorativo se tem cortesia, neutro se é só guia de instalação =====
+  const header = planoLabel ? `
     <div style="text-align:center;margin-bottom:18px;padding-top:10px">
       <div style="font-size:54px;line-height:1">🎁</div>
       <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:-.3px">Cortesia ativada!</div>
-      <div style="font-size:13px;color:#4ade80;font-weight:700;margin-top:3px">${planoLabel || '3 meses grátis Pro'}</div>
+      <div style="font-size:13px;color:#4ade80;font-weight:700;margin-top:3px">${planoLabel}</div>
       <div style="font-size:11px;color:#888;margin-top:6px;line-height:1.5">Antes de começar, instala o app no seu celular pra usar offline e direto no ícone</div>
+    </div>` : `
+    <div style="text-align:center;margin-bottom:18px;padding-top:10px">
+      <div style="font-size:54px;line-height:1">📲</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:-.3px">Bem-vindo ao CoachOrg</div>
+      <div style="font-size:13px;color:#5b8cff;font-weight:700;margin-top:3px">App pra Personal Trainer · BETA</div>
+      <div style="font-size:11px;color:#888;margin-top:6px;line-height:1.5">Pra usar como app de verdade (ícone no celular + offline), segue os passos abaixo</div>
     </div>`;
 
   // ===== INSTRUÇÃO BASEADA NO CONTEXTO =====
@@ -8305,7 +8324,10 @@ function showCourtesyWelcome(planoLabel) {
 function fecharCourtesyWelcome(pulou) {
   const el = document.getElementById('courtesyWelcomeOverlay');
   if(el) el.remove();
-  if(pulou) localStorage.setItem('coachorg_install_dismissed', '1');
+  if(pulou) {
+    localStorage.setItem('coachorg_install_dismissed', '1');
+    localStorage.setItem('coachorg_install_helper_dismissed', '1');
+  }
 }
 
 function copiarLinkCortesia() {
@@ -8509,6 +8531,12 @@ initAuth();
 initOneSignal();
 checkCourtesyExpiration();
 checkCourtesyURL();
+// Se não veio por link de cortesia, ainda guia instalação se for in-app browser ou iOS Safari 1ª visita
+setTimeout(() => {
+  if(!new URLSearchParams(location.search).get('vip')) {
+    showInstallHelperIfNeeded();
+  }
+}, 1200);
 checkPasswordResetURL();
 handleStravaCallback();
 checkBetaBanner();
