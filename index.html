@@ -5491,12 +5491,136 @@ window.addEventListener('appinstalled', () => {
 function showInstallBanner() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   if(isStandalone) return;
-  const banner = document.getElementById('installBanner');
-  if(banner) banner.style.display = 'flex';
+  showStickyInstall();
+  if(!localStorage.getItem('coachorg_install_welcomed')) {
+    setTimeout(() => showWelcomeInstallModal(), 800);
+  }
 }
 function hideInstallBanner() {
-  const banner = document.getElementById('installBanner');
-  if(banner) banner.style.display = 'none';
+  const sticky = document.getElementById('stickyInstall');
+  if(sticky) sticky.style.display = 'none';
+  const old = document.getElementById('installBanner');
+  if(old) old.style.display = 'none';
+}
+
+function _isIOS() {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+function _isAndroid() {
+  return /Android/.test(navigator.userAgent);
+}
+
+function showStickyInstall() {
+  let bar = document.getElementById('stickyInstall');
+  if(!bar) {
+    bar = document.createElement('div');
+    bar.id = 'stickyInstall';
+    bar.style.cssText = 'position:fixed;bottom:75px;left:10px;right:10px;z-index:9998;background:linear-gradient(90deg,#ff5252,#ff1744);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px #ff525260;cursor:pointer';
+    bar.onclick = () => showWelcomeInstallModal();
+    bar.innerHTML = `<span style="font-size:22px;flex-shrink:0">📲</span>
+      <div style="flex:1;color:#fff">
+        <div style="font-size:13px;font-weight:800;line-height:1.2">Adicionar à tela do celular</div>
+        <div style="font-size:11px;opacity:.9;line-height:1.3">Toque aqui pra ver como em 10 segundos</div>
+      </div>
+      <button onclick="event.stopPropagation();dismissStickyInstall()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;font-weight:700;flex-shrink:0">×</button>`;
+    document.body.appendChild(bar);
+  }
+  bar.style.display = 'flex';
+}
+
+function dismissStickyInstall() {
+  const bar = document.getElementById('stickyInstall');
+  if(bar) bar.style.display = 'none';
+  localStorage.setItem('coachorg_install_sticky_dismissed', String(Date.now()));
+}
+
+function showWelcomeInstallModal() {
+  let modal = document.getElementById('welcomeInstallModal');
+  if(!modal) {
+    modal = document.createElement('div');
+    modal.id = 'welcomeInstallModal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)';
+    document.body.appendChild(modal);
+  }
+  const ios = _isIOS();
+  const android = _isAndroid();
+  const stepsHtml = ios ? `
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid #5b8cff40">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#5b8cff;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">1</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Toca no botão de compartilhar</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">📲 Quadrado com seta pra cima, embaixo da tela</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid #5b8cff40">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#5b8cff;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">2</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Rola pra baixo e toca</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">➕ "Adicionar à Tela de Início"</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;border:1.5px solid #4ade8040">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#4ade80;color:#0f0f1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">3</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Confirma "Adicionar"</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">✅ Ícone vai aparecer na tela inicial</div>
+    </div>
+    <div style="background:#ff525215;border:1px solid #ff525240;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:11px;color:#fff;line-height:1.5">⚠️ Tem que ser pelo <strong>Safari</strong>. No Chrome do iPhone não funciona.</div>
+  ` : `
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid #4ade8040">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#4ade80;color:#0f0f1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">1</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Toca no botão abaixo</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">📲 Vai aparecer popup do Chrome</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid #4ade8040">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#4ade80;color:#0f0f1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">2</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Confirma "Instalar"</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">✅ Ícone aparece na tela inicial</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:14px;padding:14px;border:1.5px solid #4ade8040">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="background:#4ade80;color:#0f0f1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0">3</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Pronto, abre como app</div>
+      </div>
+      <div style="font-size:12px;color:#aaa;padding-left:36px">🎉 Funciona offline e em tela cheia</div>
+    </div>
+  `;
+  modal.innerHTML = `<div style="background:#0a0a14;border-radius:24px;padding:24px;max-width:380px;width:100%;border:2px solid #ff525240;box-shadow:0 0 80px #ff525220;max-height:90vh;overflow-y:auto">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="display:inline-block;background:#1a1a2e;border-radius:24px;padding:14px;border:1.5px solid #ff525240">
+        <svg width="56" height="56" viewBox="0 0 100 100">
+          <rect x="22" y="24" width="56" height="12" rx="4" fill="#ff5252"/>
+          <rect x="22" y="40" width="56" height="12" rx="4" fill="#ff5252" opacity="0.7"/>
+          <rect x="22" y="56" width="56" height="12" rx="4" fill="#ff5252" opacity="0.4"/>
+          <rect x="22" y="72" width="56" height="12" rx="4" fill="#ff5252" opacity="0.2"/>
+        </svg>
+      </div>
+      <div style="font-size:22px;font-weight:900;color:#fff;margin-top:14px;letter-spacing:-.5px">📲 Instale na tela inicial</div>
+      <div style="font-size:13px;color:#aaa;margin-top:6px;line-height:1.5">Pra abrir igual app nativo · Funciona offline · 0 espaço de armazenamento</div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="display:inline-block;background:${ios ? '#5b8cff15' : '#4ade8015'};border:1px solid ${ios ? '#5b8cff60' : '#4ade8060'};color:${ios ? '#5b8cff' : '#4ade80'};border-radius:20px;padding:5px 14px;font-size:11px;font-weight:800;letter-spacing:.5px">${ios ? '🍎 NO IPHONE' : android ? '🤖 NO ANDROID' : '💻 NO COMPUTADOR'}</div>
+    </div>
+
+    ${stepsHtml}
+
+    ${!ios ? `<button onclick="triggerInstall();closeWelcomeInstallModal()" style="width:100%;background:#ff5252;color:#fff;border:none;border-radius:14px;padding:14px;font-weight:900;cursor:pointer;font-size:14px;margin-top:14px">📲 INSTALAR AGORA</button>` : ''}
+
+    <button onclick="closeWelcomeInstallModal()" style="width:100%;background:transparent;border:1.5px solid #ffffff20;color:#fff;border-radius:14px;padding:12px;font-weight:600;cursor:pointer;font-size:12px;margin-top:8px">Já entendi · Continuar</button>
+  </div>`;
+  modal.style.display = 'flex';
+  localStorage.setItem('coachorg_install_welcomed', '1');
+}
+
+function closeWelcomeInstallModal() {
+  const modal = document.getElementById('welcomeInstallModal');
+  if(modal) modal.style.display = 'none';
 }
 async function triggerInstall() {
   if(_deferredInstallPrompt) {
