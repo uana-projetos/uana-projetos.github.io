@@ -2384,15 +2384,213 @@ function renderPersonalSelfCare() {
       </div>
     </div>
 
-    <div style="display:flex;gap:8px">
-      <button onclick="selfCareToggleField('workout')" style="flex:1;background:${s.workout ? '#ff525225' : 'var(--bg)'};border:1.5px solid ${s.workout ? 'var(--accent)' : 'var(--border)'};border-radius:10px;padding:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:${s.workout ? 'var(--accent)' : 'var(--text)'};font-size:12px;font-weight:700">
-        ${s.workout ? '✅' : '🏋️'} Meu treino
-      </button>
-      <button onclick="selfCareToggleField('stretch')" style="flex:1;background:${s.stretch ? '#ffab0025' : 'var(--bg)'};border:1.5px solid ${s.stretch ? '#ffab00' : 'var(--border)'};border-radius:10px;padding:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:${s.stretch ? '#ffab00' : 'var(--text)'};font-size:12px;font-weight:700">
-        ${s.stretch ? '✅' : '🧘'} Alongamento
-      </button>
+    <button onclick="selfCareToggleField('workout')" style="width:100%;background:${s.workout ? '#ff525225' : 'var(--bg)'};border:1.5px solid ${s.workout ? 'var(--accent)' : 'var(--border)'};border-radius:10px;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:${s.workout ? 'var(--accent)' : 'var(--text)'};font-size:12px;font-weight:700;margin-bottom:10px">
+      ${s.workout ? '✅ TREINEI HOJE' : '🏋️ Marcar meu treino do dia'}
+    </button>
+
+    <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <span style="font-size:16px">🎓</span>
+        <span style="font-size:12px;font-weight:700;color:var(--text)">Validar SEU treino com PhD AI</span>
+      </div>
+      <textarea id="myWorkoutText" placeholder="Cola seu treino aqui&#10;Ex: Supino reto 4x6&#10;Crucifixo 3x10" rows="3" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:12px;resize:vertical;font-family:inherit;margin-bottom:8px"></textarea>
+      <button onclick="validateMyOwnWorkout()" id="myPhdBtn" style="width:100%;background:linear-gradient(90deg,#5b8cff,#9c5bff);color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;cursor:pointer;font-size:12px">🎓 Validar com Dr. CoachOrg</button>
+      <div id="myPhdResult" style="margin-top:8px"></div>
+    </div>
+
+    <div style="background:var(--bg);border-radius:12px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:16px">🔔</span>
+          <span style="font-size:12px;font-weight:700">Meus lembretes</span>
+        </div>
+        <button onclick="openReminderModal()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">+ Novo</button>
+      </div>
+      <div id="myRemindersList"></div>
     </div>
   </div>`;
+  renderMyReminders();
+}
+
+async function validateMyOwnWorkout() {
+  const txt = document.getElementById('myWorkoutText').value.trim();
+  const btn = document.getElementById('myPhdBtn');
+  const result = document.getElementById('myPhdResult');
+  if(!txt) { showToast('Cola seu treino primeiro'); return; }
+  btn.textContent = '🎓 Analisando...';
+  btn.disabled = true;
+  try {
+    const sb = getSB();
+    if(sb) {
+      const { data, error } = await sb.functions.invoke('phd-workout', {
+        body: { prompt: 'meu treino pessoal — analise', workout: txt, student: { name: 'Eu Personal', goal: 'Hipertrofia/Força' } }
+      });
+      if(!error && data?.insights?.length) {
+        renderPhDInsights(result, data.insights, true);
+      } else {
+        result.innerHTML = '<div style="font-size:11px;color:var(--text2);padding:8px">Não consegui analisar agora — tenta de novo.</div>';
+      }
+    }
+  } catch(e) {
+    result.innerHTML = '<div style="font-size:11px;color:var(--accent);padding:8px">Erro de conexão.</div>';
+  }
+  btn.textContent = '🎓 Validar com Dr. CoachOrg';
+  btn.disabled = false;
+}
+
+function getMyReminders() {
+  const raw = localStorage.getItem('coachorg_my_reminders');
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveMyReminders(r) {
+  localStorage.setItem('coachorg_my_reminders', JSON.stringify(r));
+  scheduleMyReminderNotifications();
+}
+
+const DAYS_LBL = ['D','S','T','Q','Q','S','S'];
+
+function renderMyReminders() {
+  const el = document.getElementById('myRemindersList');
+  if(!el) return;
+  const list = getMyReminders();
+  if(list.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:12px;border:1.5px dashed var(--border);border-radius:8px">Nenhum lembrete. Toca em + Novo</div>';
+    return;
+  }
+  el.innerHTML = list.map((r,i) => `<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:5px">
+    <button onclick="toggleMyReminder(${i})" style="width:36px;height:20px;border-radius:20px;background:${r.on?'#4ade80':'var(--text3)'};border:none;cursor:pointer;position:relative;flex-shrink:0">
+      <span style="position:absolute;top:2px;left:${r.on?'18px':'2px'};width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s"></span>
+    </button>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12px;font-weight:700;color:var(--text);${r.on?'':'opacity:.5'}">${r.icon||'⏰'} ${r.name}</div>
+      <div style="font-size:10px;color:var(--text2)">${r.time} · ${(r.days||[1,2,3,4,5]).map(d=>DAYS_LBL[d]).join(' ')}</div>
+    </div>
+    <button onclick="deleteMyReminder(${i})" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer">×</button>
+  </div>`).join('');
+}
+
+function toggleMyReminder(idx) {
+  const list = getMyReminders();
+  if(!list[idx]) return;
+  list[idx].on = !list[idx].on;
+  saveMyReminders(list);
+  renderMyReminders();
+}
+
+function deleteMyReminder(idx) {
+  if(!confirm('Excluir esse lembrete?')) return;
+  const list = getMyReminders();
+  list.splice(idx, 1);
+  saveMyReminders(list);
+  renderMyReminders();
+}
+
+function openReminderModal() {
+  let modal = document.getElementById('reminderModal');
+  if(!modal) {
+    modal = document.createElement('div');
+    modal.id = 'reminderModal';
+    modal.className = 'modal-overlay';
+    modal.onclick = (e)=>{ if(e.target===modal) modal.classList.remove('show'); };
+    document.body.appendChild(modal);
+  }
+  const presets = ['⏰','💧','💊','🧘','📚','🍎','🏃','🛌','📞','💆'];
+  modal.innerHTML = `<div class="modal" style="max-width:400px;margin:20px auto">
+    <div class="modal-header"><div class="modal-title">Novo Lembrete</div><button class="modal-close" onclick="document.getElementById('reminderModal').classList.remove('show')">×</button></div>
+    <div style="padding:0 20px 22px">
+      <div style="margin-bottom:14px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Ícone</label>
+        <div id="reminderIcons" style="display:flex;flex-wrap:wrap;gap:6px">
+          ${presets.map((p,i)=>`<button onclick="pickReminderIcon('${p}')" data-icon="${p}" style="width:38px;height:38px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;font-size:20px;cursor:pointer">${p}</button>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Nome</label>
+        <input type="text" id="reminderName" placeholder="Ex: Tomar vitamina D" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Horário</label>
+        <input type="time" id="reminderTime" value="08:00" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px">
+      </div>
+      <div style="margin-bottom:18px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Dias</label>
+        <div id="reminderDays" style="display:flex;gap:5px">
+          ${['D','S','T','Q','Q','S','S'].map((l,i)=>`<button onclick="toggleReminderDay(${i})" data-day="${i}" style="flex:1;padding:8px 0;background:${[1,2,3,4,5].includes(i)?'var(--accent)':'var(--card)'};color:${[1,2,3,4,5].includes(i)?'#fff':'var(--text)'};border:1.5px solid ${[1,2,3,4,5].includes(i)?'var(--accent)':'var(--border)'};border-radius:8px;font-weight:700;cursor:pointer">${l}</button>`).join('')}
+        </div>
+      </div>
+      <button onclick="saveNewReminder()" class="btn btn-primary" style="width:100%">Criar lembrete</button>
+    </div>
+  </div>`;
+  modal.classList.add('show');
+  _newReminder = { icon:'⏰', days:[1,2,3,4,5] };
+}
+
+let _newReminder = { icon:'⏰', days:[1,2,3,4,5] };
+
+function pickReminderIcon(icon) {
+  _newReminder.icon = icon;
+  document.querySelectorAll('#reminderIcons button').forEach(b => {
+    b.style.border = b.dataset.icon === icon ? '2px solid var(--accent)' : '1.5px solid var(--border)';
+  });
+}
+
+function toggleReminderDay(d) {
+  _newReminder.days = _newReminder.days || [];
+  const idx = _newReminder.days.indexOf(d);
+  if(idx >= 0) _newReminder.days.splice(idx, 1);
+  else _newReminder.days.push(d);
+  document.querySelectorAll('#reminderDays button').forEach(b => {
+    const day = parseInt(b.dataset.day, 10);
+    const on = _newReminder.days.includes(day);
+    b.style.background = on ? 'var(--accent)' : 'var(--card)';
+    b.style.color = on ? '#fff' : 'var(--text)';
+    b.style.border = on ? '1.5px solid var(--accent)' : '1.5px solid var(--border)';
+  });
+}
+
+function saveNewReminder() {
+  const name = document.getElementById('reminderName').value.trim();
+  const time = document.getElementById('reminderTime').value;
+  if(!name) { showToast('Digite um nome'); return; }
+  if(!time) { showToast('Escolha um horário'); return; }
+  if(!_newReminder.days || _newReminder.days.length === 0) { showToast('Escolha pelo menos 1 dia'); return; }
+  const list = getMyReminders();
+  list.push({ icon: _newReminder.icon, name, time, days: _newReminder.days, on: true });
+  saveMyReminders(list);
+  document.getElementById('reminderModal').classList.remove('show');
+  renderMyReminders();
+  showToast('✅ Lembrete criado');
+}
+
+let _myReminderTimers = [];
+function scheduleMyReminderNotifications() {
+  _myReminderTimers.forEach(t => clearTimeout(t));
+  _myReminderTimers = [];
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date();
+  const dow = now.getDay();
+  const list = getMyReminders();
+  list.forEach(r => {
+    if(!r.on) return;
+    if(!r.days || !r.days.includes(dow)) return;
+    const [h, m] = r.time.split(':').map(Number);
+    const target = new Date();
+    target.setHours(h, m, 0, 0);
+    const ms = target.getTime() - now.getTime();
+    if(ms > 0 && ms < 24*60*60*1000) {
+      const timer = setTimeout(async () => {
+        try {
+          if('serviceWorker' in navigator) {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if(reg) { reg.showNotification(r.icon + ' ' + r.name, { body: 'Lembrete personalizado', icon: './icons/icon-192x192.png', tag: 'reminder-' + r.name, vibrate: [200,100,200] }); return; }
+          }
+          new Notification(r.icon + ' ' + r.name, { body: 'Lembrete personalizado' });
+        } catch(e) {}
+      }, ms);
+      _myReminderTimers.push(timer);
+    }
+  });
 }
 
 function toggleSelfCareCollapsed() {
@@ -2439,6 +2637,7 @@ function renderHome() {
   document.getElementById('todayCount').textContent = todayStudents.length;
   renderTasks();
   renderPersonalSelfCare();
+  scheduleMyReminderNotifications();
   renderBirthdayBanner();
   renderWorkoutExpirationBanner();
   scheduleSessionEndNotifications();
