@@ -594,6 +594,16 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 }
 .menu-mais-btn:hover { background:var(--card); border-color:#5b8cff60; }
 .menu-mais-btn > span { color:var(--text3); font-size:14px; }
+.share-opt-btn {
+  background:var(--bg); border:1.5px solid var(--border); color:var(--text2);
+  border-radius:10px; padding:9px 6px; font-size:11px; font-weight:700;
+  cursor:pointer; line-height:1.2; font-family:inherit;
+}
+.share-opt-btn > span { display:block; font-size:9px; color:var(--text3); font-weight:500; margin-top:2px; }
+.share-opt-btn.active {
+  background:linear-gradient(135deg,#5b8cff20,#9c5bff20);
+  border-color:#5b8cff; color:var(--text);
+}
 .toggle {
   width:48px; height:28px; border-radius:14px; background:#ffffff20;
   position:relative; cursor:pointer; transition:.2s; border:none;
@@ -1253,10 +1263,55 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
           <label style="font-size:10px;color:var(--text2);font-weight:700">Período de evolução</label>
           <input type="text" id="conqPeriodo" placeholder="Ex: 8 semanas" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:9px 11px;font-size:13px;margin-top:3px">
         </div>
+
+        <!-- Formato -->
+        <div style="margin-top:8px">
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Tamanho</label>
+          <div id="conqSizePicker" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px">
+            <button type="button" onclick="setShareOpt('size','sm')" data-opt="size" data-val="sm" class="share-opt-btn">📱 Pequeno<br><span>540×540</span></button>
+            <button type="button" onclick="setShareOpt('size','sq')" data-opt="size" data-val="sq" class="share-opt-btn active">🟨 Padrão<br><span>1080×1080</span></button>
+            <button type="button" onclick="setShareOpt('size','story')" data-opt="size" data-val="story" class="share-opt-btn">📲 Story<br><span>1080×1920</span></button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--text2);font-weight:700">Fundo</label>
+          <div id="conqBgPicker" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px">
+            <button type="button" onclick="setShareOpt('bg','gradient')" data-opt="bg" data-val="gradient" class="share-opt-btn active">🌑 Escuro</button>
+            <button type="button" onclick="setShareOpt('bg','light')" data-opt="bg" data-val="light" class="share-opt-btn">⬜ Claro</button>
+            <button type="button" onclick="setShareOpt('bg','transparent')" data-opt="bg" data-val="transparent" class="share-opt-btn">▢ Transparente</button>
+          </div>
+        </div>
       </div>
 
       <button onclick="gerarConquistaCard()" id="btnGerarConquista" style="width:100%;background:linear-gradient(90deg,#ffab00,#ff6d00);color:#0f0f1a;border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;font-size:14px;margin-top:14px">🏆 Gerar e Compartilhar</button>
       <div style="font-size:9px;color:var(--text3);text-align:center;margin-top:6px">Gera PNG pra Instagram, WhatsApp ou Stories</div>
+    </div>
+  </div>
+
+  <!-- Modal: Opções de Formato (Treino e Semanal) -->
+  <div id="modalSharePicker" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:420px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:800" id="sharePickerTitle">📤 Compartilhar</div>
+        <button onclick="fecharSharePicker()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">×</button>
+      </div>
+
+      <div>
+        <label style="font-size:10px;color:var(--text2);font-weight:700">Tamanho</label>
+        <div id="spkSizePicker" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px;margin-bottom:10px">
+          <button type="button" onclick="setShareOpt('size','sm')" data-opt="size" data-val="sm" class="share-opt-btn">📱 Pequeno<br><span>540×540</span></button>
+          <button type="button" onclick="setShareOpt('size','sq')" data-opt="size" data-val="sq" class="share-opt-btn active">🟨 Padrão<br><span>1080×1080</span></button>
+          <button type="button" onclick="setShareOpt('size','story')" data-opt="size" data-val="story" class="share-opt-btn">📲 Story<br><span>1080×1920</span></button>
+        </div>
+        <label style="font-size:10px;color:var(--text2);font-weight:700">Fundo</label>
+        <div id="spkBgPicker" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px;margin-bottom:14px">
+          <button type="button" onclick="setShareOpt('bg','gradient')" data-opt="bg" data-val="gradient" class="share-opt-btn active">🌑 Escuro</button>
+          <button type="button" onclick="setShareOpt('bg','light')" data-opt="bg" data-val="light" class="share-opt-btn">⬜ Claro</button>
+          <button type="button" onclick="setShareOpt('bg','transparent')" data-opt="bg" data-val="transparent" class="share-opt-btn">▢ Transparente</button>
+        </div>
+      </div>
+
+      <button onclick="confirmarSharePicker()" id="btnConfirmarShare" style="width:100%;background:linear-gradient(90deg,#5b8cff,#9c5bff);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;font-size:14px">📤 Gerar e Compartilhar</button>
     </div>
   </div>
 
@@ -5259,23 +5314,61 @@ function buildMonthCalendar(studentId) {
 
 // SEND WORKOUT VIA WHATSAPP
 // === COMPARTILHAMENTO DE CARDS ===
-function _initShareCanvas() {
+// Estado global do share (escolhido pelo modal de formato)
+let _shareOpts = { size: 'sq', bg: 'gradient' };
+
+function _shareDims(size) {
+  switch(size) {
+    case 'sm':    return { w: 540,  h: 540,  scale: 0.5 };
+    case 'story': return { w: 1080, h: 1920, scale: 1.0 };
+    case 'sq':
+    default:      return { w: 1080, h: 1080, scale: 1.0 };
+  }
+}
+
+function _shareTheme(bg) {
+  // Retorna paleta adaptada ao fundo
+  if(bg === 'light') return { text:'#0f0f1a', sub:'#444', accent:'#ff5252', divider:'#0f0f1a' };
+  return { text:'#fff', sub:'#aaa', accent:'#ff5252', divider:'#fff' };
+}
+
+function _initShareCanvas(opts) {
+  opts = opts || _shareOpts;
+  const { w, h, scale } = _shareDims(opts.size);
   const canvas = document.createElement('canvas');
-  canvas.width = 1080; canvas.height = 1080;
+  canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
-  // Background gradient
-  const bg = ctx.createLinearGradient(0, 0, 1080, 1080);
-  bg.addColorStop(0, '#1a1a2e');
-  bg.addColorStop(1, '#0a0a14');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, 1080, 1080);
-  // Subtle red glow top right
-  const glow = ctx.createRadialGradient(820, 280, 0, 820, 280, 480);
-  glow.addColorStop(0, 'rgba(255,82,82,0.25)');
-  glow.addColorStop(1, 'rgba(255,82,82,0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, 1080, 1080);
-  return { canvas, ctx };
+
+  // Pinta o fundo direto no tamanho real
+  if(opts.bg === 'transparent') {
+    // nada
+  } else if(opts.bg === 'light') {
+    ctx.fillStyle = '#f7f7fb';
+    ctx.fillRect(0, 0, w, h);
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, w, h);
+    bg.addColorStop(0, '#1a1a2e');
+    bg.addColorStop(1, '#0a0a14');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+    const glow = ctx.createRadialGradient(w*0.76, h*0.26, 0, w*0.76, h*0.26, Math.min(w,h)*0.45);
+    glow.addColorStop(0, 'rgba(255,82,82,0.25)');
+    glow.addColorStop(1, 'rgba(255,82,82,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // Aplica transformação pra que o conteúdo desenhado em 1080x1080 vire o tamanho final
+  // 'sq' → escala 1, offsetY 0
+  // 'sm' → escala 0.5, offsetY 0
+  // 'story' → escala 1, offsetY 420 (centraliza o quadrado dentro do 1080x1920)
+  if(opts.size === 'story') {
+    ctx.translate(0, 420);
+  } else if(scale !== 1) {
+    ctx.scale(scale, scale);
+  }
+
+  return { canvas, ctx, w, h, theme: _shareTheme(opts.bg), opts };
 }
 
 function _drawCoachOrgLogo(ctx, x, y, size) {
@@ -5299,83 +5392,77 @@ function _drawCoachOrgLogo(ctx, x, y, size) {
   ctx.globalAlpha = 1;
 }
 
-function _drawCoachOrgFooter(ctx) {
-  // Logo small + text bottom
-  _drawCoachOrgLogo(ctx, 70, 940, 100);
-  ctx.fillStyle = '#fff';
+function _drawCoachOrgFooter(ctx, w, h, theme) {
+  w = w || 1080; h = h || 1080;
+  theme = theme || _shareTheme('gradient');
+  const footY = h - 140;
+  _drawCoachOrgLogo(ctx, 70, footY, 100);
+  ctx.fillStyle = theme.text;
   ctx.font = 'bold 26px Arial, sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText('CoachOrg', 200, 970);
-  ctx.fillStyle = '#999';
+  ctx.fillText('CoachOrg', 200, footY + 30);
+  ctx.fillStyle = theme.sub;
   ctx.font = '18px Arial, sans-serif';
-  ctx.fillText('Organize. Cresça. Não perca aluno.', 200, 1000);
+  ctx.fillText('Organize. Cresça. Não perca aluno.', 200, footY + 60);
 }
 
 function generateTreinoCardBlob(student, workout) {
   return new Promise(resolve => {
-    const { canvas, ctx } = _initShareCanvas();
-    ctx.fillStyle = '#fff';
+    const { canvas, ctx, theme } = _initShareCanvas();
     ctx.textAlign = 'left';
     ctx.font = 'bold 22px Arial, sans-serif';
-    ctx.fillStyle = '#ff5252';
+    ctx.fillStyle = theme.accent;
     ctx.fillText('TREINO PARA', 80, 110);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = theme.text;
     ctx.font = 'bold 64px Arial, sans-serif';
     ctx.fillText((student.name || 'Aluno').toUpperCase(), 80, 180);
     ctx.font = '24px Arial, sans-serif';
-    ctx.fillStyle = '#aaa';
+    ctx.fillStyle = theme.sub;
     const info = [];
     if(student.days?.length) info.push(student.days.length + 'x/semana');
     if(workout.name) info.push(workout.name);
     if(student.goal) info.push(student.goal);
     ctx.fillText(info.join(' · '), 80, 230);
-    // Linha
-    ctx.fillStyle = '#ff5252';
+    ctx.fillStyle = theme.accent;
     ctx.fillRect(80, 270, 200, 4);
-    // Exercícios
     const exercises = (workout.exercises || '').split('\n').filter(l => l.trim()).slice(0, 10);
-    ctx.font = '28px Arial, sans-serif';
-    ctx.fillStyle = '#fff';
     let y = 350;
     exercises.forEach((line, i) => {
-      ctx.fillStyle = '#ff5252';
+      ctx.fillStyle = theme.accent;
       ctx.font = 'bold 28px Arial, sans-serif';
       ctx.fillText(String(i+1).padStart(2, '0') + '.', 80, y);
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = theme.text;
       ctx.font = '28px Arial, sans-serif';
       const text = line.replace(/^\d+\.?\s*/, '');
       ctx.fillText(text.length > 40 ? text.slice(0, 38) + '...' : text, 150, y);
       y += 52;
     });
-    _drawCoachOrgFooter(ctx);
+    _drawCoachOrgFooter(ctx, 1080, 1080, theme);
     canvas.toBlob(blob => resolve(blob), 'image/png');
   });
 }
 
 function generateConquistaCardBlob(studentName, exercise, weight, prevWeight, period) {
   return new Promise(resolve => {
-    const { canvas, ctx } = _initShareCanvas();
-    // Trophy emoji area
+    const { canvas, ctx, theme } = _initShareCanvas();
     ctx.font = 'bold 80px Arial, sans-serif';
     ctx.textAlign = 'center';
+    ctx.fillStyle = theme.text;
     ctx.fillText('🏆', 540, 180);
     ctx.font = 'bold 26px Arial, sans-serif';
     ctx.fillStyle = '#ffab00';
     ctx.fillText('NOVO RECORDE!', 540, 230);
-    // Student name
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = theme.text;
     ctx.font = 'bold 56px Arial, sans-serif';
     ctx.fillText((studentName || 'ALUNO').toUpperCase(), 540, 350);
-    // Exercise
-    ctx.fillStyle = '#999';
+    ctx.fillStyle = theme.sub;
     ctx.font = 'bold 32px Arial, sans-serif';
     ctx.fillText((exercise || '').toUpperCase(), 540, 430);
-    // Weight big
-    ctx.fillStyle = '#ff5252';
+    ctx.fillStyle = theme.accent;
     ctx.font = 'bold 180px Arial, sans-serif';
     ctx.fillText(weight + 'kg', 540, 620);
     if(prevWeight && +prevWeight < +weight) {
-      ctx.fillStyle = '#666';
+      ctx.fillStyle = theme.sub;
       ctx.font = 'bold 24px Arial, sans-serif';
       ctx.fillText('(era ' + prevWeight + 'kg)', 540, 680);
       const diff = +weight - +prevWeight;
@@ -5383,7 +5470,7 @@ function generateConquistaCardBlob(studentName, exercise, weight, prevWeight, pe
       ctx.font = 'bold 38px Arial, sans-serif';
       ctx.fillText('+' + diff + 'kg' + (period ? ' em ' + period : ''), 540, 770);
     }
-    _drawCoachOrgFooter(ctx);
+    _drawCoachOrgFooter(ctx, 1080, 1080, theme);
     canvas.toBlob(blob => resolve(blob), 'image/png');
   });
 }
@@ -5426,27 +5513,27 @@ function generateSemanalCardBlob() {
   const dateStr = startOfWeek.getDate() + '-' + endOfWeek.getDate() + ' ' + monthName;
 
   return new Promise(resolve => {
-    const { canvas, ctx } = _initShareCanvas();
+    const { canvas, ctx, theme, opts } = _initShareCanvas();
+    const cardBg = opts.bg === 'light' ? '#fff' : '#1a1a2e';
     ctx.textAlign = 'left';
-    ctx.fillStyle = '#ff5252';
+    ctx.fillStyle = theme.accent;
     ctx.font = 'bold 22px Arial, sans-serif';
     ctx.fillText('MINHA SEMANA · ' + dateStr.toUpperCase(), 80, 110);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = theme.text;
     ctx.font = 'bold 50px Arial, sans-serif';
     ctx.fillText('Como foi a semana', 80, 180);
-    ctx.fillStyle = '#ff5252';
+    ctx.fillStyle = theme.accent;
     ctx.fillRect(80, 215, 200, 4);
 
-    // 3 stats blocks (presentes / faltas / sessões)
     const stats = [
-      { label: 'PRESENTES', val: presentes, color: '#4ade80', icon: '✓' },
-      { label: 'FALTAS', val: faltas, color: '#ff5252', icon: '✗' },
-      { label: 'SESSÕES', val: sessions, color: '#5b8cff', icon: '🏋️' }
+      { label: 'PRESENTES', val: presentes, color: '#4ade80' },
+      { label: 'FALTAS', val: faltas, color: '#ff5252' },
+      { label: 'SESSÕES', val: sessions, color: '#5b8cff' }
     ];
     stats.forEach((s, i) => {
       const x = 80 + i * 310;
       const y = 270;
-      ctx.fillStyle = '#1a1a2e';
+      ctx.fillStyle = cardBg;
       ctx.strokeStyle = s.color + '40';
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -5463,22 +5550,21 @@ function generateSemanalCardBlob() {
       ctx.fillStyle = s.color;
       ctx.font = 'bold 70px Arial, sans-serif';
       ctx.fillText(String(s.val), x + w/2, y + 85);
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = theme.sub;
       ctx.font = 'bold 18px Arial, sans-serif';
       ctx.fillText(s.label, x + w/2, y + 130);
     });
 
-    // Pódio
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ffab00';
     ctx.font = 'bold 26px Arial, sans-serif';
     ctx.fillText('🏆 PÓDIO DA SEMANA', 80, 510);
-    ctx.fillStyle = '#999';
+    ctx.fillStyle = theme.sub;
     ctx.font = '18px Arial, sans-serif';
     ctx.fillText('Alunos com melhor presença', 80, 540);
 
     if(podio.length === 0) {
-      ctx.fillStyle = '#666';
+      ctx.fillStyle = theme.sub;
       ctx.font = 'italic 24px Arial, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('Sem presenças marcadas ainda', 540, 700);
@@ -5487,8 +5573,7 @@ function generateSemanalCardBlob() {
       const colors = ['#ffd700','#c0c0c0','#cd7f32'];
       podio.forEach((p, i) => {
         const y = 590 + i * 110;
-        // Background card
-        ctx.fillStyle = '#1a1a2e';
+        ctx.fillStyle = cardBg;
         ctx.strokeStyle = colors[i] + '60';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -5501,25 +5586,23 @@ function generateSemanalCardBlob() {
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-        // Medal
+        ctx.fillStyle = theme.text;
         ctx.font = 'bold 48px Arial, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(medals[i], 130, y + 60);
-        // Name
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = theme.text;
         ctx.font = 'bold 30px Arial, sans-serif';
         ctx.textAlign = 'left';
         const firstName = p.name.split(' ').slice(0,2).join(' ');
         const displayName = firstName.length > 22 ? firstName.slice(0,21) + '…' : firstName;
         ctx.fillText(displayName.toUpperCase(), 190, y + 45);
-        // Presence
         ctx.fillStyle = colors[i];
         ctx.font = 'bold 18px Arial, sans-serif';
         ctx.fillText(p.present + '/' + p.total + ' presenças (' + Math.round(p.present/p.total*100) + '%)', 190, y + 72);
       });
     }
 
-    _drawCoachOrgFooter(ctx);
+    _drawCoachOrgFooter(ctx, 1080, 1080, theme);
     canvas.toBlob(blob => resolve(blob), 'image/png');
   });
 }
@@ -5542,15 +5625,66 @@ async function shareBlob(blob, filename, title, text) {
   showToast('📥 Imagem baixada — compartilhe manualmente');
 }
 
+// ===== Compartilhamento com seletor de formato =====
+let _sharePending = null; // { type:'treino'|'semanal', studentId?, workoutIdx? }
+
+function setShareOpt(opt, val) {
+  _shareOpts[opt] = val;
+  // Atualiza todos os botões com data-opt=opt em qualquer modal aberto
+  document.querySelectorAll(`.share-opt-btn[data-opt="${opt}"]`).forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+}
+
+function abrirSharePicker(type, ctx) {
+  _sharePending = Object.assign({ type }, ctx || {});
+  document.getElementById('sharePickerTitle').textContent =
+    type === 'treino' ? '📤 Compartilhar Treino' : '📤 Compartilhar Resumo da Semana';
+  // Reset visual dos botões pro estado atual
+  setShareOpt('size', _shareOpts.size);
+  setShareOpt('bg', _shareOpts.bg);
+  document.getElementById('modalSharePicker').style.display = 'flex';
+}
+
+function fecharSharePicker() {
+  document.getElementById('modalSharePicker').style.display = 'none';
+  _sharePending = null;
+}
+
+async function confirmarSharePicker() {
+  const ctx = _sharePending;
+  if(!ctx) { fecharSharePicker(); return; }
+  const btn = document.getElementById('btnConfirmarShare');
+  btn.textContent = '🎨 Gerando...';
+  btn.disabled = true;
+  try {
+    if(ctx.type === 'treino') {
+      const s = students.find(x => x.id === ctx.studentId);
+      const w = s?.workouts?.[ctx.workoutIdx];
+      if(!s || !w) throw new Error('treino não encontrado');
+      const blob = await generateTreinoCardBlob(s, w);
+      fecharSharePicker();
+      shareBlob(blob, 'treino-' + s.name.split(' ')[0].toLowerCase() + '.png',
+        'Treino de ' + s.name, 'Treino criado no CoachOrg 🏋️');
+    } else if(ctx.type === 'semanal') {
+      const blob = await generateSemanalCardBlob();
+      fecharSharePicker();
+      shareBlob(blob, 'minha-semana.png',
+        'Minha semana como Personal', '📊 Resumo semanal feito no CoachOrg 🏋️');
+    }
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  }
+  btn.textContent = '📤 Gerar e Compartilhar';
+  btn.disabled = false;
+}
+
 async function shareTreinoCard(studentId, workoutIdx) {
   const s = students.find(x => x.id === studentId);
   if(!s) return;
   const w = s.workouts?.[workoutIdx];
   if(!w) return;
-  showToast('🎨 Gerando card...');
-  const blob = await generateTreinoCardBlob(s, w);
-  shareBlob(blob, 'treino-' + s.name.split(' ')[0].toLowerCase() + '.png',
-    'Treino de ' + s.name, 'Treino criado no CoachOrg 🏋️');
+  abrirSharePicker('treino', { studentId, workoutIdx });
 }
 
 let _conquistaStudentId = null;
@@ -5564,6 +5698,9 @@ function shareConquistaCardFromStudent(studentId) {
   document.getElementById('conqPesoAnterior').value = '';
   document.getElementById('conqPeriodo').value = '';
   document.getElementById('modalConquista').style.display = 'flex';
+  // Sincroniza visual dos botões com _shareOpts atual
+  setShareOpt('size', _shareOpts.size);
+  setShareOpt('bg', _shareOpts.bg);
 }
 
 function fecharModalConquista() {
@@ -5597,10 +5734,7 @@ async function gerarConquistaCard() {
 }
 
 async function shareSemanalCard() {
-  showToast('🎨 Gerando resumo da semana...');
-  const blob = await generateSemanalCardBlob();
-  shareBlob(blob, 'minha-semana.png',
-    'Minha semana como Personal', '📊 Resumo semanal feito no CoachOrg 🏋️');
+  abrirSharePicker('semanal');
 }
 
 function sendWorkoutWhatsApp(studentId, workoutIdx) {
@@ -7865,7 +7999,7 @@ function showIOSInstallGuide() {
 })();
 
 // Move modais novos pra fora de qualquer .page — evita modal sumir quando aba inativa
-['modalPostura','modalAvalFisica','modalEditMeal','modalEditSupp','modalMenuMais','modalConquista','modalRegistrarComida'].forEach(id => {
+['modalPostura','modalAvalFisica','modalEditMeal','modalEditSupp','modalMenuMais','modalConquista','modalRegistrarComida','modalSharePicker'].forEach(id => {
   const m = document.getElementById(id);
   if(m && m.parentElement && m.parentElement !== document.body) {
     document.body.appendChild(m);
