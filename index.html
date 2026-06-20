@@ -1157,8 +1157,8 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
       <button onclick="fecharMenuMais();showPage('settings');setTimeout(()=>document.getElementById('referralPanel')?.scrollIntoView({behavior:'smooth'}),200)" style="width:100%;background:linear-gradient(90deg,#ffab00,#ff6d00);color:#0f0f1a;border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:13px;text-align:left;display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <span style="font-size:22px">🎁</span>
         <div>
-          <div>Indique amigo · ganhe R$50</div>
-          <div style="font-size:10px;font-weight:600;opacity:.8">Ele ganha 30 dias grátis, você fica com R$50</div>
+          <div>Indique amigo · ganhe acesso grátis</div>
+          <div style="font-size:10px;font-weight:600;opacity:.8">Vocês dois ganham meses extras no Pro</div>
         </div>
       </button>
 
@@ -1324,25 +1324,63 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 </div>
 
 <div class="page" id="pagePayments">
-  <div class="summary-row">
-    <div class="summary-card">
-      <div class="num" style="color:var(--green)" id="paidCount">0</div>
-      <div class="label">Pagos</div>
+
+  <!-- Header Financeiro -->
+  <div style="margin-bottom:16px">
+    <div style="font-size:20px;font-weight:900;letter-spacing:-.3px">💰 Financeiro</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:2px" id="finPeriodLabel">—</div>
+  </div>
+
+  <!-- Cards principais do mês -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+    <div class="summary-card" style="background:linear-gradient(135deg,#4ade8010,#4ade8025);border-color:#4ade8030">
+      <div style="font-size:10px;color:var(--text2);font-weight:700;letter-spacing:.5px">FATURADO</div>
+      <div class="num" style="color:#4ade80;font-size:22px;margin-top:2px" id="finFaturado">R$0</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px" id="finFaturadoSub">0 alunos pagos</div>
     </div>
-    <div class="summary-card">
-      <div class="num" style="color:var(--orange)" id="unpaidCount">0</div>
-      <div class="label">Pendentes</div>
+    <div class="summary-card" style="background:linear-gradient(135deg,#5b8cff10,#5b8cff25);border-color:#5b8cff30">
+      <div style="font-size:10px;color:var(--text2);font-weight:700;letter-spacing:.5px">PROJETADO</div>
+      <div class="num" style="color:#5b8cff;font-size:22px;margin-top:2px" id="finProjetado">R$0</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px" id="finProjetadoSub">se todos pagarem</div>
+    </div>
+    <div class="summary-card" style="background:linear-gradient(135deg,#ff525210,#ff525225);border-color:#ff525230">
+      <div style="font-size:10px;color:var(--text2);font-weight:700;letter-spacing:.5px">INADIMPLÊNCIA</div>
+      <div class="num" style="color:#ff5252;font-size:22px;margin-top:2px" id="finInad">0%</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px" id="finInadSub">R$0 atrasado</div>
+    </div>
+    <div class="summary-card" style="background:linear-gradient(135deg,#ffab0010,#ffab0025);border-color:#ffab0030">
+      <div style="font-size:10px;color:var(--text2);font-weight:700;letter-spacing:.5px">TICKET MÉDIO</div>
+      <div class="num" style="color:#ffab00;font-size:22px;margin-top:2px" id="finTicket">R$0</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px" id="finTicketSub">por aluno</div>
     </div>
   </div>
-  <div class="stat-bar">
+
+  <!-- Meta do mês (reaproveita) -->
+  <div id="finMetaCard" style="margin-bottom:14px"></div>
+
+  <!-- Comparativo com mês anterior -->
+  <div id="finComparativo" style="margin-bottom:14px"></div>
+
+  <!-- Barra de pagos vs pendentes -->
+  <div class="stat-bar" style="margin-bottom:10px">
     <div class="stat-bar-fill" id="paymentBar" style="width:0%;background:var(--green)"></div>
   </div>
-  <div style="display:flex;gap:8px;margin:16px 0">
-    <button class="btn btn-secondary" style="font-size:13px;padding:10px" onclick="filterPayments('all')">Todos</button>
-    <button class="btn btn-secondary" style="font-size:13px;padding:10px" onclick="filterPayments('pending')">Pendentes</button>
-    <button class="btn btn-secondary" style="font-size:13px;padding:10px" onclick="filterPayments('paid')">Pagos</button>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:14px">
+    <span><strong style="color:#4ade80" id="paidCount">0</strong> pagos</span>
+    <span><strong style="color:#ff6d00" id="unpaidCount">0</strong> pendentes</span>
   </div>
+
+  <!-- Filtros -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;background:var(--card);border-radius:12px;padding:3px;border:1px solid var(--border)">
+    <button id="finFilterAll" onclick="filterPayments('all')" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">Todos</button>
+    <button id="finFilterPending" onclick="filterPayments('pending')" style="flex:1;background:transparent;color:var(--text2);border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">Pendentes</button>
+    <button id="finFilterPaid" onclick="filterPayments('paid')" style="flex:1;background:transparent;color:var(--text2);border:none;border-radius:9px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">Pagos</button>
+  </div>
+
   <div id="paymentsList"></div>
+
+  <!-- Snapshot mensal botão (salva fechamento do mês) -->
+  <div id="finSnapshotZone" style="margin-top:20px"></div>
 </div>
 
 <!-- PAGE: SETTINGS / COACH IA -->
@@ -1806,7 +1844,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   </button>
   <button class="tab-btn" onclick="showPage('payments')" data-page="payments">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-    Pagamentos
+    Financeiro
   </button>
 </div>
 
@@ -4868,16 +4906,67 @@ function renderScheduleList(dow) {
   document.getElementById('daySchedule').innerHTML = html;
 }
 
-// PAYMENTS
+// FINANCEIRO (era PAYMENTS)
 function renderPayments() {
+  // Período: nome do mês atual
+  const hoje = new Date();
+  const mesLabel = hoje.toLocaleString('pt-BR',{month:'long', year:'numeric'});
+  const finLab = document.getElementById('finPeriodLabel');
+  if(finLab) finLab.textContent = mesLabel.charAt(0).toUpperCase() + mesLabel.slice(1);
+
+  // Cálculos
+  const totalAlunos = students.length;
+  const paidStudents = students.filter(s => isPaymentDone(s.id));
+  const unpaidStudents = students.filter(s => !isPaymentDone(s.id));
+  const overdueStudents = unpaidStudents.filter(s => daysUntilPayment(s.payDay) <= 0);
+
+  const faturado = paidStudents.reduce((sum, s) => sum + (parseFloat(s.value) || 0), 0);
+  const pendente = unpaidStudents.reduce((sum, s) => sum + (parseFloat(s.value) || 0), 0);
+  const atrasado = overdueStudents.reduce((sum, s) => sum + (parseFloat(s.value) || 0), 0);
+  const projetado = faturado + pendente;
+  const ticket = totalAlunos > 0 ? Math.round(projetado / totalAlunos) : 0;
+  const inadPct = projetado > 0 ? Math.round((atrasado / projetado) * 100) : 0;
+
+  // Cards principais
+  const setText = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  const fmt = n => 'R$' + Math.round(n).toLocaleString('pt-BR');
+  setText('finFaturado', fmt(faturado));
+  setText('finFaturadoSub', `${paidStudents.length} aluno${paidStudents.length!==1?'s':''} pago${paidStudents.length!==1?'s':''}`);
+  setText('finProjetado', fmt(projetado));
+  setText('finProjetadoSub', 'se todos pagarem');
+  setText('finInad', inadPct + '%');
+  setText('finInadSub', fmt(atrasado) + ' atrasado');
+  setText('finTicket', fmt(ticket));
+  setText('finTicketSub', 'por aluno');
+
+  // Meta na aba Financeiro
+  renderFinMetaCard();
+
+  // Comparativo com mês anterior
+  renderFinComparativo(faturado);
+
+  // Botão snapshot mensal (fecha o mês e salva histórico)
+  renderFinSnapshot();
+
+  // Filtros — atualiza estado visual
+  const setFilterBtn = (id, active) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.style.background = active ? 'var(--accent)' : 'transparent';
+    el.style.color = active ? '#fff' : 'var(--text2)';
+  };
+  setFilterBtn('finFilterAll', currentPayFilter === 'all');
+  setFilterBtn('finFilterPending', currentPayFilter === 'pending');
+  setFilterBtn('finFilterPaid', currentPayFilter === 'paid');
+
   let filtered = [...students];
   if(currentPayFilter === 'paid') filtered = filtered.filter(s=>isPaymentDone(s.id));
   if(currentPayFilter === 'pending') filtered = filtered.filter(s=>!isPaymentDone(s.id));
 
   filtered.sort((a,b)=>(parseInt(a.payDay)||0)-(parseInt(b.payDay)||0));
 
-  const paid = students.filter(s=>isPaymentDone(s.id)).length;
-  const unpaid = students.length - paid;
+  const paid = paidStudents.length;
+  const unpaid = unpaidStudents.length;
   const pct = students.length > 0 ? (paid/students.length*100) : 0;
 
   document.getElementById('paidCount').textContent = paid;
@@ -4910,6 +4999,97 @@ function renderPayments() {
 }
 
 function filterPayments(f) { currentPayFilter = f; renderPayments(); }
+
+// ===== Helpers Financeiro =====
+function renderFinMetaCard() {
+  const el = document.getElementById('finMetaCard');
+  if(!el) return;
+  const goal = parseFloat(localStorage.getItem('coachorg_monthly_goal') || '0');
+  const revenue = students.filter(s=>isPaymentDone(s.id)).reduce((sum,s)=>sum+(parseFloat(s.value)||0),0);
+  if(!goal) {
+    el.innerHTML = `<div onclick="abrirEditarMeta()" style="background:linear-gradient(135deg,#1a1a2e,#0f2a40);border:1.5px dashed #5b8cff60;border-radius:12px;padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🎯</span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:#5b8cff">Define a meta do mês</div>
+        <div style="font-size:10px;color:var(--text2)">Quanto você quer faturar?</div>
+      </div>
+      <span style="color:#5b8cff">›</span>
+    </div>`;
+    return;
+  }
+  const pct = Math.min(100, Math.round((revenue / goal) * 100));
+  const cor = pct >= 100 ? '#4ade80' : pct >= 75 ? '#5b8cff' : pct >= 40 ? '#ffab00' : '#ff5252';
+  const restante = Math.max(0, goal - revenue);
+  el.innerHTML = `<div onclick="abrirEditarMeta()" style="background:linear-gradient(135deg,#1a1a2e,#0f2a40);border:1.5px solid ${cor}40;border-radius:12px;padding:12px 14px;cursor:pointer">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">🎯</span><span style="font-size:12px;font-weight:800">META · ${pct}%</span></div>
+      <div style="font-size:11px;color:var(--text2)">${restante>0 ? 'Faltam R$'+Math.round(restante).toLocaleString('pt-BR') : '✅ atingida'}</div>
+    </div>
+    <div style="height:8px;background:#ffffff10;border-radius:4px;overflow:hidden;margin-bottom:6px">
+      <div style="height:100%;background:${cor};width:${pct}%;transition:.3s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2)">
+      <span>R$ ${Math.round(revenue).toLocaleString('pt-BR')}</span>
+      <span>R$ ${Math.round(goal).toLocaleString('pt-BR')}</span>
+    </div>
+  </div>`;
+}
+
+function renderFinComparativo(faturadoAtual) {
+  const el = document.getElementById('finComparativo');
+  if(!el) return;
+  const history = JSON.parse(localStorage.getItem('coachorg_fin_history') || '{}');
+  // Pega o mês anterior
+  const hoje = new Date();
+  const prev = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+  const prevKey = prev.getFullYear() + '-' + String(prev.getMonth()+1).padStart(2,'0');
+  const prevData = history[prevKey];
+  if(!prevData) {
+    el.innerHTML = '';
+    return;
+  }
+  const delta = faturadoAtual - prevData.faturado;
+  const pct = prevData.faturado > 0 ? Math.round((delta / prevData.faturado) * 100) : 0;
+  const cor = delta >= 0 ? '#4ade80' : '#ff5252';
+  const icon = delta >= 0 ? '↑' : '↓';
+  el.innerHTML = `<div style="background:var(--card);border:1.5px solid ${cor}30;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+    <div style="font-size:22px;color:${cor};font-weight:900">${icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:11px;color:var(--text2)">vs ${prev.toLocaleString('pt-BR',{month:'long'})}</div>
+      <div style="font-size:13px;font-weight:800;color:${cor}">${delta>=0?'+':''}${pct}% <span style="font-size:10px;color:var(--text2);font-weight:600">(${delta>=0?'+':''}R$${Math.round(delta).toLocaleString('pt-BR')})</span></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);text-align:right">R$ ${Math.round(prevData.faturado).toLocaleString('pt-BR')}<br>mês ant.</div>
+  </div>`;
+}
+
+function renderFinSnapshot() {
+  const el = document.getElementById('finSnapshotZone');
+  if(!el) return;
+  const hoje = new Date();
+  const mesKey = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
+  const history = JSON.parse(localStorage.getItem('coachorg_fin_history') || '{}');
+  const saved = history[mesKey];
+  el.innerHTML = `<div style="background:var(--card);border:1.5px dashed var(--border);border-radius:12px;padding:12px 14px">
+    <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:8px">📸 SNAPSHOT MENSAL</div>
+    <div style="font-size:10px;color:var(--text3);line-height:1.5;margin-bottom:10px">${saved ? '✅ Mês fechado em '+new Date(saved.savedAt).toLocaleDateString('pt-BR')+' · R$'+Math.round(saved.faturado).toLocaleString('pt-BR') : 'Fecha o mês pra comparar com os próximos. Bater R$ vira histórico.'}</div>
+    <button onclick="salvarSnapshotMensal()" style="width:100%;background:transparent;border:1.5px solid #5b8cff60;color:#5b8cff;border-radius:10px;padding:9px;font-size:11px;font-weight:700;cursor:pointer">${saved ? '🔄 Atualizar snapshot' : '📸 Fechar mês'}</button>
+  </div>`;
+}
+
+function salvarSnapshotMensal() {
+  const hoje = new Date();
+  const mesKey = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
+  const history = JSON.parse(localStorage.getItem('coachorg_fin_history') || '{}');
+  const faturado = students.filter(s=>isPaymentDone(s.id)).reduce((sum,s)=>sum+(parseFloat(s.value)||0),0);
+  const projetado = students.reduce((sum,s)=>sum+(parseFloat(s.value)||0),0);
+  const alunos = students.length;
+  const pagos = students.filter(s=>isPaymentDone(s.id)).length;
+  history[mesKey] = { faturado, projetado, alunos, pagos, savedAt: Date.now() };
+  localStorage.setItem('coachorg_fin_history', JSON.stringify(history));
+  showToast('📸 Mês ' + mesKey + ' salvo no histórico');
+  renderFinSnapshot();
+  renderFinComparativo(faturado);
+}
 
 // WHATSAPP
 const WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
