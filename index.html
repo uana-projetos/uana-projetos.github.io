@@ -1403,6 +1403,10 @@ body {
         <input type="date" id="fBirthday">
       </div>
       <div class="form-group">
+        <label>Cor do aluno na agenda <span style="font-size:11px;color:var(--text2);font-weight:400">(opcional)</span></label>
+        <div id="fColorPicker" style="display:flex;flex-wrap:wrap;gap:8px;padding:4px 0"></div>
+      </div>
+      <div class="form-group">
         <label>Objetivo</label>
         <select id="fGoal">
           <option value="Hipertrofia">Hipertrofia</option>
@@ -1541,6 +1545,7 @@ body {
 const DAYS_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const DAYS_LETTER = ['D','S','T','Q','Q','S','S'];
 const COLORS = ['#ff5252','#0f3460','#533483','#00c853','#ff6d00','#6c63ff','#00bcd4','#ff4081'];
+const STUDENT_PALETTE = ['#ff5252','#ff6d00','#ffab00','#4ade80','#00c853','#00bcd4','#5b8cff','#0f3460','#9c5bff','#ff4081','#e91e63','#795548'];
 
 let students = JSON.parse(localStorage.getItem('pp_students') || '[]');
 let settings = JSON.parse(localStorage.getItem('pp_settings') || '{"payNotif":true,"trainNotif":true,"whatsappNotif":true,"defaultTime":"06:00","whatsappMsg":"Oi {nome}! Tudo bem? Seu treino está marcado pra hoje às {hora}. Você vem? Me confirma aqui pra eu reservar seu horário! 💪","whatsappPayMsg":"Oi {nome}! Tudo bem? Passando pra lembrar que o pagamento da mensalidade (R${valor}) vence dia {dia}. Qualquer dúvida me chama! 😊","whatsappHoursBefore":2}');
@@ -1888,10 +1893,27 @@ function updatePromoCounter() {
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
-function getColor(name) {
+function getColor(nameOrStudent) {
+  if(typeof nameOrStudent === 'object' && nameOrStudent?.color) return nameOrStudent.color;
+  const name = typeof nameOrStudent === 'string' ? nameOrStudent : (nameOrStudent?.name || '');
   let h = 0;
   for(let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h);
   return COLORS[Math.abs(h) % COLORS.length];
+}
+
+let _selectedStudentColor = '';
+function renderColorPicker(currentColor) {
+  _selectedStudentColor = currentColor || '';
+  const el = document.getElementById('fColorPicker');
+  if(!el) return;
+  el.innerHTML = `<div onclick="pickStudentColor('')" data-c=""
+    style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1a1a2e,#444);border:2px solid ${!_selectedStudentColor?'#fff':'var(--border)'};cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text2)" title="Automática">A</div>` +
+    STUDENT_PALETTE.map(c => `<div onclick="pickStudentColor('${c}')" data-c="${c}"
+      style="width:34px;height:34px;border-radius:50%;background:${c};border:2px solid ${_selectedStudentColor===c?'#fff':'transparent'};cursor:pointer;${_selectedStudentColor===c?'box-shadow:0 0 0 2px var(--accent)':''}"></div>`).join('');
+}
+function pickStudentColor(c) {
+  _selectedStudentColor = c;
+  renderColorPicker(c);
 }
 
 function showToast(msg) {
@@ -2516,7 +2538,7 @@ function renderScheduleGrid(weekDates, todayKey) {
       const endMin = eh*60 + em;
       const topPx = ((sh - minH) * 60 + sm) * (ROW_HEIGHT/60);
       const heightPx = Math.max(28, ((endMin - startMin) * (ROW_HEIGHT/60)) - 2);
-      const color = getColor(s.name);
+      const color = getColor(s);
       const firstName = s.name.split(' ')[0];
       gridBody += `<div onclick="showStudentDetail('${s.id}')"
         style="position:absolute;left:2px;right:2px;top:${topPx}px;height:${heightPx}px;background:${color}cc;color:#fff;border-radius:6px;padding:4px 5px;font-size:10px;font-weight:700;cursor:pointer;overflow:hidden;line-height:1.15;box-shadow:0 1px 3px #00000060;border-left:3px solid ${color}">
@@ -3037,6 +3059,7 @@ function openAddStudent() {
   document.getElementById('fGoal').value = 'Hipertrofia';
   document.getElementById('fLocal').value = '';
   document.getElementById('fBirthday').value = '';
+  renderColorPicker('');
   document.getElementById('fClassType').value = 'Individual';
   document.getElementById('fTime').value = settings.defaultTime || '06:00';
   document.getElementById('fEndTime').value = addMinutes(settings.defaultTime || '06:00', 60);
@@ -3059,6 +3082,7 @@ function editStudent(id) {
   document.getElementById('fPhone').value = s.phone || '';
   document.getElementById('fEmail').value = s.email || '';
   document.getElementById('fBirthday').value = s.birthday || '';
+  renderColorPicker(s.color || '');
   document.getElementById('fGoal').value = s.goal || 'Hipertrofia';
   document.getElementById('fLocal').value = s.local || '';
   document.getElementById('fClassType').value = s.classType || 'Individual';
@@ -3148,6 +3172,7 @@ function saveStudent(e) {
     phone: document.getElementById('fPhone').value.trim(),
     email: document.getElementById('fEmail').value.trim(),
     birthday: document.getElementById('fBirthday').value || '',
+    color: _selectedStudentColor || '',
     endTime: document.getElementById('fEndTime').value || '',
     goal: document.getElementById('fGoal').value,
     local: document.getElementById('fLocal').value.trim(),
