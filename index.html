@@ -943,33 +943,6 @@ body {
     <div style="font-size:11px;color:var(--text2);margin-top:2px">Quem cuida de quem cuida</div>
   </div>
 
-  <!-- 🛠️ FERRAMENTAS DE TREINO -->
-  <div class="section-title" style="margin-bottom:10px">🛠️ Ferramentas PhD</div>
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px">
-    <button onclick="abrirFerramenta('1rm')" class="tool-btn" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:left;cursor:pointer;color:var(--text)">
-      <div style="font-size:22px">🧮</div>
-      <div style="font-size:12px;font-weight:800;margin-top:4px">1RM</div>
-      <div style="font-size:9px;color:var(--text2)">Calcular força máxima</div>
-    </button>
-    <button onclick="abrirFerramenta('postura')" class="tool-btn" style="background:linear-gradient(135deg,#5b8cff15,#9c5bff15);border:1.5px solid #9c5bff60;border-radius:12px;padding:14px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
-      <div style="position:absolute;top:6px;right:6px;background:#9c5bff;color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:8px">IA</div>
-      <div style="font-size:22px">📸</div>
-      <div style="font-size:12px;font-weight:800;margin-top:4px">Análise Postural</div>
-      <div style="font-size:9px;color:var(--text2)">Foto → PhD analisa</div>
-    </button>
-    <button onclick="abrirFerramenta('phd-treino')" class="tool-btn" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:left;cursor:pointer;color:var(--text)">
-      <div style="font-size:22px">🎓</div>
-      <div style="font-size:12px;font-weight:800;margin-top:4px">Validar Treino</div>
-      <div style="font-size:9px;color:var(--text2)">PhD revisa o plano</div>
-    </button>
-    <button onclick="abrirFerramenta('periodizacao')" class="tool-btn" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
-      <div style="position:absolute;top:6px;right:6px;background:#4ade80;color:#0f0f1a;font-size:8px;font-weight:800;padding:1px 5px;border-radius:8px">EM BREVE</div>
-      <div style="font-size:22px;opacity:.6">📅</div>
-      <div style="font-size:12px;font-weight:800;margin-top:4px;opacity:.7">Periodização</div>
-      <div style="font-size:9px;color:var(--text2)">Semana ou mês</div>
-    </button>
-  </div>
-
   <!-- Modal: Análise Postural por foto -->
   <div id="modalPostura" class="modal" style="display:none">
     <div class="modal-content" style="max-width:520px">
@@ -2862,34 +2835,67 @@ function confirmarEAnalisarTreino() {
   validarMeuTreino();
 }
 
-// ====== FERRAMENTAS PhD (aba EU) ======
-function abrirFerramenta(tipo) {
+// ====== FERRAMENTAS PhD ======
+function abrirFerramentaAluno(tipo, studentId) {
   if(tipo === '1rm') {
-    document.getElementById('euSelfCare').scrollIntoView({behavior:'smooth',block:'start'});
-    setTimeout(()=>showToast('Role pra baixo até calculadora 1RM'), 300);
-    return;
-  }
-  if(tipo === 'phd-treino') {
-    escolherModoTreino('analisar');
-    document.getElementById('myTreinoInput')?.scrollIntoView({behavior:'smooth',block:'center'});
+    abrirModal1RMAluno(studentId);
     return;
   }
   if(tipo === 'postura') {
-    abrirModalPostura();
+    abrirModalPostura(studentId);
     return;
   }
-  if(tipo === 'periodizacao') {
+  if(tipo === 'avaliacao' || tipo === 'periodizacao') {
     showToast('🛠️ Em construção — em breve');
     return;
   }
 }
 
-function abrirModalPostura() {
+function abrirModal1RMAluno(studentId) {
+  const s = (window.students || []).find(x => x.id === studentId);
+  const nome = s ? s.name : 'aluno';
+  const html = `<div style="background:var(--card);border:1.5px solid #ffab0040;border-radius:14px;padding:14px;margin-top:10px">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+      <span style="font-size:18px">🧮</span>
+      <span style="font-size:13px;font-weight:800">1RM de ${nome}</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <input type="number" id="rmW_${studentId}" placeholder="Peso (kg)" min="1" max="500" step="0.5" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
+      <input type="number" id="rmR_${studentId}" placeholder="Reps" min="1" max="20" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:9px 11px;font-size:13px;text-align:center">
+      <button onclick="calc1RMAluno('${studentId}')" style="background:#ffab00;color:#0f0f1a;border:none;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer;font-size:12px">Calcular</button>
+    </div>
+    <div id="rmResAluno_${studentId}" style="font-size:11px;color:var(--text2);text-align:center;padding:4px"></div>
+  </div>`;
+  let placeholder = document.getElementById('phdFerramentaResult_' + studentId);
+  if(!placeholder) {
+    placeholder = document.createElement('div');
+    placeholder.id = 'phdFerramentaResult_' + studentId;
+    const section = document.querySelector('#detailContent');
+    if(section) section.insertBefore(placeholder, section.firstChild.nextSibling);
+  }
+  placeholder.innerHTML = html;
+  placeholder.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function calc1RMAluno(studentId) {
+  const w = parseFloat(document.getElementById('rmW_' + studentId).value);
+  const r = parseInt(document.getElementById('rmR_' + studentId).value, 10);
+  const out = document.getElementById('rmResAluno_' + studentId);
+  if(!w || !r) { out.textContent = 'Preencha peso e reps'; return; }
+  const epley = w * (1 + r/30);
+  const brzycki = w * 36 / (37 - r);
+  const lander = (100 * w) / (101.3 - 2.67123 * r);
+  const med = (epley + brzycki + lander) / 3;
+  out.innerHTML = `<div style="font-size:14px;font-weight:800;color:#ffab00">${med.toFixed(1)}kg</div><div style="font-size:9px;color:var(--text3)">Média Epley · Brzycki · Lander</div>`;
+}
+
+function abrirModalPostura(preSelectStudentId) {
   // Popular seletor com EU + lista de alunos
   const sel = document.getElementById('posturaAlvo');
   if(sel) {
     sel.innerHTML = '<option value="eu">💚 Eu mesmo</option>' +
       (window.students || []).map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    if(preSelectStudentId) sel.value = preSelectStudentId;
   }
   // Limpar estado anterior
   _posturaImagens = [];
@@ -4563,6 +4569,34 @@ function showStudentDetail(id) {
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-right:4px"></span>Faltou</span>
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#ffffff10;vertical-align:middle;margin-right:4px"></span>Sem treino</span>
       </div>
+    </div>
+
+    <!-- 🛠️ FERRAMENTAS PhD PRO ALUNO -->
+    <div class="section-title" style="margin-top:18px;margin-bottom:10px">🛠️ Ferramentas PhD</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+      <button onclick="abrirFerramentaAluno('1rm','${s.id}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text)">
+        <div style="font-size:20px">🧮</div>
+        <div style="font-size:12px;font-weight:800;margin-top:3px">1RM</div>
+        <div style="font-size:9px;color:var(--text2)">Força máxima do aluno</div>
+      </button>
+      <button onclick="abrirFerramentaAluno('postura','${s.id}')" style="background:linear-gradient(135deg,#5b8cff15,#9c5bff15);border:1.5px solid #9c5bff60;border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
+        <div style="position:absolute;top:5px;right:5px;background:#9c5bff;color:#fff;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">IA</div>
+        <div style="font-size:20px">📸</div>
+        <div style="font-size:12px;font-weight:800;margin-top:3px">Análise Postural</div>
+        <div style="font-size:9px;color:var(--text2)">Foto → PhD analisa</div>
+      </button>
+      <button onclick="abrirFerramentaAluno('avaliacao','${s.id}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
+        <div style="position:absolute;top:5px;right:5px;background:#4ade80;color:#0f0f1a;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">EM BREVE</div>
+        <div style="font-size:20px;opacity:.6">📏</div>
+        <div style="font-size:12px;font-weight:800;margin-top:3px;opacity:.7">Avaliação Física</div>
+        <div style="font-size:9px;color:var(--text2)">Medidas + foto</div>
+      </button>
+      <button onclick="abrirFerramentaAluno('periodizacao','${s.id}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;text-align:left;cursor:pointer;color:var(--text);position:relative">
+        <div style="position:absolute;top:5px;right:5px;background:#4ade80;color:#0f0f1a;font-size:7px;font-weight:800;padding:1px 5px;border-radius:8px">EM BREVE</div>
+        <div style="font-size:20px;opacity:.6">📅</div>
+        <div style="font-size:12px;font-weight:800;margin-top:3px;opacity:.7">Periodização</div>
+        <div style="font-size:9px;color:var(--text2)">Semana ou mês</div>
+      </button>
     </div>
 
     <div class="card" style="border:1.5px solid #ff525240;background:linear-gradient(135deg,#1a1a2e,#22112a);margin-top:18px">
