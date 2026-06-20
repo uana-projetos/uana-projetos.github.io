@@ -7555,8 +7555,8 @@ async function renderReferralPanel() {
   // Próxima recompensa
   let next = null;
   if(!ouroUnlocked) {
-    if(!prataUnlocked) next = { type:'prata', current: paid, target: prataGoal, label:'PRATA — Anual grátis' };
-    else next = { type:'ouro', current: paid, target: ouroGoal, label:'OURO — Sócio Fundador grátis' };
+    if(!prataUnlocked) next = { type:'prata', current: paid, target: prataGoal, label:'PRATA — 6 meses grátis' };
+    else next = { type:'ouro', current: paid, target: ouroGoal, label:'OURO — 1 ano grátis' };
   }
   const bronzeNext = !bronzeUnlocked ? { current: active, target: bronzeGoal } : null;
 
@@ -7590,8 +7590,8 @@ async function renderReferralPanel() {
     </div>
 
     ${tier('🥉', 'BRONZE', '+1 mês grátis', active, bronzeGoal, bronzeUnlocked, '#cd7f32')}
-    ${tier('🥈', 'PRATA', 'Anual grátis (R$99)', paid, prataGoal, prataUnlocked, '#c0c0c0')}
-    ${tier('🥇', 'OURO', 'Sócio Fundador (R$297)', paid, ouroGoal, ouroUnlocked, '#d4af37')}
+    ${tier('🥈', 'PRATA', '6 meses grátis', paid, prataGoal, prataUnlocked, '#c0c0c0')}
+    ${tier('🥇', 'OURO', '1 ano grátis', paid, ouroGoal, ouroUnlocked, '#d4af37')}
 
     ${next?`<div style="font-size:11px;color:var(--text2);text-align:center;margin-top:8px">Faltam <strong style="color:var(--text)">${next.target-next.current}</strong> amigo${next.target-next.current>1?'s':''} pagante${next.target-next.current>1?'s':''} para ganhar <strong style="color:var(--accent)">${next.label}</strong></div>`:''}
     ${pend>0?`<div style="font-size:11px;color:var(--text2);margin-top:6px;text-align:center">${pend} cadastro${pend>1?'s':''} pendente${pend>1?'s':''} (aguardando assinar)</div>`:''}
@@ -7599,8 +7599,8 @@ async function renderReferralPanel() {
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ffffff08;font-size:11px;color:var(--text2);line-height:1.7">
       <strong style="color:var(--text)">Como funciona:</strong><br>
       🥉 5 amigos que cadastrarem 1 aluno → +1 mês grátis<br>
-      🥈 3 amigos que assinarem → Anual grátis<br>
-      🥇 5 amigos que assinarem → Sócio Fundador grátis
+      🥈 3 amigos que assinarem → 6 meses grátis<br>
+      🥇 5 amigos que assinarem → 1 ano grátis
     </div>`;
 }
 
