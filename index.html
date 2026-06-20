@@ -947,23 +947,16 @@ body {
 
   <div class="section-title" style="margin-top:24px">🏋️ Meu Treino</div>
   <div class="card" style="border:1.5px solid #5b8cff40;background:linear-gradient(135deg,#1a1a2e,#1a2240)">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <span style="font-size:20px">🎓</span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700">Monte SEU treino com Personal PhD</div>
-        <div style="font-size:10px;color:var(--text2)">IA com 30 anos de biomecânica + Schoenfeld + RP</div>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Descreva objetivo OU cola um treino já feito:</div>
-    <textarea id="myTreinoInput" placeholder="Ex: peito e tríceps 45min hipertrofia&#10;OU&#10;Supino reto 4x8&#10;Crucifixo 3x10&#10;..." rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit;margin-bottom:8px"></textarea>
-    <div style="display:flex;gap:6px;margin-bottom:6px">
-      <button onclick="gerarMeuTreino()" id="meuGerBtn" style="flex:1;background:linear-gradient(90deg,var(--accent),#ff6d6d);color:#fff;border:none;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">⚡ Gerar treino</button>
-      <button onclick="validarMeuTreino()" id="meuPhdBtn" style="flex:1;background:linear-gradient(90deg,#5b8cff,#9c5bff);color:#fff;border:none;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">🎓 Personal PhD</button>
-    </div>
-    <div id="meuTreinoResult" style="margin-top:8px"></div>
-    <div style="display:flex;gap:6px;margin-top:8px">
-      <button onclick="salvarMeuTreino()" id="salvarMeuBtn" style="flex:1;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:10px;padding:9px;font-weight:700;cursor:pointer;font-size:11px">💾 Salvar</button>
-      <button onclick="marcarTreinoFeito()" id="marcarFeitoBtn" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px;font-weight:700;cursor:pointer;font-size:11px">✅ Marcar feito hoje</button>
+    <textarea id="myTreinoInput" placeholder="Descreva o objetivo OU cole um treino&#10;Ex: peito e tríceps 45min hipertrofia" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit;margin-bottom:10px"></textarea>
+
+    <button onclick="validarMeuTreino()" id="meuPhdBtn" style="width:100%;background:linear-gradient(90deg,#5b8cff,#9c5bff);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:800;cursor:pointer;font-size:14px;margin-bottom:6px">🎓 Analisar e melhorar com PhD</button>
+    <button onclick="gerarMeuTreino()" id="meuGerBtn" style="width:100%;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:600;cursor:pointer;font-size:11px">⚡ Ou gerar um treino do zero</button>
+
+    <div id="meuTreinoResult" style="margin-top:10px"></div>
+
+    <div style="display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <button onclick="salvarMeuTreino()" id="salvarMeuBtn" style="flex:1;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;cursor:pointer;font-size:11px">💾 Salvar</button>
+      <button onclick="marcarTreinoFeito()" id="marcarFeitoBtn" style="flex:1;background:#4ade80;color:#0f0f1a;border:none;border-radius:10px;padding:9px;font-weight:800;cursor:pointer;font-size:11px">✅ Feito hoje</button>
     </div>
     <div id="treinoMarcadoMsg" style="font-size:10px;color:#4ade80;text-align:center;margin-top:6px"></div>
   </div>
@@ -2717,6 +2710,16 @@ function gerarMeuTreino() {
   }, 500);
 }
 
+function aplicarTreinoSugerido(targetInputId, btn) {
+  const sugestao = document.getElementById('phdSuggested')?.textContent;
+  if(!sugestao) return;
+  const input = document.getElementById(targetInputId);
+  if(!input) return;
+  input.value = sugestao;
+  if(btn) { btn.textContent = '✅ Aplicado'; btn.disabled = true; }
+  showToast('✅ Treino atualizado com as correções do PhD');
+}
+
 async function validarMeuTreino() {
   const txt = document.getElementById('myTreinoInput').value.trim();
   const btn = document.getElementById('meuPhdBtn');
@@ -2731,7 +2734,7 @@ async function validarMeuTreino() {
         body: { prompt: 'meu treino pessoal', workout: txt, student: { name: 'Eu Personal', goal: 'Hipertrofia/Força' } }
       });
       if(!error && data?.insights?.length) {
-        renderPhDInsights(result, data.insights, true);
+        renderPhDInsights(result, data.insights, true, null, data.treino_sugerido, 'myTreinoInput');
       } else {
         result.innerHTML = '<div style="font-size:11px;color:var(--text2);padding:8px">Sem conexão — usando análise local</div>';
       }
@@ -2889,7 +2892,7 @@ async function validateMyOwnWorkout() {
         body: { prompt: 'meu treino pessoal — analise', workout: txt, student: { name: 'Eu Personal', goal: 'Hipertrofia/Força' } }
       });
       if(!error && data?.insights?.length) {
-        renderPhDInsights(result, data.insights, true);
+        renderPhDInsights(result, data.insights, true, null, data.treino_sugerido, 'myWorkoutText');
       } else {
         result.innerHTML = '<div style="font-size:11px;color:var(--text2);padding:8px">Não consegui analisar agora — tenta de novo.</div>';
       }
@@ -4628,7 +4631,7 @@ async function validatePhDWorkout(studentId) {
         }
       });
       if(!error && data && Array.isArray(data.insights) && data.insights.length > 0) {
-        renderPhDInsights(result, data.insights, true);
+        renderPhDInsights(result, data.insights, true, null, data.treino_sugerido, 'aiPromptInput_'+studentId);
         btn.textContent = '🎓 Personal PhD';
         btn.disabled = false;
         return;
@@ -4737,7 +4740,7 @@ async function validatePhDWorkout(studentId) {
   }, 700);
 }
 
-function renderPhDInsights(container, insights, isGemini, summary) {
+function renderPhDInsights(container, insights, isGemini, summary, treinoSugerido, targetInputId) {
   const color = (t) => ({ warn:'#ffab00', ok:'#4ade80', tip:'#5b8cff', science:'#9c5bff', lesao:'#ff5252' }[t] || '#5b8cff');
   const bg = (t) => ({ warn:'#ffab0015', ok:'#4ade8015', tip:'#5b8cff15', science:'#9c5bff15', lesao:'#ff525215' }[t] || '#5b8cff15');
   const badge = isGemini
@@ -4755,6 +4758,11 @@ function renderPhDInsights(container, insights, isGemini, summary) {
         <div style="font-size:12px;font-weight:800;color:${color(ins.type)};margin-bottom:3px">${ins.icon||'💡'} ${ins.title}</div>
         <div style="font-size:11px;color:var(--text);line-height:1.4">${ins.desc}</div>
       </div>`).join('')}
+      ${treinoSugerido ? `<div style="background:linear-gradient(135deg,#4ade8015,#5b8cff15);border:1.5px solid #4ade8050;border-radius:12px;padding:12px;margin-top:10px">
+        <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:8px;display:flex;align-items:center;gap:6px">✨ TREINO SUGERIDO PELO PhD</div>
+        <pre id="phdSuggested" style="font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.6;font-family:inherit;margin:0;background:var(--bg);border-radius:8px;padding:10px">${treinoSugerido.replace(/</g,'&lt;')}</pre>
+        ${targetInputId ? `<button onclick="aplicarTreinoSugerido('${targetInputId}', this)" style="width:100%;background:#4ade80;color:#0f0f1a;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;font-size:12px;margin-top:8px">✅ APLICAR NO TREINO</button>` : ''}
+      </div>` : ''}
       <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px;font-style:italic">${isGemini ? 'Personal PhD — 30 anos em biomecânica e fisiologia · Literatura científica peer-reviewed' : 'Baseado em Schoenfeld 2021 + RP Scientific Principles of Hypertrophy'}</div>
     </div>`;
 }

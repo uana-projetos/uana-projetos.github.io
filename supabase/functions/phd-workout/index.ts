@@ -55,30 +55,33 @@ OBJETIVO DESCRITO PELO PERSONAL: ${req.prompt || 'não informado'}
 TREINO PROPOSTO:
 ${req.workout || 'não informado'}
 
-Analise esse treino como o PhD consultor. Retorne JSON array com 5-8 insights estruturados:
+Analise esse treino como o PhD consultor. Retorne JSON com 2 campos:
 
-[
-  {
-    "type": "ok" | "warn" | "tip" | "science" | "lesao",
-    "icon": "emoji apropriado",
-    "title": "título curto (máx 50 chars)",
-    "desc": "análise/conselho (1-3 frases, sempre que possível citar fonte tipo 'Schoenfeld 2021')"
-  }
-]
+{
+  "insights": [
+    {
+      "type": "ok" | "warn" | "tip" | "science" | "lesao",
+      "icon": "emoji apropriado",
+      "title": "título curto (máx 50 chars)",
+      "desc": "análise/conselho (1-3 frases, sempre que possível citar fonte tipo 'Schoenfeld 2021')"
+    }
+  ],
+  "treino_sugerido": "Versão corrigida do treino, linha por linha no formato 'Exercício SériesxReps (descanso)'. Aplique TODAS as correções dos insights. Mantenha o objetivo original. Inclua finalizador se relevante. Máximo 12 linhas."
+}
 
-Tipos:
+Tipos de insight:
 - "ok": o que está correto
 - "warn": problema de programação (volume, intensidade, etc)
 - "tip": dica de melhoria
 - "science": princípio científico relevante com fonte
 - "lesao": ALERTA de risco de lesão com biomecânica
 
-Priorize: lesão > volume/freq > técnica > otimização.
+Retorne 5-8 insights. Priorize: lesão > volume/freq > técnica > otimização.
 
-Responda APENAS o array JSON. Sem texto antes ou depois.`;
+Responda APENAS o JSON object. Sem texto antes ou depois.`;
 }
 
-async function callGemini(systemPrompt: string, userPrompt: string): Promise<any[]> {
+async function callGemini(systemPrompt: string, userPrompt: string): Promise<any> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
   const res = await fetch(url, {
     method: 'POST',
@@ -123,9 +126,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const insights = await callGemini(SYSTEM_PROMPT, buildUserPrompt(body));
+    const result = await callGemini(SYSTEM_PROMPT, buildUserPrompt(body));
+    const insights = Array.isArray(result) ? result : (result.insights || []);
+    const treino_sugerido = Array.isArray(result) ? null : (result.treino_sugerido || null);
 
-    return new Response(JSON.stringify({ insights, source: 'gemini-phd' }), {
+    return new Response(JSON.stringify({ insights, treino_sugerido, source: 'gemini-phd' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
