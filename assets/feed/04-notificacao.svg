@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#1a2e22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.4">
+      <stop offset="0%" stop-color="#4ade80" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <circle cx="540" cy="400" r="450" fill="url(#glow)"/>
+
+  <g transform="translate(440, 200)">
+    <circle cx="100" cy="100" r="100" fill="#4ade8020" stroke="#4ade80" stroke-width="3"/>
+    <text x="100" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="100">🔔</text>
+  </g>
+
+  <text x="540" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="30" fill="#4ade80" letter-spacing="6">NUNCA PERCA HORÁRIO</text>
+
+  <text x="540" y="600" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="68" fill="#fff">Notificação Inteligente</text>
+
+  <text x="540" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="36" fill="#aaa">Recebe alerta ANTES e DEPOIS</text>
+  <text x="540" y="725" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="36" fill="#aaa">de cada aula no celular.</text>
+
+  <g transform="translate(140, 820)">
+    <rect width="380" height="160" rx="20" fill="#4ade8015" stroke="#4ade8040" stroke-width="2"/>
+    <text x="30" y="50" font-family="Arial, sans-serif" font-weight="800" font-size="22" fill="#4ade80">⏰ ANTES</text>
+    <text x="30" y="95" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#fff">Aula com João</text>
+    <text x="30" y="125" font-family="Arial, sans-serif" font-weight="500" font-size="18" fill="#aaa">em 15 min · 06:00</text>
+  </g>
+
+  <g transform="translate(560, 820)">
+    <rect width="380" height="160" rx="20" fill="#4ade8015" stroke="#4ade8040" stroke-width="2"/>
+    <text x="30" y="50" font-family="Arial, sans-serif" font-weight="800" font-size="22" fill="#4ade80">✓ DEPOIS</text>
+    <text x="30" y="95" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#fff">Aula com João terminou</text>
+    <text x="30" y="125" font-family="Arial, sans-serif" font-weight="500" font-size="18" fill="#aaa">marcar presença →</text>
+  </g>
+</svg>

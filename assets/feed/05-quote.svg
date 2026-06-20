@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0a0a14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff5252"/>
+      <stop offset="100%" stop-color="#ff1744"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+
+  <text x="80" y="280" font-family="Arial, sans-serif" font-weight="900" font-size="220" fill="#ff525230">"</text>
+
+  <g transform="translate(180, 350)">
+    <text font-family="Arial, sans-serif" font-weight="800" font-size="50" fill="#fff">
+      <tspan x="0" dy="0">Recuperei R$800 que</tspan>
+      <tspan x="0" dy="68">tinha esquecido de</tspan>
+      <tspan x="0" dy="68">cobrar no primeiro mês</tspan>
+      <tspan x="0" dy="68" fill="#ff5252">usando o CoachOrg.</tspan>
+    </text>
+  </g>
+
+  <text x="980" y="710" text-anchor="end" font-family="Arial, sans-serif" font-weight="900" font-size="220" fill="#ff525230">"</text>
+
+  <line x1="180" y1="800" x2="900" y2="800" stroke="#ff525240" stroke-width="2"/>
+
+  <g transform="translate(180, 850)">
+    <circle cx="40" cy="40" r="40" fill="url(#accent)"/>
+    <text x="40" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="40" fill="#fff">M</text>
+    <text x="105" y="35" font-family="Arial, sans-serif" font-weight="800" font-size="32" fill="#fff">Personal trainer</text>
+    <text x="105" y="72" font-family="Arial, sans-serif" font-weight="500" font-size="22" fill="#aaa">Testador beta · São Paulo</text>
+  </g>
+</svg>

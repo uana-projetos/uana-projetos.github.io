@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0a1230"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5">
+      <stop offset="0%" stop-color="#5b8cff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#5b8cff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <circle cx="540" cy="400" r="400" fill="url(#glow)"/>
+
+  <g transform="translate(440, 200)">
+    <circle cx="100" cy="100" r="100" fill="#5b8cff15" stroke="#5b8cff" stroke-width="3"/>
+    <text x="100" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="100">🧠</text>
+  </g>
+
+  <text x="540" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="30" fill="#5b8cff" letter-spacing="6">FEATURE EXCLUSIVA</text>
+
+  <text x="540" y="600" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="78" fill="#fff">Coach IA</text>
+
+  <text x="540" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="38" fill="#aaa">Detecta aluno em risco de</text>
+  <text x="540" y="730" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="38" fill="#aaa">cancelar antes da pessoa falar.</text>
+
+  <g transform="translate(140, 820)">
+    <rect width="800" height="160" rx="20" fill="#5b8cff15" stroke="#5b8cff30" stroke-width="2"/>
+    <text x="400" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#fff">A IA olha pra:</text>
+    <text x="400" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-weight="500" font-size="20" fill="#aaa">📉 Frequência de presença</text>
+    <text x="400" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-weight="500" font-size="20" fill="#aaa">💰 Atraso de pagamento  ·  ⏱️ Tempo sem mensagem</text>
+  </g>
+</svg>
