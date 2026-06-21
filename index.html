@@ -1871,6 +1871,11 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
           <button onclick="openLoginModal()" class="btn btn-primary" style="width:auto;padding:9px 24px">Fazer Login / Cadastrar</button>
         </div>
       </div>
+      <div id="logoutCard" style="display:none;margin-bottom:10px">
+        <button onclick="doSignOut()" style="width:100%;background:transparent;border:1.5px solid var(--red);color:var(--red);border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.2px">
+          Sair do Aplicativo
+        </button>
+      </div>
       <div class="card">
         <div class="config-item">
           <div>
@@ -2573,10 +2578,13 @@ function updateAuthUI() {
   _authReady = true;
   if(_splashMinDone) _hideSplash();
   const wall = document.getElementById('loginWall');
+  const logoutCard = document.getElementById('logoutCard');
   if(currentUser) {
     if(wall) wall.style.display = 'none';
+    if(logoutCard) logoutCard.style.display = 'block';
   } else {
-    if(wall) wall.style.display = 'flex';
+    if(wall) { wall.style.display = 'flex'; wall.style.zIndex = '9998'; }
+    if(logoutCard) logoutCard.style.display = 'none';
   }
   const el = document.getElementById('authStatus');
   if(!el) return;
