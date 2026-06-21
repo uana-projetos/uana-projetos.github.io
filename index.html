@@ -2663,8 +2663,10 @@ function renderHomeSaudacao(treinosHoje) {
   let prefix = 'Bom dia';
   if(hour >= 12 && hour < 18) prefix = 'Boa tarde';
   else if(hour >= 18 || hour < 5) prefix = 'Boa noite';
-  const nome = (currentUser?.email || '').split('@')[0].split('.')[0];
-  const nomeCap = nome ? nome.charAt(0).toUpperCase() + nome.slice(1) : '';
+  const nomeCustom = localStorage.getItem('coachorg_trainer_name');
+  const nomeEmail = (currentUser?.email || '').split('@')[0].split('.')[0];
+  const nomeBase = nomeCustom || nomeEmail || '';
+  const nomeCap = nomeBase ? nomeBase.charAt(0).toUpperCase() + nomeBase.slice(1) : '';
   el.innerHTML = `${prefix}${nomeCap ? ', ' + nomeCap : ''} 👋`;
   if(linha) {
     if(treinosHoje > 0) {
@@ -5916,12 +5918,96 @@ function _obNext() {
 function _obPrev() { _obGo(_obCurrent - 1); }
 
 function _obDone() {
+  // Antes de fechar, mostra mini survey se ainda não respondeu
+  if(!localStorage.getItem('coachorg_trainer_name')) {
+    _showObSurvey();
+    return;
+  }
+  _obFinalizar();
+}
+
+function _showObSurvey() {
+  const overlay = document.getElementById('onboardingOverlay');
+  if(!overlay) return;
+  overlay.innerHTML = `
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center;gap:0">
+      <div style="font-size:56px;margin-bottom:20px">✍️</div>
+      <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;letter-spacing:-.3px">Última coisa rápida</div>
+      <div style="font-size:13px;color:#aaa;margin-bottom:28px;line-height:1.5">Deixa a gente personalizar sua experiência</div>
+
+      <div style="width:100%;text-align:left;margin-bottom:20px">
+        <label style="font-size:11px;color:#888;font-weight:700;letter-spacing:.5px;display:block;margin-bottom:6px">COMO QUER QUE TE CHAMEMOS?</label>
+        <input id="obNomeInput" type="text" placeholder="Seu primeiro nome" autocomplete="given-name"
+          style="width:100%;background:#1a1a2e;border:1.5px solid #333;border-radius:12px;color:#fff;padding:14px 16px;font-size:16px;outline:none;-webkit-appearance:none"
+          oninput="this.style.borderColor=this.value?'#ff5252':'#333'">
+      </div>
+
+      <div style="width:100%;text-align:left;margin-bottom:28px">
+        <label style="font-size:11px;color:#888;font-weight:700;letter-spacing:.5px;display:block;margin-bottom:10px">QUANTOS ALUNOS VOCÊ TEM HOJE?</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <button onclick="_obSelectAlunos(this,'0')" data-alunos="0"
+            style="background:#1a1a2e;border:1.5px solid #333;border-radius:12px;color:#aaa;padding:14px 8px;font-size:15px;font-weight:700;cursor:pointer">
+            0<div style="font-size:10px;font-weight:500;margin-top:2px;color:#666">Iniciando</div></button>
+          <button onclick="_obSelectAlunos(this,'1-5')" data-alunos="1-5"
+            style="background:#1a1a2e;border:1.5px solid #333;border-radius:12px;color:#aaa;padding:14px 8px;font-size:15px;font-weight:700;cursor:pointer">
+            1–5<div style="font-size:10px;font-weight:500;margin-top:2px;color:#666">Crescendo</div></button>
+          <button onclick="_obSelectAlunos(this,'6+')" data-alunos="6+"
+            style="background:#1a1a2e;border:1.5px solid #333;border-radius:12px;color:#aaa;padding:14px 8px;font-size:15px;font-weight:700;cursor:pointer">
+            6+<div style="font-size:10px;font-weight:500;margin-top:2px;color:#666">Estabelecido</div></button>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 24px 36px;display:flex;flex-direction:column;gap:10px">
+      <button onclick="_obSurveyDone()" class="ob-btn-next" id="obSurveyBtn" style="opacity:.5;pointer-events:none">🚀 Entrar no CoachOrg</button>
+      <button onclick="_obFinalizar()" class="ob-btn-skip">Pular</button>
+    </div>`;
+
+  // Habilita botão quando nome preenchido
+  const input = document.getElementById('obNomeInput');
+  input?.addEventListener('input', _obCheckSurveyReady);
+  input?.focus();
+}
+
+let _obAlunosSel = null;
+function _obSelectAlunos(btn, val) {
+  _obAlunosSel = val;
+  document.querySelectorAll('[data-alunos]').forEach(b => {
+    b.style.background = '#1a1a2e';
+    b.style.borderColor = '#333';
+    b.style.color = '#aaa';
+  });
+  btn.style.background = '#ff525220';
+  btn.style.borderColor = '#ff5252';
+  btn.style.color = '#fff';
+  _obCheckSurveyReady();
+}
+
+function _obCheckSurveyReady() {
+  const nome = document.getElementById('obNomeInput')?.value?.trim();
+  const btn = document.getElementById('obSurveyBtn');
+  if(!btn) return;
+  const pronto = nome && nome.length >= 2;
+  btn.style.opacity = pronto ? '1' : '.5';
+  btn.style.pointerEvents = pronto ? '' : 'none';
+}
+
+function _obSurveyDone() {
+  const nome = document.getElementById('obNomeInput')?.value?.trim();
+  if(!nome || nome.length < 2) return;
+  localStorage.setItem('coachorg_trainer_name', nome);
+  if(_obAlunosSel) localStorage.setItem('coachorg_trainer_alunos', _obAlunosSel);
+  _obFinalizar(nome);
+}
+
+function _obFinalizar(nome) {
   localStorage.setItem('coachorg_onboarding_done', '1');
+  _obAlunosSel = null;
   const overlay = document.getElementById('onboardingOverlay');
   if(overlay) {
     overlay.style.transition = 'opacity .4s';
     overlay.style.opacity = '0';
-    setTimeout(() => overlay.remove(), 400);
+    setTimeout(() => { overlay.remove(); renderHome(); }, 400);
   }
 }
 
