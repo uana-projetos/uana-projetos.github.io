@@ -2355,6 +2355,8 @@ async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
   if(session?.user) { currentUser = session.user; await checkProStatus(); }
   updateAuthUI();
+  // Processa link de cortesia depois que a sessão foi carregada
+  if(new URLSearchParams(location.search).get('vip')) checkCourtesyURL();
   sb.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user || null;
     if(currentUser) await checkProStatus();
@@ -8652,22 +8654,35 @@ function showCourtesyWelcome(planoLabel) {
   if(overlay) overlay.remove();
   overlay = document.createElement('div');
   overlay.id = 'courtesyWelcomeOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0a0a14;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:24px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch';
+  // Bottom-sheet: fundo semi-transparente, painel sobe de baixo
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;flex-direction:column;justify-content:flex-end;-webkit-overflow-scrolling:touch';
+  overlay.onclick = e => { if(e.target===overlay) fecharCourtesyWelcome(true); };
+  const sheet = document.createElement('div');
+  sheet.style.cssText = 'background:#0f0f1a;border-radius:24px 24px 0 0;padding:20px 18px 32px;max-height:85vh;overflow-y:auto;border-top:1.5px solid #ffffff12;animation:slideUp .3s ease';
 
   // ===== HEADER: comemorativo se tem cortesia, neutro se é só guia de instalação =====
+  const dragHandle = `<div style="width:36px;height:4px;background:#ffffff25;border-radius:2px;margin:0 auto 16px"></div>`;
   const header = planoLabel ? `
-    <div style="text-align:center;margin-bottom:18px;padding-top:10px">
-      <div style="font-size:54px;line-height:1">🎁</div>
-      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:-.3px">Cortesia ativada!</div>
-      <div style="font-size:13px;color:#4ade80;font-weight:700;margin-top:3px">${planoLabel}</div>
-      <div style="font-size:11px;color:#888;margin-top:6px;line-height:1.5">Antes de começar, instala o app no seu celular pra usar offline e direto no ícone</div>
-    </div>` : `
-    <div style="text-align:center;margin-bottom:18px;padding-top:10px">
-      <div style="font-size:54px;line-height:1">📲</div>
-      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:-.3px">Bem-vindo ao CoachOrg</div>
-      <div style="font-size:13px;color:#5b8cff;font-weight:700;margin-top:3px">App pra Personal Trainer · BETA</div>
-      <div style="font-size:11px;color:#888;margin-top:6px;line-height:1.5">Pra usar como app de verdade (ícone no celular + offline), segue os passos abaixo</div>
-    </div>`;
+    ${dragHandle}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="font-size:36px;line-height:1">🎁</div>
+      <div>
+        <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px">Cortesia ativada!</div>
+        <div style="font-size:12px;color:#4ade80;font-weight:700;margin-top:2px">${planoLabel}</div>
+      </div>
+      <button onclick="fecharCourtesyWelcome(true)" style="margin-left:auto;background:transparent;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px 8px">×</button>
+    </div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.5">Instala o app no celular pra usar offline e direto no ícone 👇</div>` : `
+    ${dragHandle}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="font-size:32px;line-height:1">📲</div>
+      <div>
+        <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px">Bem-vindo ao CoachOrg</div>
+        <div style="font-size:12px;color:#5b8cff;font-weight:700;margin-top:2px">App pra Personal Trainer · BETA</div>
+      </div>
+      <button onclick="fecharCourtesyWelcome(true)" style="margin-left:auto;background:transparent;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px 8px">×</button>
+    </div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.5">Pra usar como app no celular (ícone na tela + offline), segue os passos:</div>`;
 
   // ===== INSTRUÇÃO BASEADA NO CONTEXTO =====
   let instrucao = '';
@@ -8844,14 +8859,15 @@ function showCourtesyWelcome(planoLabel) {
 
   // ===== FOOTER: pular ou ajuda =====
   const footer = `
-    <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
-      <button onclick="fecharCourtesyWelcome()" style="background:transparent;border:1.5px solid #ffffff20;color:#fff;border-radius:12px;padding:13px;font-weight:700;cursor:pointer;font-size:13px">Já instalei — Entrar no app</button>
-      <button onclick="fecharCourtesyWelcome(true)" style="background:transparent;border:none;color:#666;font-size:11px;padding:6px;cursor:pointer">Pular por agora</button>
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button onclick="fecharCourtesyWelcome(true)" style="flex:1;background:transparent;border:1.5px solid #ffffff20;color:#aaa;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;font-size:13px">Pular</button>
+      <button onclick="fecharCourtesyWelcome()" style="flex:2;background:var(--accent,#5b8cff);border:none;color:#fff;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;font-size:13px">✅ Já instalei — entrar</button>
     </div>
-    <div style="font-size:9px;color:#444;text-align:center;margin-top:16px;line-height:1.5">Sua cortesia já está ativa nesse navegador.<br>Se instalar depois, mesmo link reativa.</div>
+    ${planoLabel ? '<div style="font-size:9px;color:#444;text-align:center;margin-top:10px;line-height:1.5">Cortesia ativa nesse navegador. Se instalar depois, mesmo link reativa.</div>' : ''}
   `;
 
-  overlay.innerHTML = header + instrucao + footer;
+  sheet.innerHTML = header + instrucao + footer;
+  overlay.appendChild(sheet);
   document.body.appendChild(overlay);
   return true;
 }
@@ -9065,7 +9081,7 @@ updateAdBanner();
 initAuth();
 initOneSignal();
 checkCourtesyExpiration();
-checkCourtesyURL();
+// checkCourtesyURL() agora roda dentro de initAuth() após sessão carregada
 // Se não veio por link de cortesia, ainda guia instalação se for in-app browser ou iOS Safari 1ª visita
 setTimeout(() => {
   if(!new URLSearchParams(location.search).get('vip')) {
