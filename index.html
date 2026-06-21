@@ -8544,12 +8544,18 @@ function _randCourtesyId() {
 }
 
 async function generateCourtesyLink() {
+  const recipientEmail = prompt('📧 Email de quem vai receber o link:\n(só essa pessoa poderá ativar)');
+  if(!recipientEmail || !recipientEmail.includes('@')) {
+    showToast('Email inválido. Tenta de novo 🙏');
+    return;
+  }
+  const emailNorm = recipientEmail.trim().toLowerCase();
+
   const id = _randCourtesyId();
   const now = Date.now();
   const exp = new Date(now + 90*24*60*60*1000).toISOString();
   const url = location.origin + location.pathname + '?vip=' + id;
 
-  // Tenta registrar no Supabase pra ser intransferível
   try {
     const sb = getSB();
     if(sb) {
@@ -8558,6 +8564,7 @@ async function generateCourtesyLink() {
         plan: 'cortesia',
         duration_days: 90,
         created_by_email: currentUser?.email || null,
+        recipient_email: emailNorm,
         expires_at: exp
       });
       if(error) throw error;
@@ -8572,9 +8579,9 @@ async function generateCourtesyLink() {
 
   try {
     await navigator.clipboard.writeText(url);
-    showToast('🎁 Link único copiado! Só uma pessoa pode usar.');
+    showToast('🔒 Link exclusivo copiado! Só ' + emailNorm + ' pode ativar.');
   } catch(e) {
-    prompt('Copie o link (1 uso, 3 meses):', url);
+    prompt('Copie o link (exclusivo para ' + emailNorm + '):', url);
   }
 }
 
@@ -8848,9 +8855,15 @@ async function checkCourtesyURL() {
         return;
       }
       // Já foi usado por outra pessoa?
-      const meuEmail = currentUser?.email || null;
+      const meuEmail = currentUser?.email?.toLowerCase() || null;
       if(link.used_by_email && link.used_by_email !== meuEmail) {
         showToast('🔒 Esse link já foi usado por outra pessoa.');
+        history.replaceState({}, '', location.pathname);
+        return;
+      }
+      // Link exclusivo — verifica email do destinatário
+      if(link.recipient_email && meuEmail && link.recipient_email !== meuEmail) {
+        showToast('🔒 Esse link é exclusivo para outro email. Pede um link seu 🙏');
         history.replaceState({}, '', location.pathname);
         return;
       }
