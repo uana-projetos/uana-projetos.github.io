@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#E8722A">
+<meta name="theme-color" content="#C44B18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CoachOrg">
+<meta name="apple-mobile-web-app-title" content="NOTCH">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<title>CoachOrg</title>
+<title>NOTCH</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
@@ -20,10 +20,10 @@
   --card: #160D06;
   --card2: #201308;
   --card3: #2A190A;
-  --accent: #E8722A;
-  --accent2: #7A2D0A;
-  --accent-dim: #E8722A40;
-  --accent-glow: #E8722A20;
+  --accent: #C44B18;
+  --accent2: #4A1500;
+  --accent-dim: #C44B1840;
+  --accent-glow: #C44B1820;
   --green: #5C8C2E;
   --green-dim: #5C8C2E20;
   --yellow: #FFB830;
@@ -73,7 +73,7 @@
   --shadow-sm: 0 2px 12px #00000060, inset 0 1px 0 #ffffff06;
   --shadow-md: 0 6px 28px #00000070, inset 0 1px 0 #ffffff08;
   --shadow-lg: 0 12px 48px #00000090, inset 0 1px 0 #ffffff0a;
-  --shadow-accent: 0 6px 28px #E8722A40, 0 2px 8px #E8722A20;
+  --shadow-accent: 0 6px 28px #C44B1840, 0 2px 8px #C44B1820;
 
   /* Transições */
   --t-fast: 150ms ease;
@@ -90,9 +90,9 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   background-image:
-    radial-gradient(ellipse 80% 40% at 15% 0%, #E8722A18 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 85% 100%, #7A2D0A12 0%, transparent 60%),
-    radial-gradient(ellipse 50% 30% at 50% 50%, #FF6B3508 0%, transparent 70%);
+    radial-gradient(ellipse 80% 40% at 15% 0%, var(--glow-top,#C44B1818) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 100%, var(--glow-bottom,#4A150012) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, var(--glow-center,#C44B1808) 0%, transparent 70%);
   background-attachment: fixed;
   color: var(--text);
   min-height: 100dvh;
@@ -122,7 +122,7 @@ body {
   opacity: 0;
 }
 .splash-name {
-  font-size: 38px; font-weight: 900; letter-spacing: -1px;
+  font-size: 44px; font-weight: 100; letter-spacing: 14px;
   margin-top: 18px;
   animation: splashFade .6s ease .4s forwards;
   opacity: 0;
@@ -675,7 +675,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 .ob-footer { padding:0 24px 36px; display:flex; flex-direction:column; gap:10px; }
 .ob-btn-next {
   width:100%; padding:16px; border:none; border-radius:14px;
-  background:linear-gradient(90deg,var(--accent),#ff1744);
+  background:linear-gradient(90deg,var(--accent),#8B1500);
   color:#fff; font-size:16px; font-weight:900; cursor:pointer;
   letter-spacing:.2px;
 }
@@ -914,18 +914,16 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 <div id="splash">
   <div class="splash-logo">
     <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="#ff1744"/></linearGradient></defs>
-      <rect fill="#1a1a2e" width="100" height="100" rx="22"/>
-      <rect class="session-bar b1" x="22" y="24" width="56" height="12" rx="4" fill="url(#sg)"/>
-      <circle class="session-check-bg" cx="30" cy="30" r="3.6" fill="#1a1a2e"/>
-      <path class="session-check" d="M27.5 30 L29.5 32 L33 27.5" stroke="url(#sg)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect class="session-bar b2" x="22" y="40" width="56" height="12" rx="4" fill="url(#sg)"/>
-      <rect class="session-bar b3" x="22" y="56" width="56" height="12" rx="4" fill="url(#sg)"/>
-      <rect class="session-bar b4" x="22" y="72" width="56" height="12" rx="4" fill="url(#sg)"/>
+      <rect fill="#060504" width="100" height="100" rx="22"/>
+      <line x1="20" y1="20" x2="20" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="38" y1="20" x2="38" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="56" y1="20" x2="56" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="74" y1="20" x2="74" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="8" y1="86" x2="92" y2="14" stroke="#C44B18" stroke-width="7" stroke-linecap="round"/>
     </svg>
   </div>
-  <div class="splash-name">Coach<span>Org</span></div>
-  <div class="splash-slogan">Organize seus alunos.<br>Cresça como coach.</div>
+  <div class="splash-name">NOTCH</div>
+  <div class="splash-slogan">every session counts.</div>
   <div class="splash-bar"></div>
 </div>
 
@@ -934,17 +932,15 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   <div style="width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center">
     <!-- Logo -->
     <svg width="72" height="72" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:16px">
-      <defs><linearGradient id="wsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="#ff1744"/></linearGradient></defs>
-      <rect fill="#1a1a2e" width="100" height="100" rx="22"/>
-      <rect x="22" y="24" width="56" height="12" rx="4" fill="url(#wsg)"/>
-      <circle cx="30" cy="30" r="3.6" fill="#1a1a2e"/>
-      <path d="M27.5 30 L29.5 32 L33 27.5" stroke="url(#wsg)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect x="22" y="40" width="56" height="12" rx="4" fill="url(#wsg)"/>
-      <rect x="22" y="56" width="56" height="12" rx="4" fill="url(#wsg)"/>
-      <rect x="22" y="72" width="56" height="12" rx="4" fill="url(#wsg)"/>
+      <rect fill="#060504" width="100" height="100" rx="22"/>
+      <line x1="20" y1="20" x2="20" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="38" y1="20" x2="38" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="56" y1="20" x2="56" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="74" y1="20" x2="74" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="8" y1="86" x2="92" y2="14" stroke="#C44B18" stroke-width="7" stroke-linecap="round"/>
     </svg>
-    <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:4px">Coach<span style="color:var(--accent)">Org</span></div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:36px;text-align:center">Organize seus alunos. Cresça como coach.</div>
+    <div style="font-size:32px;font-weight:100;color:#fff;letter-spacing:10px;margin-bottom:4px">NOTCH</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:36px;text-align:center">every session counts.</div>
 
     <!-- Form -->
     <div style="width:100%;margin-bottom:12px">
@@ -958,7 +954,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
     <div id="wallError" style="color:var(--accent);font-size:12px;margin-bottom:8px;display:none;width:100%;text-align:center;padding:8px;background:var(--accent)1a;border-radius:10px"></div>
 
     <button onclick="handleWallLogin()" id="wallLoginBtn"
-      style="width:100%;background:linear-gradient(90deg,var(--accent),#ff1744);color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:.3px">
+      style="width:100%;background:linear-gradient(90deg,var(--accent),#8B1500);color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:.3px">
       Entrar
     </button>
     <button onclick="handleWallSignup()" id="wallSignupBtn"
@@ -971,7 +967,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   </div>
 </div>
 
-<div id="betaBanner" style="display:none;background:linear-gradient(90deg,var(--accent2),var(--accent));padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:11px;color:#fff;font-weight:600;line-height:1.4">
+<div id="betaBanner" style="display:none;background:linear-gradient(90deg,var(--accent2),var(--accent));padding:8px 14px;align-items:center;gap:10px;font-size:11px;color:#fff;font-weight:600;line-height:1.4">
   <span style="font-size:14px;flex-shrink:0">🚧</span>
   <div style="flex:1">App em <strong>BETA</strong> — pode aparecer bug. Manda print pra gente se travar 🙏</div>
   <button onclick="dismissBetaBanner()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;font-weight:700;flex-shrink:0;line-height:1">×</button>
@@ -980,22 +976,15 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 <div class="header">
   <div style="display:flex;align-items:center;gap:12px">
     <svg class="logo-icon" width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="var(--accent)"/>
-          <stop offset="100%" stop-color="#ff1744"/>
-        </linearGradient>
-      </defs>
-      <rect fill="#1a1a2e" width="100" height="100" rx="22"/>
-      <rect class="session-bar b1" x="22" y="24" width="56" height="12" rx="4" fill="url(#logoGrad)"/>
-      <circle class="session-check-bg" cx="30" cy="30" r="3.6" fill="#1a1a2e"/>
-      <path class="session-check" d="M27.5 30 L29.5 32 L33 27.5" stroke="url(#logoGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect class="session-bar b2" x="22" y="40" width="56" height="12" rx="4" fill="url(#logoGrad)"/>
-      <rect class="session-bar b3" x="22" y="56" width="56" height="12" rx="4" fill="url(#logoGrad)"/>
-      <rect class="session-bar b4" x="22" y="72" width="56" height="12" rx="4" fill="url(#logoGrad)"/>
+      <rect fill="#060504" width="100" height="100" rx="22"/>
+      <line x1="20" y1="20" x2="20" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="38" y1="20" x2="38" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="56" y1="20" x2="56" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="74" y1="20" x2="74" y2="80" stroke="#F5F5F7" stroke-width="7" stroke-linecap="round"/>
+      <line x1="8" y1="86" x2="92" y2="14" stroke="#C44B18" stroke-width="7" stroke-linecap="round"/>
     </svg>
     <div>
-      <h1>Coach<span>Org</span></h1>
+      <h1>NOTCH</h1>
       <div class="header-sub" id="headerSub">Carregando...</div>
     </div>
   </div>
@@ -1039,10 +1028,10 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   <!-- 🎯 META FINANCEIRA -->
   <div id="homeMetaCard"></div>
 
-  <div id="installBanner" style="display:none;background:linear-gradient(90deg,var(--accent),#ff1744);border-radius:14px;padding:12px 14px;margin-bottom:12px;color:#fff;display:none;align-items:center;gap:12px;cursor:pointer" onclick="triggerInstall()">
+  <div id="installBanner" style="display:none;background:linear-gradient(90deg,var(--accent),#8B1500);border-radius:14px;padding:12px 14px;margin-bottom:12px;color:#fff;align-items:center;gap:12px;cursor:pointer" onclick="triggerInstall()">
     <div style="font-size:22px;flex-shrink:0">📲</div>
     <div style="flex:1">
-      <div style="font-weight:800;font-size:13px;margin-bottom:2px">Instalar CoachOrg no celular</div>
+      <div style="font-weight:800;font-size:13px;margin-bottom:2px">Instalar NOTCH no celular</div>
       <div style="font-size:11px;opacity:.9">Tela inicial, abre offline, igual app de loja</div>
     </div>
     <button style="background:#fff;color:var(--accent);border:none;border-radius:10px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer;flex-shrink:0" onclick="event.stopPropagation();triggerInstall()">Instalar</button>
@@ -1408,7 +1397,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
         </div>
       </div>
 
-      <div style="text-align:center;font-size:9px;color:var(--text3);padding:8px;margin-top:8px;border-top:1px solid var(--border)">CoachOrg v3.0 Pro</div>
+      <div style="text-align:center;font-size:9px;color:var(--text3);padding:8px;margin-top:8px;border-top:1px solid var(--border)">NOTCH v3.0</div>
     </div>
   </div>
 
@@ -1755,6 +1744,21 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
     </summary>
 
     <div style="margin-top:10px">
+
+      <!-- 🎨 TEMA -->
+      <div class="card" style="margin-bottom:10px;cursor:pointer" onclick="abrirTemasSheet()">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px">🎨 Tema do App</div>
+            <div style="font-size:12px;color:var(--text2)" id="temaAtualNome">Premium Utopia</div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center">
+            <div id="temaPreviewDots" style="display:flex;gap:4px"></div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+
       <!-- Notificações -->
       <div class="card" style="margin-bottom:10px">
         <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:10px">🔔 Notificações</div>
@@ -1791,12 +1795,6 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
           </div>
           <input type="time" value="06:00" id="defaultTime" style="background:var(--bg);border:1px solid #ffffff15;color:var(--text);padding:8px 12px;border-radius:10px;font-size:13px" onchange="saveSetting('defaultTime',this.value)">
         </div>
-      </div>
-
-      <!-- 🎨 PALETA DE CORES -->
-      <div class="card" style="margin-bottom:10px">
-        <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:12px">🎨 Tema Visual</div>
-        <div id="paletaGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
       </div>
 
       <!-- WhatsApp -->
@@ -1895,7 +1893,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
         <div class="config-item" style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
           <div>
             <div class="config-label">Versão do App</div>
-            <div class="config-desc" id="appVersionLabel">v109</div>
+            <div class="config-desc" id="appVersionLabel">v120</div>
           </div>
           <button class="btn btn-secondary" style="width:auto;padding:7px 14px;font-size:12px" onclick="forcarAtualizacao()">Atualizar</button>
         </div>
@@ -2001,7 +1999,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   </div>
 
   <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:24px;padding-bottom:80px">
-    CoachOrg v3.0 Pro · IA + WhatsApp + Agenda + Financeiro<br>
+    NOTCH v3.0 · IA + WhatsApp + Agenda + Financeiro<br>
     <button onclick="openTermosModal()" style="background:none;border:none;color:#5b8cff;font-size:10px;cursor:pointer;margin-top:6px;text-decoration:underline">📄 Termos de Uso & Privacidade (LGPD)</button>
   </div>
 </div>
@@ -2037,7 +2035,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
       <button class="modal-close" onclick="closeRatingModal()">×</button>
     </div>
     <div style="padding:0 20px 24px">
-      <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5">Você tá usando o CoachOrg há alguns dias. Como tá sendo a experiência?</p>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5">Você tá usando o NOTCH há alguns dias. Como tá sendo a experiência?</p>
 
       <div style="margin-bottom:18px">
         <div style="font-size:12px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Sua nota:</div>
@@ -2066,7 +2064,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
 <div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
   <div class="modal" style="max-width:380px;margin:20px auto">
     <div class="modal-header">
-      <div class="modal-title">Entrar no CoachOrg</div>
+      <div class="modal-title">Entrar no NOTCH</div>
       <button class="modal-close" onclick="closeLoginModal()">×</button>
     </div>
     <div style="padding:0 20px 24px">
@@ -2092,6 +2090,17 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   </div>
 </div>
 
+<!-- TEMAS SHEET -->
+<div id="temasSheet" style="display:none;position:fixed;inset:0;z-index:500;background:#00000088;align-items:flex-end;justify-content:center" onclick="if(event.target===this)fecharTemasSheet()">
+  <div style="background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:500px;padding:20px 20px max(24px,env(safe-area-inset-bottom));animation:slideUp .3s cubic-bezier(.32,.72,0,1)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div style="font-size:17px;font-weight:800">🎨 Escolher Tema</div>
+      <button onclick="fecharTemasSheet()" style="background:var(--card2);border:none;color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div id="temasLista" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+
 <!-- UPGRADE MODAL -->
 <div class="upgrade-modal" id="upgradeModal" onclick="if(event.target===this)closeUpgrade()">
   <div class="upgrade-sheet" style="max-height:92vh;overflow-y:auto">
@@ -2104,7 +2113,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
     </div>
 
     <div style="text-align:center;font-size:24px;margin-bottom:6px">🚀</div>
-    <h2 style="text-align:center;margin-bottom:4px">Desbloqueie o CoachOrg Pro</h2>
+    <h2 style="text-align:center;margin-bottom:4px">Desbloqueie o NOTCH Pro</h2>
     <p style="text-align:center;margin-bottom:18px;font-size:13px">Escolha o plano ideal pra você:</p>
 
     <!-- PLANO 1: MENSAL (caro de propósito) -->
@@ -2449,9 +2458,9 @@ const DAYS_LETTER = ['D','S','T','Q','Q','S','S'];
 const COLORS = ['#ff5252','#0f3460','#533483','#00c853','#ff6d00','#6c63ff','#00bcd4','#ff4081'];
 const STUDENT_PALETTE = ['#ff5252','#ff6d00','#ffab00','#4ade80','#00c853','#00bcd4','#5b8cff','#0f3460','#9c5bff','#ff4081','#e91e63','#795548'];
 
-let students = JSON.parse(localStorage.getItem('pp_students') || '[]');
+let students = [];
 let settings = JSON.parse(localStorage.getItem('pp_settings') || '{"payNotif":true,"trainNotif":true,"whatsappNotif":true,"defaultTime":"06:00","whatsappMsg":"Oi {nome}! Tudo bem? Seu treino está marcado pra hoje às {hora}. Você vem? Me confirma aqui pra eu reservar seu horário! 💪","whatsappPayMsg":"Oi {nome}! Tudo bem? Passando pra lembrar que o pagamento da mensalidade (R${valor}) vence dia {dia}. Qualquer dúvida me chama! 😊","whatsappHoursBefore":2}');
-let attendance = JSON.parse(localStorage.getItem('pp_attendance') || '{}');
+let attendance = {};
 const BETA_MODE = true;
 const FREE_LIMIT = BETA_MODE ? 999 : 3;
 // 🔒 Pra liberar indicação quando o app estiver 100%, trocar pra false
@@ -2470,16 +2479,38 @@ function getSB() {
   return _sb;
 }
 
+function _ensureSameUserData(userId) {
+  // Se os dados locais são de outro usuário, zera tudo antes de carregar
+  const ownerId = localStorage.getItem('coachorg_user_id');
+  if(ownerId && ownerId !== userId) {
+    students = [];
+    attendance = {};
+    localStorage.removeItem('pp_students');
+    localStorage.removeItem('pp_attendance');
+    localStorage.removeItem('pp_updated_at');
+  }
+  localStorage.setItem('coachorg_user_id', userId);
+}
+
 async function initAuth() {
   const sb = getSB();
   if(!sb) { updateAuthUI(); return; }
   const { data: { session } } = await sb.auth.getSession();
-  if(session?.user) { currentUser = session.user; await checkProStatus(); await loadFromCloud(); }
+  if(session?.user) {
+    currentUser = session.user;
+    _ensureSameUserData(currentUser.id);
+    await checkProStatus();
+    await loadFromCloud();
+  }
   updateAuthUI();
   if(new URLSearchParams(location.search).get('vip')) checkCourtesyURL();
   sb.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user || null;
-    if(currentUser) { await checkProStatus(); await loadFromCloud(); }
+    if(currentUser) {
+      _ensureSameUserData(currentUser.id);
+      await checkProStatus();
+      await loadFromCloud();
+    }
     updateAuthUI();
   });
 }
@@ -2518,16 +2549,40 @@ async function checkProStatus() {
   await checkReferralReward();
 }
 
+function traduzirErroSupabase(msg) {
+  if(!msg) return 'Erro desconhecido. Tente novamente.';
+  const m = msg.toLowerCase();
+  if(m.includes('email not confirmed')) return '📧 Email ainda não confirmado. Verifique sua caixa de entrada e o spam. Clique no link que enviamos para ativar sua conta.';
+  if(m.includes('invalid login credentials') || m.includes('invalid credentials')) return 'Email ou senha incorretos. Verifique e tente de novo.';
+  if(m.includes('user already registered') || m.includes('already registered')) return 'Este email já tem uma conta. Clique em "Entrar" e use sua senha.';
+  if(m.includes('email rate limit') || m.includes('rate limit')) return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+  if(m.includes('invalid email') || m.includes('unable to validate email')) return 'Formato de email inválido. Verifique o que digitou.';
+  if(m.includes('password')) return 'A senha deve ter pelo menos 6 caracteres.';
+  if(m.includes('network') || m.includes('fetch')) return 'Sem conexão. Verifique sua internet e tente novamente.';
+  if(m.includes('signup disabled') || m.includes('signups not allowed')) return 'Cadastro temporariamente desabilitado. Entre em contato conosco.';
+  return msg;
+}
+
 async function signInWithEmail(email, password) {
   const sb = getSB();
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  return error ? { error: error.message } : { user: data.user };
+  if(!sb) return { error: 'Sem conexão com o servidor. Verifique sua internet e recarregue o app.' };
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    return error ? { error: traduzirErroSupabase(error.message) } : { user: data.user };
+  } catch(e) {
+    return { error: 'Erro de conexão. Verifique sua internet e tente novamente.' };
+  }
 }
 
 async function signUpWithEmail(email, password) {
   const sb = getSB();
-  const { data, error } = await sb.auth.signUp({ email, password });
-  return error ? { error: error.message } : { user: data.user };
+  if(!sb) return { error: 'Sem conexão com o servidor. Verifique sua internet e recarregue o app.' };
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password });
+    return error ? { error: traduzirErroSupabase(error.message) } : { user: data.user, session: data.session };
+  } catch(e) {
+    return { error: 'Erro de conexão. Verifique sua internet e tente novamente.' };
+  }
 }
 
 async function handleForgotPassword() {
@@ -2576,8 +2631,29 @@ async function doSignOut() {
   const sb = getSB();
   if(sb) await sb.auth.signOut();
   currentUser = null;
+  students = [];
+  attendance = {};
+  // Limpa dados locais — só existem quando logado
+  localStorage.removeItem('pp_students');
+  localStorage.removeItem('pp_attendance');
+  localStorage.removeItem('pp_updated_at');
   updateAuthUI();
+  renderHome();
+  renderStudents();
+  if(typeof renderPayments==='function') renderPayments();
+  if(typeof renderSchedule==='function') renderSchedule();
   showToast('Sessão encerrada');
+}
+
+function abrirTemasSheet() {
+  renderPaletaGrid();
+  var s = document.getElementById('temasSheet');
+  if(s) s.style.display='flex';
+}
+
+function fecharTemasSheet() {
+  var s = document.getElementById('temasSheet');
+  if(s) s.style.display='none';
 }
 
 async function forcarAtualizacao() {
@@ -2602,6 +2678,8 @@ function updateAuthUI() {
   if(currentUser) {
     if(wall) wall.style.display = 'none';
     if(logoutCard) logoutCard.style.display = 'block';
+    // Mostra onboarding após primeiro login (não pode aparecer antes da auth)
+    if(typeof checkOnboarding === 'function') checkOnboarding();
   } else {
     if(wall) { wall.style.display = 'flex'; wall.style.zIndex = '9998'; }
     if(logoutCard) logoutCard.style.display = 'none';
@@ -2670,11 +2748,17 @@ async function handleSignup() {
   if(pass.length<6) { errEl.textContent='Senha deve ter pelo menos 6 caracteres'; errEl.style.display='block'; return; }
   btn.textContent='Criando conta...'; btn.disabled=true;
   const { error } = await signUpWithEmail(email, pass);
+  if(error) { btn.textContent='Criar conta nova'; btn.disabled=false; errEl.textContent=error; errEl.style.display='block'; return; }
+  const { error: loginError } = await signInWithEmail(email, pass);
   btn.textContent='Criar conta nova'; btn.disabled=false;
-  if(error) { errEl.textContent=error; errEl.style.display='block'; return; }
+  if(loginError && loginError.includes('confirmado')) {
+    errEl.innerHTML='📧 <strong>Conta criada!</strong> Verifique seu email e clique no link de confirmação. Depois volte e clique em <strong>Entrar</strong>.';
+    errEl.style.color='var(--green)'; errEl.style.background='var(--green-dim)'; errEl.style.display='block'; return;
+  }
+  if(loginError) { errEl.textContent=loginError; errEl.style.display='block'; return; }
   errEl.style.display='none';
   closeLoginModal();
-  showToast('✅ Conta criada! Verifique seu email para confirmar.');
+  showToast('✅ Conta criada! Bem-vindo(a) ao NOTCH!');
   // Registrar indicação se veio por link de referral
   const refCode = localStorage.getItem('coachorg_ref_by');
   if(refCode) {
@@ -2689,7 +2773,7 @@ async function handleSignup() {
           );
           localStorage.removeItem('coachorg_ref_by');
           // Amigo ganha 7 dias extras → ativa Free estendido (sem custo)
-          showToast('🎁 Você foi indicado por um colega! Aproveite o CoachOrg.');
+          showToast('🎁 Você foi indicado por um colega! Aproveite o NOTCH.');
         }
       }
     } catch(e) { /* código inválido */ }
@@ -2730,11 +2814,29 @@ async function handleWallSignup() {
   if(!email||!pass) { errEl.textContent='Preencha email e senha'; errEl.style.display='block'; return; }
   if(pass.length<6) { errEl.textContent='Senha deve ter pelo menos 6 caracteres'; errEl.style.display='block'; return; }
   btn.textContent='Criando conta...'; btn.disabled=true;
-  const { error } = await signUpWithEmail(email, pass);
+  const { error, session } = await signUpWithEmail(email, pass);
+  if(error) {
+    btn.textContent='Criar conta nova'; btn.disabled=false;
+    errEl.textContent=error; errEl.style.display='block'; return;
+  }
+  // Tenta login imediato (funciona se confirmação de email estiver desabilitada no Supabase)
+  const { error: loginError } = await signInWithEmail(email, pass);
   btn.textContent='Criar conta nova'; btn.disabled=false;
-  if(error) { errEl.textContent=error; errEl.style.display='block'; return; }
   errEl.style.display='none';
-  showToast('✅ Conta criada! Verifique seu email para confirmar.');
+  if(loginError && loginError.includes('confirmado')) {
+    // Email confirmation required — mostrar instrução clara
+    errEl.innerHTML = '📧 <strong>Conta criada!</strong> Verifique seu email e clique no link de confirmação que enviamos. Depois volte aqui e clique em <strong>Entrar</strong>.';
+    errEl.style.color = 'var(--green)';
+    errEl.style.background = 'var(--green-dim)';
+    errEl.style.display='block';
+    showToast('✅ Verifique seu email para ativar a conta!');
+  } else if(loginError) {
+    errEl.textContent = loginError;
+    errEl.style.color = 'var(--accent)';
+    errEl.style.display='block';
+  } else {
+    showToast('✅ Conta criada! Bem-vindo(a) ao NOTCH!');
+  }
 }
 // ==================== END SUPABASE AUTH ====================
 let selectedWeekDay = new Date().getDay();
@@ -2777,24 +2879,19 @@ async function loadFromCloud() {
   try {
     const { data, error } = await sb.from('coach_data').select('*').eq('user_id', currentUser.id).single();
     if(error || !data) return;
-    const localTs = localStorage.getItem('pp_updated_at') || '0';
-    if(data.updated_at > localTs) {
-      students = data.students || [];
-      settings = data.settings || settings;
-      attendance = data.attendance || {};
-      localStorage.setItem('pp_students', JSON.stringify(students));
-      localStorage.setItem('pp_settings', JSON.stringify(settings));
-      localStorage.setItem('pp_attendance', JSON.stringify(attendance));
-      localStorage.setItem('pp_updated_at', data.updated_at);
-      if(typeof renderHome === 'function') renderHome();
-      if(typeof renderStudents === 'function') renderStudents();
-      if(typeof renderPayments === 'function') renderPayments();
-      if(typeof renderSchedule === 'function') renderSchedule();
-      showToast('☁️ Dados sincronizados!');
-    } else if(!data.updated_at) {
-      syncToCloud();
-    }
-  } catch(e) { /* usa dados locais */ }
+    // Cloud é sempre a fonte de verdade — sobrescreve local
+    students = data.students || [];
+    settings = data.settings || settings;
+    attendance = data.attendance || {};
+    localStorage.setItem('pp_students', JSON.stringify(students));
+    localStorage.setItem('pp_settings', JSON.stringify(settings));
+    localStorage.setItem('pp_attendance', JSON.stringify(attendance));
+    localStorage.setItem('pp_updated_at', data.updated_at);
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderStudents === 'function') renderStudents();
+    if(typeof renderPayments === 'function') renderPayments();
+    if(typeof renderSchedule === 'function') renderSchedule();
+  } catch(e) { /* sem internet — mantém vazio até sincronizar */ }
 }
 
 function updateAdBanner() {
@@ -3291,10 +3388,10 @@ function generateICS() {
   let ics = '';
   ics += 'BEGIN:VCALENDAR\r\n';
   ics += 'VERSION:2.0\r\n';
-  ics += 'PRODID:-//CoachOrg//PT-BR//EN\r\n';
+  ics += 'PRODID:-//NOTCH//PT-BR//EN\r\n';
   ics += 'CALSCALE:GREGORIAN\r\n';
   ics += 'METHOD:PUBLISH\r\n';
-  ics += 'X-WR-CALNAME:CoachOrg - Treinos\r\n';
+  ics += 'X-WR-CALNAME:NOTCH - Treinos\r\n';
   ics += 'X-WR-TIMEZONE:America/Sao_Paulo\r\n';
 
   students.forEach(s => {
@@ -3324,7 +3421,7 @@ function generateICS() {
       if(s.classType && s.classType !== 'Individual') descParts.push('Tipo: ' + s.classType);
       if(s.phone) descParts.push('Tel: ' + s.phone);
       if(s.value) descParts.push('Valor: R$' + s.value);
-      descParts.push('Gerado por CoachOrg');
+      descParts.push('Gerado por NOTCH');
       const description = descParts.join('\n');
 
       ics += 'BEGIN:VEVENT\r\n';
@@ -4823,15 +4920,15 @@ function showUnblockNotifyHelp() {
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Abre <strong style="color:var(--text)">Configurações</strong> do iPhone (ícone cinza)</div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px">
-      <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">2️⃣ Encontra o CoachOrg</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.5">Rola pra baixo até achar <strong style="color:var(--text)">CoachOrg</strong> na lista de apps</div>
+      <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">2️⃣ Encontra o NOTCH</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5">Rola pra baixo até achar <strong style="color:var(--text)">NOTCH</strong> na lista de apps</div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px">
       <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">3️⃣ Ativa Notificações</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Toca em <strong style="color:var(--text)">Notificações</strong> → liga o botão <strong style="color:var(--text)">Permitir Notificações</strong></div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px">
-      <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:4px">4️⃣ Volta no CoachOrg</div>
+      <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:4px">4️⃣ Volta no NOTCH</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Toca em <strong style="color:var(--text)">🔔 Ativar</strong> aqui de novo. ✅</div>
     </div>
   ` : `
@@ -4840,15 +4937,15 @@ function showUnblockNotifyHelp() {
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Abre <strong style="color:var(--text)">Configurações</strong> do celular → <strong style="color:var(--text)">Apps</strong></div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px">
-      <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">2️⃣ Encontra o CoachOrg</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.5">Procura <strong style="color:var(--text)">CoachOrg</strong> na lista</div>
+      <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">2️⃣ Encontra o NOTCH</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5">Procura <strong style="color:var(--text)">NOTCH</strong> na lista</div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px">
       <div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">3️⃣ Ativa Notificações</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Toca em <strong style="color:var(--text)">Notificações</strong> → liga o botão</div>
     </div>
     <div style="background:var(--bg);border-radius:12px;padding:12px">
-      <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:4px">4️⃣ Volta no CoachOrg</div>
+      <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:4px">4️⃣ Volta no NOTCH</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5">Toca em <strong style="color:var(--text)">🔔 Ativar</strong>. ✅</div>
     </div>
   `;
@@ -5131,6 +5228,16 @@ function renderBirthdayBanner() {
 }
 
 function renderHome() {
+  if(!currentUser) {
+    // Sem login: zera tudo na tela — dados não aparecem
+    const ids = ['totalStudents','todayCount','pendingPayments','monthRevenue'];
+    ids.forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
+    const sc = document.getElementById('scheduleList') || document.getElementById('homeSchedule');
+    if(sc) sc.innerHTML='';
+    const ci = document.getElementById('homeCoachIA'); if(ci) ci.innerHTML='';
+    const hm = document.getElementById('homeMetaCard'); if(hm) hm.innerHTML='';
+    return;
+  }
   const today = new Date();
   const dow = today.getDay();
   const dom = today.getDate();
@@ -5353,6 +5460,11 @@ function daysUntilPayment(payDay) {
 
 // STUDENTS
 function renderStudents() {
+  if(!currentUser) {
+    const el = document.getElementById('studentsList');
+    if(el) el.innerHTML='';
+    return;
+  }
   const q = document.getElementById('searchInput').value.toLowerCase();
   const filtered = students.filter(s=>s.name.toLowerCase().includes(q));
 
@@ -5447,6 +5559,11 @@ function _getWeekDates() {
 }
 
 function renderSchedule() {
+  if(!currentUser) {
+    const g = document.getElementById('weekGrid'); if(g) g.innerHTML='';
+    const d = document.getElementById('daySchedule'); if(d) d.innerHTML='';
+    return;
+  }
   const today = new Date();
   const todayKey = today.toISOString().slice(0,10);
   const dow = today.getDay();
@@ -5576,6 +5693,11 @@ function renderScheduleList(dow) {
 
 // FINANCEIRO (era PAYMENTS)
 function renderPayments() {
+  if(!currentUser) {
+    const el = document.getElementById('paymentsList') || document.getElementById('finList');
+    if(el) el.innerHTML='';
+    return;
+  }
   // Período: nome do mês atual
   const hoje = new Date();
   const mesLabel = hoje.toLocaleString('pt-BR',{month:'long', year:'numeric'});
@@ -6094,7 +6216,7 @@ function _drawCoachOrgFooter(ctx, w, h, theme) {
   ctx.fillStyle = theme.text;
   ctx.font = `bold 26px ${theme.font}`;
   ctx.textAlign = 'left';
-  ctx.fillText('CoachOrg', 200, footY + 30);
+  ctx.fillText('NOTCH', 200, footY + 30);
   ctx.fillStyle = theme.sub;
   ctx.font = `18px ${theme.font}`;
   ctx.fillText('Organize. Cresça. Não perca aluno.', 200, footY + 60);
@@ -6323,7 +6445,7 @@ async function shareBlob(blob, filename, title, text) {
 const _OB_SLIDES = [
   {
     emoji: '👋',
-    title: 'Bem-vindo ao CoachOrg',
+    title: 'Bem-vindo ao NOTCH',
     desc: 'O único app de personal trainer com <span class="ob-highlight">IA especializada em ciência do treino</span> embutida. Organize, analise e evolua seus alunos.'
   },
   {
@@ -6353,6 +6475,8 @@ let _obTouchStartX = 0;
 
 function checkOnboarding() {
   if(localStorage.getItem('coachorg_onboarding_done')) return;
+  // Só mostra onboarding depois de logar — não pode cobrir a login wall
+  if(!currentUser) return;
   // Se veio por link de cortesia, não sobrepõe (a landing já cuida do welcome)
   if(new URLSearchParams(location.search).get('vip')) return;
   setTimeout(() => _showOnboarding(), 300);
@@ -6452,7 +6576,7 @@ function _showObSurvey() {
     </div>
 
     <div style="padding:0 24px 36px;display:flex;flex-direction:column;gap:10px">
-      <button onclick="_obSurveyDone()" class="ob-btn-next" id="obSurveyBtn" style="opacity:.5;pointer-events:none">🚀 Entrar no CoachOrg</button>
+      <button onclick="_obSurveyDone()" class="ob-btn-next" id="obSurveyBtn" style="opacity:.5;pointer-events:none">🚀 Entrar no NOTCH</button>
       <button onclick="_obFinalizar()" class="ob-btn-skip">Pular</button>
     </div>`;
 
@@ -6770,12 +6894,12 @@ async function confirmarSharePicker() {
       const blob = await generateTreinoCardBlob(s, w);
       fecharSharePicker();
       shareBlob(blob, 'treino-' + s.name.split(' ')[0].toLowerCase() + '.png',
-        'Treino de ' + s.name, 'Treino criado no CoachOrg 🏋️');
+        'Treino de ' + s.name, 'Treino criado no NOTCH 🏋️');
     } else if(ctx.type === 'semanal') {
       const blob = await generateSemanalCardBlob();
       fecharSharePicker();
       shareBlob(blob, 'minha-semana.png',
-        'Minha semana como Personal', '📊 Resumo semanal feito no CoachOrg 🏋️');
+        'Minha semana como Personal', '📊 Resumo semanal feito no NOTCH 🏋️');
     }
   } catch(e) {
     showToast('Erro: ' + e.message);
@@ -6833,7 +6957,7 @@ async function gerarConquistaCard() {
     const blob = await generateConquistaCardBlob(s.name, exercise, weight, prevWeight, period);
     fecharModalConquista();
     shareBlob(blob, 'recorde-' + s.name.split(' ')[0].toLowerCase() + '.png',
-      'Novo recorde: ' + s.name, '🏆 Bate-recorde no CoachOrg!');
+      'Novo recorde: ' + s.name, '🏆 Bate-recorde no NOTCH!');
   } catch(e) {
     showToast('Erro: ' + e.message);
   }
@@ -6902,7 +7026,7 @@ function checkWhatsAppReminders() {
       const key = 'notif_wa_' + today.toISOString().slice(0,10) + '_' + s.id;
       if(localStorage.getItem(key)) return;
 
-      const n = new Notification('CoachOrg -Confirmar Presença', {
+      const n = new Notification('NOTCH - Confirmar Presença', {
         body: `Hora de perguntar se ${s.name} vem treinar as ${s.time}! Toque para enviar WhatsApp.`,
         tag: 'wa_'+s.id,
         requireInteraction: true,
@@ -7040,6 +7164,23 @@ function showStudentDetail(id) {
             <div style="font-size:10px;color:var(--text3);margin-top:1px">${sub}</div>
           </div>
           <button onclick="abrirContrato('${s.id}')" style="background:${assinado?'var(--card2)':'var(--accent)'};color:${assinado?'var(--text2)':'#fff'};border:${assinado?'1.5px solid var(--border)':'none'};border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:12px;flex-shrink:0">${assinado?'Ver contrato':'Fazer assinar'}</button>
+        </div>
+      </div>`;
+    })()}
+
+    ${(()=>{
+      const t = s.termoImagemAssinado;
+      const col = t ? '#4ade80' : '#5b8cff';
+      const label = t ? `✅ Autorizado por ${t.nome}` : '📸 Sem autorização de imagem';
+      const sub = t ? `em ${new Date(t.data).toLocaleDateString('pt-BR')} · escopo: ${t.escopo||'redes sociais'}` : 'Aluno ainda não autorizou uso de foto';
+      return `<div class="card" style="border:1px solid ${col}30">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:var(--text)">📸 Autorização de Imagem</div>
+            <div style="font-size:11px;color:${col};margin-top:2px;font-weight:600">${label}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">${sub}</div>
+          </div>
+          <button onclick="abrirTermoImagem('${s.id}')" style="background:${t?'var(--card2)':'#5b8cff'};color:${t?'var(--text2)':'#fff'};border:${t?'1.5px solid var(--border)':'none'};border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:12px;flex-shrink:0">${t?'Ver termo':'Fazer assinar'}</button>
         </div>
       </div>`;
     })()}
@@ -7811,6 +7952,7 @@ async function analisarAnamneseIA() {
   if(!queixa && !dores.length && !condicoes.length && !laudo && !lesoes) {
     showToast('Preencha ao menos uma informação antes de analisar'); return;
   }
+  if(!consumeIA()) { showIALimitBlocked(); return; }
 
   btn.textContent = '🧠 Analisando...'; btn.disabled = true;
   const iaDiv = document.getElementById('anamneseIAResult');
@@ -8153,7 +8295,7 @@ function checkNotifications() {
         if(days >= 0 && days <= 3) {
           const key = 'notif_pay_'+today.toISOString().slice(0,10)+'_'+s.id;
           if(!localStorage.getItem(key)) {
-            new Notification('CoachOrg -Pagamento', {
+            new Notification('NOTCH - Pagamento', {
               body: `${s.name}: pagamento dia ${s.payDay} (${days===0?'HOJE':'em '+days+' dias'}) - R$${s.value||'0'}`,
               icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💪</text></svg>'
             });
@@ -8181,7 +8323,7 @@ function checkNotifications() {
             if(!localStorage.getItem(key)) {
               const emoji = alertAt <= 5 ? '🔴' : alertAt <= 15 ? '🟡' : '🟢';
               const urgency = alertAt <= 15 ? 'ATENÇÃO: ' : '';
-              new Notification(`${emoji} CoachOrg - ${urgency}${diffMin} min pra aula`, {
+              new Notification(`${emoji} NOTCH - ${urgency}${diffMin} min pra aula`, {
                 body: `${s.name} treina às ${s.time} — faltam ${diffMin} minutos!`,
                 requireInteraction: alertAt <= 15,
               });
@@ -8429,7 +8571,7 @@ function generateInsights() {
   const todayKey = today.toISOString().slice(0,10);
 
   if(students.length === 0) {
-    insights.push({icon:'👋', title:'Bem-vindo ao CoachOrg!', desc:'Cadastre seu primeiro aluno na aba Alunos para começar a receber insights.', color:'#5b8cff', priority:0});
+    insights.push({icon:'👋', title:'Bem-vindo ao NOTCH!', desc:'Cadastre seu primeiro aluno na aba Alunos para começar a receber insights.', color:'#5b8cff', priority:0});
     return insights;
   }
 
@@ -9070,12 +9212,29 @@ async function fetchAIInsights(container, fallback) {
   try {
     const sb = getSB();
     if(!sb || !currentUser) return;
+    // Throttle: usa cache se já chamou hoje (economiza custos da edge function)
+    const todayKey = 'coachorg_ai_insights_' + new Date().toISOString().slice(0,10);
+    const cached = localStorage.getItem(todayKey);
+    if(cached) {
+      try {
+        const insights = JSON.parse(cached);
+        if(Array.isArray(insights) && insights.length > 0) {
+          renderInsightCards(container, insights, true);
+          return;
+        }
+      } catch(e) {}
+    }
     const summary = buildCoachSummary();
     const { data, error } = await sb.functions.invoke('coach-ai', {
       body: { user_id: currentUser.id, summary }
     });
     if(error) { console.warn('coach-ai error', error); return; }
     if(data && Array.isArray(data.insights) && data.insights.length > 0) {
+      // Limpa caches antigos
+      Object.keys(localStorage).filter(k => k.startsWith('coachorg_ai_insights_')).forEach(k => {
+        if(k !== todayKey) localStorage.removeItem(k);
+      });
+      localStorage.setItem(todayKey, JSON.stringify(data.insights));
       renderInsightCards(container, data.insights, true);
     }
   } catch(e) { console.warn('coach-ai failed', e); }
@@ -9121,7 +9280,7 @@ async function requestPushPermission() {
   Notification.requestPermission().then(perm=>{
     if(perm==='granted') {
       showToast('✅ Notificações ativadas!');
-      new Notification('CoachOrg ativado! 🏋️', {body:'Você vai receber lembretes de treino e pagamento.', icon:'/favicon.ico'});
+      new Notification('NOTCH ativado! 🏋️', {body:'Você vai receber lembretes de treino e pagamento.', icon:'/favicon.ico'});
       renderCoachIA();
     } else {
       showToast('Notificações negadas. Ative nas configurações do browser.');
@@ -9135,7 +9294,7 @@ let _deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   _deferredInstallPrompt = e;
-  if(!localStorage.getItem('coachorg_install_dismissed')) showInstallBanner();
+  if(!_installDismissAtivo()) showInstallBanner();
 });
 window.addEventListener('appinstalled', () => {
   _deferredInstallPrompt = null;
@@ -9215,10 +9374,10 @@ function showVipPlatformSelector(planoLabel, jaAtivou) {
         cor: '#5b8cff',
         passos: [
           { n:'1', t:'Abre o Chrome ou Edge', d:'No seu computador (Windows ou Mac)' },
-          { n:'2', t:'Ícone ⊕ na barra de endereço', d:'Canto direito da barra de endereço do Chrome — toca em "Instalar CoachOrg"' },
+          { n:'2', t:'Ícone ⊕ na barra de endereço', d:'Canto direito da barra de endereço do Chrome — toca em "Instalar NOTCH"' },
           { n:'3', t:'Clica em "Instalar"', d:'O app abre numa janela separada — sem barra do navegador' }
         ],
-        obs: '💡 Se não aparecer o ícone, usa o menu ⋮ → "Instalar CoachOrg como app"'
+        obs: '💡 Se não aparecer o ícone, usa o menu ⋮ → "Instalar NOTCH como app"'
       },
       android: {
         emoji: '🤖', titulo: 'Android',
@@ -9345,7 +9504,7 @@ function showCourtesyWelcome(planoLabel) {
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
       <div style="font-size:32px;line-height:1">📲</div>
       <div>
-        <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px">Bem-vindo ao CoachOrg</div>
+        <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px">Bem-vindo ao NOTCH</div>
         <div style="font-size:12px;color:#5b8cff;font-weight:700;margin-top:2px">App pra Personal Trainer · BETA</div>
       </div>
       <button onclick="fecharCourtesyWelcome(true)" style="margin-left:auto;background:transparent;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px 8px">×</button>
@@ -9544,9 +9703,22 @@ function fecharCourtesyWelcome(pulou) {
   const el = document.getElementById('courtesyWelcomeOverlay');
   if(el) el.remove();
   if(pulou) {
-    localStorage.setItem('coachorg_install_dismissed', '1');
-    localStorage.setItem('coachorg_install_helper_dismissed', '1');
+    // Dismiss temporário: 7 dias — usuário pode ver de novo depois
+    const expira = Date.now() + 7*24*60*60*1000;
+    localStorage.setItem('coachorg_install_dismissed', String(expira));
+    localStorage.setItem('coachorg_install_helper_dismissed', String(expira));
   }
+}
+
+// Helper: checa se dismiss ainda é válido (não expirou)
+function _installDismissAtivo() {
+  const v = localStorage.getItem('coachorg_install_dismissed');
+  if(!v) return false;
+  // Compatibilidade: '1' antigo = considera expirado e limpa
+  if(v === '1') { localStorage.removeItem('coachorg_install_dismissed'); return false; }
+  const ts = parseInt(v, 10);
+  if(isNaN(ts) || Date.now() > ts) { localStorage.removeItem('coachorg_install_dismissed'); return false; }
+  return true;
 }
 
 function copiarLinkCortesia() {
@@ -9583,7 +9755,7 @@ function showStickyInstall() {
   if(!bar) {
     bar = document.createElement('div');
     bar.id = 'stickyInstall';
-    bar.style.cssText = 'position:fixed;bottom:75px;left:10px;right:10px;z-index:9998;background:linear-gradient(90deg,var(--accent),#ff1744);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px var(--accent-dim);cursor:pointer';
+    bar.style.cssText = 'position:fixed;bottom:75px;left:10px;right:10px;z-index:9998;background:linear-gradient(90deg,var(--accent),#8B1500);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px var(--accent-dim);cursor:pointer';
     bar.onclick = () => showWelcomeInstallModal();
     bar.innerHTML = `<span style="font-size:22px;flex-shrink:0">📲</span>
       <div style="flex:1;color:#fff">
@@ -9694,7 +9866,7 @@ async function triggerInstall() {
   if(_deferredInstallPrompt) {
     _deferredInstallPrompt.prompt();
     const { outcome } = await _deferredInstallPrompt.userChoice;
-    if(outcome === 'dismissed') { localStorage.setItem('coachorg_install_dismissed','1'); hideInstallBanner(); }
+    if(outcome === 'dismissed') { localStorage.setItem('coachorg_install_dismissed', String(Date.now()+7*24*60*60*1000)); hideInstallBanner(); }
     _deferredInstallPrompt = null;
     return;
   }
@@ -9720,7 +9892,7 @@ function showIOSInstallGuide() {
         <li>Toca no botão <strong>compartilhar</strong> ↑ embaixo da tela</li>
         <li>Rola pra baixo na lista</li>
         <li>Toca em <strong>"Adicionar à Tela de Início"</strong></li>
-        <li>Confirma o nome <strong>CoachOrg</strong> → <strong>Adicionar</strong></li>
+        <li>Confirma o nome <strong>NOTCH</strong> → <strong>Adicionar</strong></li>
       </ol>
       <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px;font-size:11px;color:var(--text2)">✅ Depois disso o ícone aparece na tela inicial e o app abre em tela cheia, igual app de loja.</div>
     </div>
@@ -9731,7 +9903,7 @@ function showIOSInstallGuide() {
   const ua = navigator.userAgent;
   const isIOS = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if(isIOS && !isStandalone && !localStorage.getItem('coachorg_install_dismissed')) {
+  if(isIOS && !isStandalone && !_installDismissAtivo()) {
     setTimeout(()=>showInstallBanner(), 1500);
   }
 })();
@@ -9763,51 +9935,70 @@ checkOnboarding();
 checkTermsAcceptance();
 checkNotifications();
 checkWhatsAppReminders();
-setInterval(()=>{ checkNotifications(); checkWhatsAppReminders(); }, 60000);
-setInterval(()=>{ if(document.querySelector('#pageHome.active')) renderHome(); }, 30000);
+// Limpa intervals antigos caso script seja re-executado (HMR / reload)
+if(window._coachorgIntervals) window._coachorgIntervals.forEach(clearInterval);
+window._coachorgIntervals = [
+  setInterval(()=>{ checkNotifications(); checkWhatsAppReminders(); }, 60000),
+  setInterval(()=>{ if(document.querySelector('#pageHome.active')) renderHome(); }, 30000)
+];
 
 // Load settings into config fields
 // ——— SISTEMA DE PALETAS ———
 const _PALETAS = {
-  travis: {
-    nome: 'Cactus Jack', emoji: '🤠',
+  premium: {
+    nome: 'Forja Premium', emoji: '✨',
+    desc: 'Cobre escuro · ouro fosco · luxo máximo',
+    bg:'#080603', card:'#130C06', card2:'#1C1209', card3:'#261810',
+    accent:'#C8781A', accent2:'#7A3E08', accentDim:'#C8781A40', accentGlow:'#C8781A20',
+    green:'#1C7B5A', greenDim:'#1C7B5A20', yellow:'#D4952A', orange:'#E8872A', red:'#CC2200',
+    text:'#EDE0C8', text2:'#A88C64', text3:'#6B5438', border:'#EDE0C80E', borderStrong:'#EDE0C81A',
+    shadowAccent:'0 6px 28px #C8781A50, 0 2px 8px #C8781A25',
+    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #C8781A14 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #7A3E0810 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #D4952A08 0%, transparent 70%)',
+    preview: ['#080603','#C8781A','#D4952A','#EDE0C8']
+  },
+  astroworld: {
+    nome: 'Brasas', emoji: '🔥',
+    desc: 'Laranja queimado · creme quente · energia',
     bg:'#0A0704', card:'#160D06', card2:'#201308', card3:'#2A190A',
     accent:'#E8722A', accent2:'#7A2D0A', accentDim:'#E8722A40', accentGlow:'#E8722A20',
     green:'#5C8C2E', greenDim:'#5C8C2E20', yellow:'#FFB830', orange:'#FF6B35', red:'#CC2200',
     text:'#F2E5CB', text2:'#A8896A', text3:'#6B5040', border:'#F2E5CB0E', borderStrong:'#F2E5CB1A',
     shadowAccent:'0 6px 28px #E8722A40, 0 2px 8px #E8722A20',
     bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #E8722A18 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #7A2D0A12 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #FF6B3508 0%, transparent 70%)',
-    preview: ['#0A0704','#E8722A','#F2E5CB']
+    preview: ['#0A0704','#E8722A','#C4944A','#F2E5CB']
   },
-  original: {
-    nome: 'Original', emoji: '🔴',
-    bg:'#07070f', card:'#12122a', card2:'#1c1c3a', card3:'#242448',
-    accent:'#ff5252', accent2:'#5c0a1e', accentDim:'#ff525240', accentGlow:'#ff525220',
-    green:'#00c853', greenDim:'#00c85320', yellow:'#ffd600', orange:'#ff6d00', red:'#ff2525',
-    text:'#eeeeee', text2:'#999999', text3:'#555555', border:'#ffffff12', borderStrong:'#ffffff22',
-    shadowAccent:'0 6px 28px var(--accent-dim), 0 2px 8px var(--accent-glow)',
-    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, var(--accent-glow) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #5b8cff0d 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #9c5bff07 0%, transparent 70%)',
-    preview: ['#07070f','#ff5252','#eeeeee']
+  cactus: {
+    nome: 'Cerrado', emoji: '🌵',
+    desc: 'Chocolate · siena · areia premium',
+    bg:'#0C0704', card:'#1A0E05', card2:'#261508', card3:'#32190C',
+    accent:'#D26918', accent2:'#8B4010', accentDim:'#D2691840', accentGlow:'#D2691820',
+    green:'#6B8040', greenDim:'#6B804020', yellow:'#E8A840', orange:'#D87038', red:'#CC2200',
+    text:'#FFDEAD', text2:'#C89C6A', text3:'#8B6840', border:'#FFDEAD0E', borderStrong:'#FFDEAD1A',
+    shadowAccent:'0 6px 28px #D2691840, 0 2px 8px #D2691820',
+    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #D2691818 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #8B401012 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #F4A46008 0%, transparent 70%)',
+    preview: ['#0C0704','#D26918','#F4A460','#FFDEAD']
   },
-  noir: {
-    nome: 'Noir Gold', emoji: '🖤',
-    bg:'#080808', card:'#111111', card2:'#181818', card3:'#202020',
-    accent:'#FFD700', accent2:'#8B7000', accentDim:'#FFD70040', accentGlow:'#FFD70020',
-    green:'#50C878', greenDim:'#50C87820', yellow:'#FFD700', orange:'#FFA500', red:'#DC143C',
-    text:'#F0F0F0', text2:'#888888', text3:'#444444', border:'#ffffff10', borderStrong:'#ffffff1a',
-    shadowAccent:'0 6px 28px #FFD70040, 0 2px 8px #FFD70020',
-    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #FFD70012 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #FFD70008 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #FFA50005 0%, transparent 70%)',
-    preview: ['#080808','#FFD700','#F0F0F0']
+  rodeo: {
+    nome: 'Noturno', emoji: '🌙',
+    desc: 'Roxo profundo · índigo · lavanda',
+    bg:'#060408', card:'#0E0814', card2:'#160C1E', card3:'#1E1228',
+    accent:'#9B4CC8', accent2:'#5A1A80', accentDim:'#9B4CC840', accentGlow:'#9B4CC820',
+    green:'#3A8A6A', greenDim:'#3A8A6A20', yellow:'#C88ADC', orange:'#A860D8', red:'#E04060',
+    text:'#E8D8F5', text2:'#A880C8', text3:'#6B4888', border:'#E8D8F50E', borderStrong:'#E8D8F51A',
+    shadowAccent:'0 6px 28px #9B4CC850, 0 2px 8px #9B4CC825',
+    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #6B2E9A18 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #3A0A6012 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #9B4CC808 0%, transparent 70%)',
+    preview: ['#060408','#9B4CC8','#C45CE0','#E8D8F5']
   },
-  ocean: {
-    nome: 'Deep Ocean', emoji: '🌊',
-    bg:'#030D1A', card:'#081828', card2:'#0C2035', card3:'#102842',
-    accent:'#00B4D8', accent2:'#004E6A', accentDim:'#00B4D840', accentGlow:'#00B4D820',
-    green:'#00C896', greenDim:'#00C89620', yellow:'#FFD166', orange:'#F77F00', red:'#EF233C',
-    text:'#E0F0FF', text2:'#7AADCC', text3:'#3A6B88', border:'#E0F0FF0E', borderStrong:'#E0F0FF1A',
-    shadowAccent:'0 6px 28px #00B4D840, 0 2px 8px #00B4D820',
-    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #00B4D815 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #0077B612 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #023E8A08 0%, transparent 70%)',
-    preview: ['#030D1A','#00B4D8','#E0F0FF']
+  birdseye: {
+    nome: 'Atlântico', emoji: '🌊',
+    desc: 'Azul petróleo · aço · laranja sotaque',
+    bg:'#030608', card:'#080F14', card2:'#0D1820', card3:'#12222C',
+    accent:'#D4831A', accent2:'#7A4800', accentDim:'#D4831A40', accentGlow:'#D4831A20',
+    green:'#2A7A5A', greenDim:'#2A7A5A20', yellow:'#D4A030', orange:'#D4831A', red:'#EF3040',
+    text:'#C8E0E8', text2:'#6890A0', text3:'#385060', border:'#C8E0E80E', borderStrong:'#C8E0E81A',
+    shadowAccent:'0 6px 28px #D4831A40, 0 2px 8px #D4831A20',
+    bodyGradient:'radial-gradient(ellipse 80% 40% at 15% 0%, #2D5A7A18 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 85% 100%, #1A304012 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 50% 50%, #D4831A08 0%, transparent 70%)',
+    preview: ['#030608','#2D5A7A','#D4831A','#C8E0E8']
   }
 };
 
@@ -9836,36 +10027,43 @@ function aplicarPaleta(nome) {
   r.style.setProperty('--shadow-accent', p.shadowAccent);
   document.body.style.backgroundImage = p.bodyGradient;
   localStorage.setItem('coachorg_paleta', nome);
-  document.querySelectorAll('.paleta-btn').forEach(function(btn) {
-    var ativo = btn.dataset.paleta === nome;
-    btn.style.borderColor = ativo ? p.accent : '#ffffff15';
-    btn.style.transform = ativo ? 'scale(1.03)' : 'scale(1)';
-    btn.querySelector('.paleta-check').style.display = ativo ? 'flex' : 'none';
-  });
+  // Atualizar card de preview em Configurações
+  var dotsEl = document.getElementById('temaPreviewDots');
+  var nomeEl = document.getElementById('temaAtualNome');
+  if(dotsEl) dotsEl.innerHTML = p.preview.map(function(c){ return '<div style="width:14px;height:14px;border-radius:50%;background:'+c+';border:1px solid #ffffff15"></div>'; }).join('');
+  if(nomeEl) nomeEl.textContent = p.emoji + ' ' + p.nome;
 }
 
 function renderPaletaGrid() {
-  var grid = document.getElementById('paletaGrid');
-  if(!grid) return;
-  var atual = localStorage.getItem('coachorg_paleta') || 'travis';
-  grid.innerHTML = Object.keys(_PALETAS).map(function(key) {
+  var lista = document.getElementById('temasLista');
+  if(!lista) return;
+  var atual = localStorage.getItem('coachorg_paleta') || 'premium';
+  lista.innerHTML = Object.keys(_PALETAS).map(function(key) {
     var p = _PALETAS[key];
     var ativo = key === atual;
-    return '<button class="paleta-btn" data-paleta="' + key + '" onclick="aplicarPaleta(\'' + key + '\')" style="background:' + p.bg + ';border:2px solid ' + (ativo ? p.accent : '#ffffff15') + ';border-radius:14px;padding:12px 10px;cursor:pointer;text-align:left;transform:' + (ativo ? 'scale(1.03)' : 'scale(1)') + ';transition:all .2s;position:relative">'
-      + '<div style="display:flex;gap:5px;margin-bottom:8px">'
-      + '<div style="width:18px;height:18px;border-radius:50%;background:' + p.preview[0] + ';border:1px solid #ffffff20"></div>'
-      + '<div style="width:18px;height:18px;border-radius:50%;background:' + p.preview[1] + '"></div>'
-      + '<div style="width:18px;height:18px;border-radius:50%;background:' + p.preview[2] + ';border:1px solid #ffffff20"></div>'
+    var dots = p.preview.map(function(c) {
+      return '<div style="width:20px;height:20px;border-radius:50%;background:' + c + ';border:1px solid #ffffff15;flex-shrink:0"></div>';
+    }).join('');
+    return '<button onclick="aplicarPaleta(\'' + key + '\');fecharTemasSheet()" style="width:100%;background:' + p.bg + ';border:' + (ativo ? '2px solid ' + p.accent : '1.5px solid #ffffff12') + ';border-radius:16px;padding:14px 16px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:14px">'
+      + '<div style="display:flex;gap:4px;flex-shrink:0">' + dots + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:14px;font-weight:700;color:' + p.text + ';margin-bottom:2px">' + p.emoji + ' ' + p.nome + (key==='premium' ? ' <span style="font-size:10px;background:' + p.accent + ';color:#000;padding:1px 6px;border-radius:6px;font-weight:900;vertical-align:middle">PRINCIPAL</span>' : '') + '</div>'
+      + '<div style="font-size:11px;color:' + p.text2 + '">' + (p.desc||'') + '</div>'
       + '</div>'
-      + '<div style="font-size:11px;font-weight:700;color:' + p.text + '">' + p.emoji + ' ' + p.nome + '</div>'
-      + '<div class="paleta-check" style="display:' + (ativo ? 'flex' : 'none') + ';position:absolute;top:6px;right:8px;background:' + p.accent + ';color:#000;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-size:9px;font-weight:900">✓</div>'
+      + (ativo ? '<div style="width:20px;height:20px;border-radius:50%;background:' + p.accent + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000;flex-shrink:0">✓</div>' : '')
       + '</button>';
   }).join('');
+  // Atualizar preview dots no card de config
+  var dotsEl = document.getElementById('temaPreviewDots');
+  var nomeEl = document.getElementById('temaAtualNome');
+  var pa = _PALETAS[atual];
+  if(dotsEl && pa) dotsEl.innerHTML = pa.preview.map(function(c){ return '<div style="width:14px;height:14px;border-radius:50%;background:'+c+';border:1px solid #ffffff15"></div>'; }).join('');
+  if(nomeEl && pa) nomeEl.textContent = pa.emoji + ' ' + pa.nome;
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  // Carregar paleta salva
-  aplicarPaleta(localStorage.getItem('coachorg_paleta') || 'travis');
+  // Carregar paleta salva — padrão: Premium Utopia
+  aplicarPaleta(localStorage.getItem('coachorg_paleta') || 'premium');
   renderPaletaGrid();
 
   const waMsg = document.getElementById('waTrainMsg');
@@ -10005,6 +10203,122 @@ function _removerAssinatura(studentId) {
   openStudent(studentId);
 }
 
+// ====== TERMO DE AUTORIZAÇÃO DE IMAGEM (LGPD) ======
+function _termoImagemTexto(s) {
+  const nome = s.name || '__________';
+  const dataHoje = new Date().toLocaleDateString('pt-BR');
+  return `TERMO DE AUTORIZAÇÃO DE USO DE IMAGEM
+
+Eu, ${nome}, autorizo o uso da minha imagem (fotografia e vídeo) registrada durante atendimentos de personal training, especificamente para os seguintes fins:
+
+1. ESCOPO AUTORIZADO
+- Publicação em redes sociais profissionais do(a) Personal Trainer (Instagram, TikTok, Reels, Stories, YouTube)
+- Material de divulgação profissional (posts antes/depois, vídeos de execução, depoimentos)
+- Site profissional, portfólio e materiais de captação de novos alunos
+- Uso em apresentações educacionais, palestras e cursos
+
+2. FINALIDADE
+Esta autorização é concedida exclusivamente para uso profissional e educacional, sem fins comerciais de terceiros. Não autorizo o repasse, venda ou cessão da minha imagem a outras empresas, marcas ou plataformas que não o(a) Personal Trainer signatário.
+
+3. PRAZO E REVOGAÇÃO
+Esta autorização é válida por tempo indeterminado, podendo ser revogada a qualquer momento mediante solicitação por escrito (mensagem ou e-mail). Em caso de revogação, comprometo-me a aguardar prazo razoável (até 30 dias) para remoção do conteúdo já publicado, ressalvando-se conteúdos já compartilhados/republicados por terceiros fora do controle do Personal.
+
+4. DIREITOS LGPD
+Conforme a Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018), declaro estar ciente dos meus direitos de acesso, correção, exclusão e portabilidade da minha imagem enquanto dado pessoal sensível.
+
+5. ISENÇÃO DE COBRANÇA
+Esta autorização é concedida de forma gratuita, não cabendo nenhum tipo de remuneração presente ou futura.
+
+Data: ${dataHoje}
+
+Ao assinar este termo digitalmente, confirmo ter lido todas as cláusulas acima e estou de acordo com seu conteúdo.`;
+}
+
+function abrirTermoImagem(studentId) {
+  const s = students.find(x=>x.id===studentId);
+  if(!s) return;
+  let m = document.getElementById('modalTermoImagem');
+  if(!m) {
+    m = document.createElement('div');
+    m.id = 'modalTermoImagem';
+    m.className = 'modal-overlay';
+    m.onclick = e => { if(e.target===m) m.classList.remove('show'); };
+    document.body.appendChild(m);
+  }
+  const t = s.termoImagemAssinado;
+  const texto = _termoImagemTexto(s);
+  m.innerHTML = `
+  <div class="modal" style="max-width:480px;margin:16px auto;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div class="modal-title">📸 Termo de Imagem — ${s.name.split(' ')[0]}</div>
+      <button class="modal-close" onclick="document.getElementById('modalTermoImagem').classList.remove('show')">×</button>
+    </div>
+    <div style="overflow-y:auto;padding:0 20px 24px;flex:1">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+        <pre style="font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.7;font-family:inherit;margin:0">${texto}</pre>
+      </div>
+      ${t ? `
+        <div style="background:#4ade8015;border:1.5px solid #4ade8040;border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:14px;font-weight:800;color:#4ade80;margin-bottom:4px">✅ Termo assinado</div>
+          <div style="font-size:12px;color:var(--text2)">Por: <strong style="color:var(--text)">${t.nome}</strong></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${new Date(t.data).toLocaleString('pt-BR')}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">Escopo: ${t.escopo||'redes sociais'}</div>
+        </div>
+        <button onclick="if(confirm('Revogar autorização de ${s.name.split(' ')[0]}?')){_revogarTermoImagem('${studentId}')}" style="width:100%;background:transparent;border:1.5px solid var(--accent-dim);color:var(--accent);border-radius:12px;padding:11px;font-weight:700;cursor:pointer;font-size:12px;margin-top:10px">Revogar autorização</button>
+      ` : `
+        <div style="margin-bottom:8px;font-size:12px;color:var(--text2);font-weight:600">Escopo da autorização</div>
+        <select id="termoImagemEscopo" style="width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);padding:12px;border-radius:12px;font-size:13px;margin-bottom:12px;font-family:inherit">
+          <option value="redes sociais">Redes sociais (Instagram, TikTok, Stories)</option>
+          <option value="completo">Completo (redes + site + portfólio + palestras)</option>
+          <option value="evolucao">Apenas fotos antes/depois para evolução</option>
+        </select>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--text2);font-weight:600">Assinatura digital do aluno</div>
+        <input id="termoImagemNomeInput" type="text" placeholder="Aluno digita o nome completo"
+          style="width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:14px;margin-bottom:10px;font-family:inherit">
+        <button onclick="assinarTermoImagem('${studentId}')" style="width:100%;background:linear-gradient(135deg,#4ade80,#22c55e);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:14px">✍️ Assinar termo de imagem</button>
+        <button onclick="_compartilharTermoImagem('${studentId}')" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;font-size:13px;margin-top:8px">📲 Enviar via WhatsApp</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.5">Ao assinar, o aluno autoriza o uso da própria imagem conforme escopo selecionado, podendo revogar a qualquer momento.</div>
+      `}
+    </div>
+  </div>`;
+  m.classList.add('show');
+}
+
+function assinarTermoImagem(studentId) {
+  const nome = document.getElementById('termoImagemNomeInput')?.value?.trim();
+  const escopo = document.getElementById('termoImagemEscopo')?.value || 'redes sociais';
+  if(!nome || nome.length < 3) { showToast('Nome completo obrigatório'); return; }
+  const idx = students.findIndex(x=>x.id===studentId);
+  if(idx<0) return;
+  students[idx].termoImagemAssinado = { nome, escopo, data: new Date().toISOString() };
+  save();
+  showToast(`✅ Termo assinado por ${nome.split(' ')[0]}`);
+  document.getElementById('modalTermoImagem').classList.remove('show');
+  openStudent(studentId);
+}
+
+function _revogarTermoImagem(studentId) {
+  const idx = students.findIndex(x=>x.id===studentId);
+  if(idx<0) return;
+  delete students[idx].termoImagemAssinado;
+  save();
+  showToast('Autorização revogada');
+  document.getElementById('modalTermoImagem').classList.remove('show');
+  openStudent(studentId);
+}
+
+function _compartilharTermoImagem(studentId) {
+  const s = students.find(x=>x.id===studentId);
+  if(!s) return;
+  const fone = (s.phone || '').replace(/\D/g,'');
+  const texto = _termoImagemTexto(s);
+  const msg = `Olá ${s.name.split(' ')[0]}! Antes de postar fotos suas, preciso da sua autorização formal. Lê o termo abaixo e me confirma se concorda:\n\n${texto}`;
+  const url = fone
+    ? `https://wa.me/55${fone}?text=${encodeURIComponent(msg)}`
+    : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
 // ====== CALCULADORA DE PRECIFICAÇÃO ======
 function calcularPrecificacao() {
   const horasSemana = parseFloat(document.getElementById('calcHorasSemana').value) || 0;
@@ -10138,9 +10452,27 @@ function cobrarAtrasadosWA() {
   next();
 }
 
-// Service Worker
+// Service Worker — updateViaCache:none garante que sw.js nunca fica em cache HTTP
 if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+    // Verifica atualização a cada vez que a página abre
+    reg.update();
+    // Novo SW instalado → ativa imediatamente
+    reg.addEventListener('updatefound', () => {
+      const sw = reg.installing;
+      if(!sw) return;
+      sw.addEventListener('statechange', () => {
+        if(sw.state === 'installed' && navigator.serviceWorker.controller) {
+          sw.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
+    });
+  }).catch(() => {});
+  // Quando o novo SW assume o controle → recarrega a página com versão nova
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(!refreshing) { refreshing = true; window.location.reload(); }
+  });
 }
 
 // ——— TERMOS & PRIVACIDADE ———
@@ -10172,24 +10504,24 @@ function _buildTermosModal() {
 
       <!-- TERMOS DE USO -->
       <div id="panelTermos" style="font-size:12px;color:var(--text);line-height:1.7">
-        <div style="font-size:14px;font-weight:800;margin-bottom:12px">Termos de Uso — CoachOrg</div>
+        <div style="font-size:14px;font-weight:800;margin-bottom:12px">Termos de Uso — NOTCH</div>
         <div style="font-size:10px;color:var(--text3);margin-bottom:14px">Atualizado em Junho/2026</div>
 
-        <div style="font-weight:700;margin-bottom:4px">1. Sobre o CoachOrg</div>
-        <p style="color:var(--text2);margin-bottom:12px">CoachOrg é uma plataforma digital para profissionais de educação física que desejam organizar seus alunos, treinos, pagamentos e análises. O app é fornecido como ferramenta de apoio e não substitui a responsabilidade técnica do profissional.</p>
+        <div style="font-weight:700;margin-bottom:4px">1. Sobre o NOTCH</div>
+        <p style="color:var(--text2);margin-bottom:12px">NOTCH é uma plataforma digital para profissionais de educação física que desejam organizar seus alunos, treinos, pagamentos e análises. O app é fornecido como ferramenta de apoio e não substitui a responsabilidade técnica do profissional.</p>
 
         <div style="font-weight:700;margin-bottom:4px">2. Uso permitido</div>
-        <p style="color:var(--text2);margin-bottom:12px">O CoachOrg destina-se exclusivamente a uso por profissionais de saúde e educação física habilitados pelo CREF ou equivalente. O uso indevido por pessoas não habilitadas é de responsabilidade exclusiva do usuário.</p>
+        <p style="color:var(--text2);margin-bottom:12px">O NOTCH destina-se exclusivamente a uso por profissionais de saúde e educação física habilitados pelo CREF ou equivalente. O uso indevido por pessoas não habilitadas é de responsabilidade exclusiva do usuário.</p>
 
         <div style="font-weight:700;margin-bottom:4px">3. IA e análises automáticas</div>
         <p style="color:var(--text2);margin-bottom:4px">As análises geradas pelo Personal PhD (IA embarcada) são <strong>ferramentas de apoio educacional</strong> e não constituem diagnóstico, prescrição médica ou substituição de avaliação presencial.</p>
         <div style="background:#ffab0010;border:1px solid #ffab0030;border-radius:8px;padding:10px;margin-bottom:12px;font-size:11px;color:#ffab00">⚠️ Em caso de dor, lesão suspeita ou alteração postural significativa, oriente o aluno a buscar avaliação médica ou fisioterápica presencial.</div>
 
         <div style="font-weight:700;margin-bottom:4px">4. Planos e pagamentos</div>
-        <p style="color:var(--text2);margin-bottom:12px">O CoachOrg oferece plano gratuito com limitações e planos pagos (Mensal, Anual, Vitalício). Não há reembolso parcial após ativação do período pago, exceto nos casos previstos pelo CDC e pela legislação brasileira.</p>
+        <p style="color:var(--text2);margin-bottom:12px">O NOTCH oferece plano gratuito com limitações e planos pagos (Mensal, Anual, Vitalício). Não há reembolso parcial após ativação do período pago, exceto nos casos previstos pelo CDC e pela legislação brasileira.</p>
 
         <div style="font-weight:700;margin-bottom:4px">5. Responsabilidade</div>
-        <p style="color:var(--text2);margin-bottom:12px">O CoachOrg não se responsabiliza por decisões de prescrição tomadas com base nas análises da IA. O profissional é o único responsável pelos treinos, orientações e condutas aplicadas aos seus alunos.</p>
+        <p style="color:var(--text2);margin-bottom:12px">O NOTCH não se responsabiliza por decisões de prescrição tomadas com base nas análises da IA. O profissional é o único responsável pelos treinos, orientações e condutas aplicadas aos seus alunos.</p>
 
         <div style="font-weight:700;margin-bottom:4px">6. Suspensão</div>
         <p style="color:var(--text2);margin-bottom:12px">Reservamo-nos o direito de suspender contas que utilizem o app para fins ilícitos, spam, revenda não autorizada ou qualquer prática que viole estes Termos.</p>
@@ -10200,7 +10532,7 @@ function _buildTermosModal() {
 
       <!-- PRIVACIDADE LGPD -->
       <div id="panelPrivacidade" style="display:none;font-size:12px;color:var(--text);line-height:1.7">
-        <div style="font-size:14px;font-weight:800;margin-bottom:12px">Política de Privacidade — CoachOrg</div>
+        <div style="font-size:14px;font-weight:800;margin-bottom:12px">Política de Privacidade — NOTCH</div>
         <div style="font-size:10px;color:var(--text3);margin-bottom:14px">Conforme LGPD (Lei 13.709/2018) · Atualizado em Junho/2026</div>
 
         <div style="font-weight:700;margin-bottom:4px">1. Dados que coletamos</div>
@@ -10220,7 +10552,7 @@ function _buildTermosModal() {
         <div style="background:var(--card);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#5b8cff">uanalee1@gmail.com</div>
 
         <div style="font-weight:700;margin-bottom:4px">6. Cookies e rastreamento</div>
-        <p style="color:var(--text2);margin-bottom:12px">O CoachOrg usa localStorage para salvar preferências offline. Não usamos cookies de rastreamento de terceiros.</p>
+        <p style="color:var(--text2);margin-bottom:12px">O NOTCH usa localStorage para salvar preferências offline. Não usamos cookies de rastreamento de terceiros.</p>
 
         <div style="font-weight:700;margin-bottom:4px">7. Menores de idade</div>
         <p style="color:var(--text2);margin-bottom:4px">O app não deve ser usado para cadastrar alunos menores de 18 anos sem consentimento expresso dos responsáveis, conforme o ECA e LGPD.</p>
@@ -10262,7 +10594,7 @@ function _showTermsAcceptModal() {
       <div style="font-size:22px;text-align:center;margin-bottom:10px">📋</div>
       <div style="font-size:16px;font-weight:800;text-align:center;margin-bottom:8px">Antes de continuar</div>
       <p style="font-size:12px;color:var(--text2);text-align:center;line-height:1.6;margin-bottom:16px">
-        O CoachOrg e suas funções de IA são <strong style="color:var(--text)">ferramentas de apoio educacional</strong>. As análises não substituem avaliação profissional presencial.
+        O NOTCH e suas funções de IA são <strong style="color:var(--text)">ferramentas de apoio educacional</strong>. As análises não substituem avaliação profissional presencial.
       </p>
       <div style="background:#ffab0010;border:1px solid #ffab0030;border-radius:10px;padding:12px;margin-bottom:18px;font-size:11px;color:#ffab00;line-height:1.6;text-align:center">
         ⚠️ Em caso de dor ou suspeita de lesão, oriente o aluno a buscar médico ou fisioterapeuta.

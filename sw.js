@@ -1,4 +1,4 @@
-const CACHE = 'coachorg-v113';
+const CACHE = 'notch-v121';
 const ASSETS = [
   './manifest.json',
   './apple-touch-icon.png',
@@ -21,8 +21,12 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+// Recebe sinal do app pra ativar imediatamente
+self.addEventListener('message', e => {
+  if(e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('fetch', e => {
-  // index.html e precos.html: sempre busca da rede, fallback pro cache
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request).then(r => {
@@ -33,7 +37,6 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
-  // Outros assets: cache primeiro
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
