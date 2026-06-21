@@ -3201,9 +3201,14 @@ function abrirEditarMeta() {
 // ======= MENU "MAIS" =======
 function abrirMenuMais() {
   document.getElementById('modalMenuMais').style.display = 'flex';
-  if(currentUser?.email === _ADMIN) {
-    const adm = document.getElementById('menuMaisAdmin');
-    if(adm) adm.style.display = '';
+  const adm = document.getElementById('menuMaisAdmin');
+  if(adm) {
+    if(currentUser?.email === _ADMIN) {
+      adm.style.display = '';
+    } else {
+      adm.innerHTML = '';
+      adm.style.display = 'none';
+    }
   }
   // Oculta botão de indique enquanto bloqueado
   const indiqueBtn = document.getElementById('menuMaisIndiqueBtn');
@@ -8581,6 +8586,7 @@ function _randCourtesyId() {
 }
 
 async function generateCourtesyLink() {
+  if(!currentUser || currentUser.email !== _ADMIN) { showToast('Sem permissão 🔒'); return; }
   const recipientEmail = prompt('📧 Email de quem vai receber o link:\n(só essa pessoa poderá ativar)');
   if(!recipientEmail || !recipientEmail.includes('@')) {
     showToast('Email inválido. Tenta de novo 🙏');
@@ -8623,6 +8629,7 @@ async function generateCourtesyLink() {
 }
 
 function activateCourtesyAdmin() {
+  if(!currentUser || currentUser.email !== _ADMIN) { showToast('Sem permissão 🔒'); return; }
   isPro = true;
   localStorage.setItem('coachorg_pro','true');
   localStorage.setItem('coachorg_plan','vitalicio');
@@ -8952,12 +8959,13 @@ function renderCoachIA() {
     renderReferralPanel();
   }
 
-  // Admin panel (só pra Uaná)
+  // Admin panel — remove HTML do DOM pra não-admins (display:none não é suficiente)
   const adminEl = document.getElementById('adminPanel');
   if(adminEl) {
     if(currentUser?.email === _ADMIN) {
       adminEl.style.display = '';
     } else {
+      adminEl.innerHTML = '';
       adminEl.style.display = 'none';
     }
   }

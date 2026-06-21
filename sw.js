@@ -1,4 +1,4 @@
-const CACHE = 'coachorg-v112';
+const CACHE = 'coachorg-v113';
 const ASSETS = [
   './manifest.json',
   './apple-touch-icon.png',
