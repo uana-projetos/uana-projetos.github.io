@@ -617,7 +617,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
   cursor:pointer; text-align:left; display:flex; justify-content:space-between;
   align-items:center; font-family:inherit;
 }
-.menu-mais-btn:hover { background:var(--card); border-color:#5b8cff60; }
+.menu-mais-btn:hover { background:var(--card); border-color:var(--accent-dim); }
 .menu-mais-btn > span { color:var(--text3); font-size:14px; }
 .share-opt-btn {
   background:var(--bg); border:1.5px solid var(--border); color:var(--text2);
@@ -989,6 +989,8 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
     <button onclick="abrirMenuMais()" style="background:var(--card);border:1.5px solid var(--border);border-radius:50%;width:40px;height:40px;cursor:pointer;color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center" title="Mais">⋯</button>
   </div>
 
+  <div id="avisoBanner" style="display:none"></div>
+
   <div class="summary-row">
     <div class="summary-card" style="background:var(--card);border-color:var(--border)">
       <div class="num" style="color:var(--accent)" id="totalStudents">0</div>
@@ -1353,6 +1355,12 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
         <button onclick="fecharMenuMais();showPage('settings');setTimeout(()=>document.getElementById('toggleWhatsappNotif')?.scrollIntoView({behavior:'smooth'}),200)" class="menu-mais-btn">💬 WhatsApp Automático <span>›</span></button>
       </div>
 
+      <!-- 📢 Comunicação -->
+      <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:6px">📢 COMUNICAÇÃO</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+        <button onclick="fecharMenuMais();openAvisoModal()" class="menu-mais-btn">📢 Mural de Avisos <span id="avisoMenuBadge" style="display:none;background:var(--accent);color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:2px 6px;margin-left:6px">ATIVO</span><span>›</span></button>
+      </div>
+
       <!-- 📤 Compartilhar -->
       <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:6px">📤 COMPARTILHAR</div>
       <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
@@ -1383,6 +1391,56 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
       </div>
 
       <div style="text-align:center;font-size:9px;color:var(--text3);padding:8px;margin-top:8px;border-top:1px solid var(--border)">NOTCH v3.0</div>
+    </div>
+  </div>
+
+  <!-- Modal: Mural de Avisos -->
+  <div id="modalAviso" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:440px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:16px;font-weight:800">📢 Mural de Avisos</div>
+        <button onclick="fecharAvisoModal()" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer">×</button>
+      </div>
+
+      <div id="avisoAtualCard" style="display:none;margin-bottom:16px"></div>
+
+      <div id="avisoFormArea">
+        <div style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:10px">Criar novo aviso</div>
+
+        <div style="margin-bottom:10px">
+          <label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Tipo</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="avisoTipoGrid">
+            <button onclick="selectAvisoTipo('recesso')" class="aviso-tipo-btn active" data-tipo="recesso" style="background:var(--bg);border:1.5px solid var(--accent);color:var(--accent);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;text-align:center">🏖️ Recesso</button>
+            <button onclick="selectAvisoTipo('doenca')" class="aviso-tipo-btn" data-tipo="doenca" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;text-align:center">🤒 Doença</button>
+            <button onclick="selectAvisoTipo('urgencia')" class="aviso-tipo-btn" data-tipo="urgencia" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;text-align:center">🚨 Urgência</button>
+            <button onclick="selectAvisoTipo('geral')" class="aviso-tipo-btn" data-tipo="geral" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;text-align:center">📋 Geral</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px">
+          <label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Mensagem</label>
+          <textarea id="avisoMsg" rows="3" placeholder="Ex: Estarei de recesso até o dia 10. Retorno normal na segunda!" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;font-family:inherit;resize:none"></textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Início</label>
+            <input type="date" id="avisoInicio" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Fim</label>
+            <input type="date" id="avisoFim" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px" disabled>
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin-bottom:16px;cursor:pointer">
+          <input type="checkbox" id="avisoIndeterminado" checked onchange="document.getElementById('avisoFim').disabled=this.checked;if(this.checked)document.getElementById('avisoFim').value=''" style="accent-color:var(--accent);width:18px;height:18px">
+          Sem previsão de retorno
+        </label>
+
+        <button onclick="salvarAviso()" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:8px">📢 Publicar aviso</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center">O aviso aparece na Home e pode ser enviado via WhatsApp</div>
+      </div>
     </div>
   </div>
 
@@ -3298,6 +3356,150 @@ function abrirMenuMais() {
 }
 function fecharMenuMais() {
   document.getElementById('modalMenuMais').style.display = 'none';
+}
+
+// ======= MURAL DE AVISOS =======
+let _avisoTipoSel = 'recesso';
+const _AVISO_ICONS = { recesso:'🏖️', doenca:'🤒', urgencia:'🚨', geral:'📋' };
+const _AVISO_LABELS = { recesso:'Recesso', doenca:'Doença', urgencia:'Urgência', geral:'Aviso geral' };
+
+function getAvisos() {
+  try { return JSON.parse(localStorage.getItem('coachorg_avisos') || '[]'); } catch { return []; }
+}
+function saveAvisos(list) { localStorage.setItem('coachorg_avisos', JSON.stringify(list)); }
+
+function getAvisoAtivo() {
+  return getAvisos().find(a => a.ativo);
+}
+
+function selectAvisoTipo(tipo) {
+  _avisoTipoSel = tipo;
+  document.querySelectorAll('.aviso-tipo-btn').forEach(b => {
+    const t = b.getAttribute('data-tipo');
+    b.style.borderColor = t === tipo ? 'var(--accent)' : 'var(--border)';
+    b.style.color = t === tipo ? 'var(--accent)' : 'var(--text2)';
+  });
+}
+
+function openAvisoModal() {
+  const m = document.getElementById('modalAviso');
+  m.style.display = 'flex';
+  const ativo = getAvisoAtivo();
+  const card = document.getElementById('avisoAtualCard');
+  const form = document.getElementById('avisoFormArea');
+  if (ativo) {
+    const fim = ativo.dataFim ? new Date(ativo.dataFim+'T12:00').toLocaleDateString('pt-BR') : 'Sem previsão';
+    card.style.display = '';
+    card.innerHTML = `
+      <div style="background:var(--bg);border:1.5px solid var(--accent-dim);border-radius:14px;padding:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:20px">${_AVISO_ICONS[ativo.tipo]||'📢'}</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:800;color:var(--accent)">${_AVISO_LABELS[ativo.tipo]||'Aviso'} — ativo</div>
+            <div style="font-size:10px;color:var(--text2)">Desde ${new Date(ativo.dataInicio+'T12:00').toLocaleDateString('pt-BR')} · Fim: ${fim}</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:10px">${ativo.msg}</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="copiarAvisoWa()" style="flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text)">💬 Copiar p/ WhatsApp</button>
+          <button onclick="encerrarAviso()" style="flex:1;background:var(--card);border:1.5px solid var(--red);border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--red)">Encerrar aviso</button>
+        </div>
+      </div>`;
+    form.style.display = 'none';
+  } else {
+    card.style.display = 'none';
+    form.style.display = '';
+    document.getElementById('avisoMsg').value = '';
+    document.getElementById('avisoInicio').value = new Date().toISOString().split('T')[0];
+    document.getElementById('avisoFim').value = '';
+    document.getElementById('avisoIndeterminado').checked = true;
+    document.getElementById('avisoFim').disabled = true;
+    selectAvisoTipo('recesso');
+  }
+}
+
+function fecharAvisoModal() {
+  document.getElementById('modalAviso').style.display = 'none';
+}
+
+function salvarAviso() {
+  const msg = document.getElementById('avisoMsg').value.trim();
+  if (!msg) { showToast('Escreva a mensagem do aviso'); return; }
+  const inicio = document.getElementById('avisoInicio').value;
+  if (!inicio) { showToast('Selecione a data de início'); return; }
+  const indet = document.getElementById('avisoIndeterminado').checked;
+  const fim = indet ? null : document.getElementById('avisoFim').value || null;
+
+  const avisos = getAvisos();
+  avisos.forEach(a => a.ativo = false);
+  avisos.unshift({
+    id: Date.now().toString(36),
+    tipo: _avisoTipoSel,
+    msg,
+    dataInicio: inicio,
+    dataFim: fim,
+    ativo: true,
+    criadoEm: new Date().toISOString()
+  });
+  saveAvisos(avisos);
+  renderAvisoBanner();
+  updateAvisoBadge();
+  fecharAvisoModal();
+  showToast('Aviso publicado!');
+}
+
+function encerrarAviso() {
+  const avisos = getAvisos();
+  avisos.forEach(a => a.ativo = false);
+  saveAvisos(avisos);
+  renderAvisoBanner();
+  updateAvisoBadge();
+  fecharAvisoModal();
+  showToast('Aviso encerrado');
+}
+
+function renderAvisoBanner() {
+  const el = document.getElementById('avisoBanner');
+  if (!el) return;
+  const ativo = getAvisoAtivo();
+  if (!ativo) { el.style.display = 'none'; return; }
+  const fim = ativo.dataFim ? 'até ' + new Date(ativo.dataFim+'T12:00').toLocaleDateString('pt-BR') : 'sem previsão de retorno';
+  const corMap = { recesso:'--accent', doenca:'--yellow', urgencia:'--red', geral:'--text2' };
+  const corVar = corMap[ativo.tipo] || '--accent';
+  el.style.display = '';
+  el.innerHTML = `
+    <div style="background:var(--card);border:1.5px solid color-mix(in srgb, var(${corVar}) 25%, transparent);border-radius:14px;padding:12px 14px;margin-bottom:14px;cursor:pointer" onclick="openAvisoModal()">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:16px">${_AVISO_ICONS[ativo.tipo]||'📢'}</span>
+        <span style="font-size:12px;font-weight:800;color:var(${corVar})">${_AVISO_LABELS[ativo.tipo]||'Aviso'}</span>
+        <span style="font-size:9px;color:var(--text3);margin-left:auto">${fim}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text);line-height:1.4">${ativo.msg}</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:6px">Toque para gerenciar · 💬 Enviar via WhatsApp</div>
+    </div>`;
+}
+
+function updateAvisoBadge() {
+  const badge = document.getElementById('avisoMenuBadge');
+  if (badge) badge.style.display = getAvisoAtivo() ? 'inline' : 'none';
+}
+
+function copiarAvisoWa() {
+  const ativo = getAvisoAtivo();
+  if (!ativo) return;
+  const fim = ativo.dataFim ? 'até ' + new Date(ativo.dataFim+'T12:00').toLocaleDateString('pt-BR') : 'sem previsão de retorno';
+  const icon = _AVISO_ICONS[ativo.tipo] || '📢';
+  const label = _AVISO_LABELS[ativo.tipo] || 'Aviso';
+  const texto = `${icon} *${label}*\n\n${ativo.msg}\n\n📅 A partir de ${new Date(ativo.dataInicio+'T12:00').toLocaleDateString('pt-BR')} · ${fim}`;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(texto).then(() => showToast('Texto copiado! Cole no WhatsApp'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = texto; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+    showToast('Texto copiado! Cole no WhatsApp');
+  }
 }
 
 // ======= MODAL GENÉRICO (utilitário) =======
@@ -5234,6 +5436,9 @@ function renderHome() {
 
   document.getElementById('totalStudents').textContent = students.length;
   document.getElementById('todayCount').textContent = todayStudents.length;
+
+  renderAvisoBanner();
+  updateAvisoBadge();
 
   // Coach IA Insights + Meta na Home
   renderHomeCoachIA();
