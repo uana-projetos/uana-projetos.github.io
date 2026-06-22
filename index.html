@@ -1399,6 +1399,7 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
       <!-- 📤 Compartilhar -->
       <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.5px;margin-bottom:6px">📤 COMPARTILHAR</div>
       <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+        <button onclick="fecharMenuMais();openContentStudio()" class="menu-mais-btn" style="background:linear-gradient(135deg,var(--card),color-mix(in srgb,var(--accent) 8%,var(--card)));border:1.5px solid color-mix(in srgb,var(--accent) 30%,transparent)">✨ Criar Card de Conteúdo <span>›</span></button>
         <button onclick="fecharMenuMais();shareSemanalCard()" class="menu-mais-btn">📊 Card da semana <span>›</span></button>
         <button onclick="fecharMenuMais();downloadICS()" class="menu-mais-btn">📅 Sincronizar Calendário <span>›</span></button>
       </div>
@@ -1451,6 +1452,21 @@ details.config-section .config-chevron { transition: transform .2s; display:inli
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Modal: Content Studio (Criar Card de Conteúdo) -->
+  <div id="contentStudioModal" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column">
+    <div style="padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0">
+      <button onclick="closeContentStudio()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:14px;font-weight:600;padding:0;display:flex;align-items:center;gap:2px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Voltar
+      </button>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:var(--text)">✨ Criar Conteúdo</div>
+        <div style="font-size:11px;color:var(--text3)">Card com propaganda do app</div>
+      </div>
+    </div>
+    <div id="csBody" style="flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch"></div>
   </div>
 
   <!-- Modal: Mural de Avisos -->
@@ -3280,6 +3296,212 @@ async function sendPhdChat() {
   const tp = document.getElementById('phdTyping');
   if(tp) tp.remove();
   _renderChat();
+}
+
+// ——— CONTENT STUDIO (Cards de Conteúdo com Propaganda) ———
+if(!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) {
+    r = Math.min(r, w/2, h/2);
+    this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath();
+  };
+}
+const _CS_CATS = [
+  { id:'dica',        emoji:'💡', label:'Dica de Treino',  grad:['#667eea','#764ba2'], text:'#fff' },
+  { id:'mentalidade', emoji:'🧠', label:'Mentalidade',     grad:['#f093fb','#f5576c'], text:'#fff' },
+  { id:'nutricao',    emoji:'🥗', label:'Nutrição',        grad:['#0cebeb','#20e3b2','#29ffc6'], text:'#0a2a1f' },
+  { id:'motivacao',   emoji:'🔥', label:'Motivação',       grad:['#fa709a','#fee140'], text:'#2a1a0a' },
+  { id:'saude',       emoji:'❤️', label:'Saúde',           grad:['#a18cd1','#fbc2eb'], text:'#1a0a2a' },
+  { id:'resultado',   emoji:'🏆', label:'Resultado',       grad:['#f7971e','#ffd200'], text:'#2a1a0a' },
+];
+const _CS_APP_URL = 'https://uana-projetos.github.io';
+let _csSelectedCat = null;
+
+function openContentStudio() {
+  document.getElementById('contentStudioModal').style.display = 'flex';
+  _csSelectedCat = null;
+  _csRenderPicker();
+}
+function closeContentStudio() { document.getElementById('contentStudioModal').style.display = 'none'; }
+
+function _csRenderPicker() {
+  const el = document.getElementById('csBody');
+  el.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Escolha o tipo de conteúdo</div>
+      <div style="font-size:12px;color:var(--text3)">Cada card sai com a marca NOTCH + link de download</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${_CS_CATS.map(c => `
+        <button onclick="_csSelectCat('${c.id}')" style="background:linear-gradient(135deg,${c.grad.join(',')});border:none;border-radius:14px;padding:20px 12px;cursor:pointer;text-align:center">
+          <div style="font-size:28px;margin-bottom:6px">${c.emoji}</div>
+          <div style="font-size:13px;font-weight:700;color:${c.text}">${c.label}</div>
+        </button>
+      `).join('')}
+    </div>`;
+}
+
+function _csSelectCat(catId) {
+  _csSelectedCat = _CS_CATS.find(c => c.id === catId);
+  const el = document.getElementById('csBody');
+  const coachName = localStorage.getItem('coachorg_user_name') || currentUser?.email?.split('@')[0] || 'Coach';
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <button onclick="_csRenderPicker()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;font-weight:600">← Categorias</button>
+      <div style="font-size:14px;font-weight:700;color:var(--text)">${_csSelectedCat.emoji} ${_csSelectedCat.label}</div>
+    </div>
+    <textarea id="csText" placeholder="Escreva sua dica, frase ou conteúdo aqui..." rows="4" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);padding:12px;font-size:14px;font-family:inherit;resize:none;box-sizing:border-box;line-height:1.5" oninput="_csUpdatePreview()"></textarea>
+    <div style="margin-top:6px;margin-bottom:14px">
+      <input id="csCoachName" value="${coachName}" placeholder="Seu nome" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;font-family:inherit;box-sizing:border-box" oninput="_csUpdatePreview()">
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px">PRÉ-VISUALIZAÇÃO</div>
+    <canvas id="csCanvas" width="1080" height="1080" style="width:100%;border-radius:12px;border:1px solid var(--border)"></canvas>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button onclick="_csShareImage()" style="flex:1;background:linear-gradient(90deg,#5b8cff,#9c5bff);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;font-size:13px">📤 Compartilhar</button>
+      <button onclick="_csSaveImage()" style="flex:1;background:var(--card);color:var(--text);border:1.5px solid var(--border);border-radius:12px;padding:13px;font-weight:700;cursor:pointer;font-size:13px">💾 Salvar Imagem</button>
+    </div>
+    <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px">A imagem já vem com a marca NOTCH e link de download</div>`;
+  setTimeout(() => { _csUpdatePreview(); document.getElementById('csText').focus(); }, 50);
+}
+
+function _csUpdatePreview() {
+  const canvas = document.getElementById('csCanvas');
+  if(!canvas || !_csSelectedCat) return;
+  const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1080;
+  const cat = _csSelectedCat;
+  const text = document.getElementById('csText')?.value || '';
+  const coach = document.getElementById('csCoachName')?.value || 'Coach';
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  cat.grad.forEach((c, i) => grad.addColorStop(i / (cat.grad.length - 1), c));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle pattern overlay
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  for(let i = 0; i < 20; i++) {
+    const x = (i * 137) % W, y = (i * 97) % H, r = 40 + (i * 23) % 60;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  const isDark = cat.text === '#fff';
+
+  // Category badge (top)
+  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)';
+  const badgeText = cat.emoji + ' ' + cat.label.toUpperCase();
+  ctx.font = '700 32px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  const bw = ctx.measureText(badgeText).width + 48;
+  const bx = (W - bw) / 2;
+  ctx.beginPath();
+  ctx.roundRect(bx, 100, bw, 56, 28);
+  ctx.fill();
+  ctx.fillStyle = cat.text;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.fillText(badgeText, W / 2, 128);
+
+  // Main text (center)
+  ctx.fillStyle = cat.text;
+  ctx.font = '800 48px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const lines = _csWrapText(ctx, text || 'Escreva algo...', W - 140);
+  const lineH = 62;
+  const totalH = lines.length * lineH;
+  const startY = (H - totalH) / 2 - 20;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, W / 2, startY + i * lineH);
+  });
+
+  // Coach name
+  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)';
+  ctx.font = '600 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('— ' + coach, W / 2, H - 220);
+
+  // Bottom branded bar
+  ctx.fillStyle = isDark ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.12)';
+  ctx.fillRect(0, H - 140, W, 140);
+
+  // NOTCH logo text
+  ctx.fillStyle = isDark ? '#fff' : '#1a1a2a';
+  ctx.font = '900 36px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('NOTCH', 50, H - 85);
+
+  // Tagline
+  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)';
+  ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.fillText('App para Personal Trainers', 50, H - 48);
+
+  // Download CTA (right side)
+  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+  const ctaW = 280, ctaH = 52, ctaX = W - ctaW - 40, ctaY = H - 110;
+  ctx.beginPath();
+  ctx.roundRect(ctaX, ctaY, ctaW, ctaH, 26);
+  ctx.fill();
+  ctx.fillStyle = isDark ? '#fff' : '#1a1a2a';
+  ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('📲 Baixe grátis', ctaX + ctaW / 2, ctaY + ctaH / 2);
+}
+
+function _csWrapText(ctx, text, maxW) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for(const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if(ctx.measureText(test).width > maxW && line) {
+      lines.push(line);
+      line = w;
+    } else { line = test; }
+  }
+  if(line) lines.push(line);
+  return lines.length > 8 ? lines.slice(0, 8) : lines;
+}
+
+async function _csShareImage() {
+  const canvas = document.getElementById('csCanvas');
+  if(!canvas) return;
+  const text = document.getElementById('csText')?.value || '';
+  const coach = document.getElementById('csCoachName')?.value || 'Coach';
+  try {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], 'notch-card.png', { type: 'image/png' });
+    if(navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'NOTCH — ' + _csSelectedCat.label,
+        text: text + '\n\n— ' + coach + '\n\n📲 Baixe o NOTCH grátis: ' + _CS_APP_URL
+      });
+    } else {
+      await navigator.share({
+        title: 'NOTCH — ' + _csSelectedCat.label,
+        text: text + '\n\n— ' + coach + '\n\n📲 Baixe o NOTCH grátis: ' + _CS_APP_URL,
+        url: _CS_APP_URL
+      });
+    }
+  } catch(e) {
+    if(e.name !== 'AbortError') {
+      _csSaveImage();
+      showToast('Imagem salva! Cole no WhatsApp/Instagram');
+    }
+  }
+}
+
+function _csSaveImage() {
+  const canvas = document.getElementById('csCanvas');
+  if(!canvas) return;
+  const a = document.createElement('a');
+  a.download = 'notch-' + (_csSelectedCat?.id || 'card') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  showToast('✅ Imagem salva!');
 }
 
 const FUNDADOR_TOTAL_SLOTS = 50;
